@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JLek.POS.Domain", "src\JLek.POS.Domain\JLek.POS.Domain.csproj", "{A1DED10F-DF8D-4494-B6B1-5640E1E9CA50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JLek.POS.Application", "src\JLek.POS.Application\JLek.POS.Application.csproj", "{17C71F17-DADD-4BA4-9470-50719091CDBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JLek.POS.Infrastructure", "src\JLek.POS.Infrastructure\JLek.POS.Infrastructure.csproj", "{CD54A8EC-0100-4BFC-9B4A-66E5399687EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JLek.POS.Shared", "src\JLek.POS.Shared\JLek.POS.Shared.csproj", "{24D3C266-C587-4AA8-8DD1-353637A09501}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JLek.POS.Web", "src\JLek.POS.Web\JLek.POS.Web.csproj", "{DD8AA5CE-9EFC-41F3-AEDF-CE4718262784}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1DED10F-DF8D-4494-B6B1-5640E1E9CA50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1DED10F-DF8D-4494-B6B1-5640E1E9CA50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1DED10F-DF8D-4494-B6B1-5640E1E9CA50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1DED10F-DF8D-4494-B6B1-5640E1E9CA50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17C71F17-DADD-4BA4-9470-50719091CDBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17C71F17-DADD-4BA4-9470-50719091CDBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17C71F17-DADD-4BA4-9470-50719091CDBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17C71F17-DADD-4BA4-9470-50719091CDBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD54A8EC-0100-4BFC-9B4A-66E5399687EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD54A8EC-0100-4BFC-9B4A-66E5399687EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD54A8EC-0100-4BFC-9B4A-66E5399687EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD54A8EC-0100-4BFC-9B4A-66E5399687EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24D3C266-C587-4AA8-8DD1-353637A09501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24D3C266-C587-4AA8-8DD1-353637A09501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24D3C266-C587-4AA8-8DD1-353637A09501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24D3C266-C587-4AA8-8DD1-353637A09501}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD8AA5CE-9EFC-41F3-AEDF-CE4718262784}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD8AA5CE-9EFC-41F3-AEDF-CE4718262784}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD8AA5CE-9EFC-41F3-AEDF-CE4718262784}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD8AA5CE-9EFC-41F3-AEDF-CE4718262784}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A1DED10F-DF8D-4494-B6B1-5640E1E9CA50} = {0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}
+		{17C71F17-DADD-4BA4-9470-50719091CDBD} = {0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}
+		{CD54A8EC-0100-4BFC-9B4A-66E5399687EC} = {0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}
+		{24D3C266-C587-4AA8-8DD1-353637A09501} = {0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}
+		{DD8AA5CE-9EFC-41F3-AEDF-CE4718262784} = {0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.28" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.28" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JLek.POS.Application\JLek.POS.Application.csproj" />
+    <ProjectReference Include="..\JLek.POS.Infrastructure\JLek.POS.Infrastructure.csproj" />
+    <ProjectReference Include="..\JLek.POS.Shared\JLek.POS.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

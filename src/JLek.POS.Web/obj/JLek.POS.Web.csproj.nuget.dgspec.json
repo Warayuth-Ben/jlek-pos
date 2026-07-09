@@ -1,0 +1,353 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\JLek.POS.Web.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Application\\JLek.POS.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Application\\JLek.POS.Application.csproj",
+        "projectName": "JLek.POS.Application",
+        "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Application\\JLek.POS.Application.csproj",
+        "packagesPath": "C:\\Users\\waray\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\waray\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Domain\\JLek.POS.Domain.csproj": {
+                "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Domain\\JLek.POS.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Domain\\JLek.POS.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Domain\\JLek.POS.Domain.csproj",
+        "projectName": "JLek.POS.Domain",
+        "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Domain\\JLek.POS.Domain.csproj",
+        "packagesPath": "C:\\Users\\waray\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\waray\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Infrastructure\\JLek.POS.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Infrastructure\\JLek.POS.Infrastructure.csproj",
+        "projectName": "JLek.POS.Infrastructure",
+        "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Infrastructure\\JLek.POS.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\waray\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Infrastructure\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\waray\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Application\\JLek.POS.Application.csproj": {
+                "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Application\\JLek.POS.Application.csproj"
+              },
+              "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Domain\\JLek.POS.Domain.csproj": {
+                "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Domain\\JLek.POS.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Shared\\JLek.POS.Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Shared\\JLek.POS.Shared.csproj",
+        "projectName": "JLek.POS.Shared",
+        "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Shared\\JLek.POS.Shared.csproj",
+        "packagesPath": "C:\\Users\\waray\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Shared\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\waray\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\JLek.POS.Web.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\JLek.POS.Web.csproj",
+        "projectName": "JLek.POS.Web",
+        "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\JLek.POS.Web.csproj",
+        "packagesPath": "C:\\Users\\waray\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\waray\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Application\\JLek.POS.Application.csproj": {
+                "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Application\\JLek.POS.Application.csproj"
+              },
+              "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Infrastructure\\JLek.POS.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Infrastructure\\JLek.POS.Infrastructure.csproj"
+              },
+              "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Shared\\JLek.POS.Shared.csproj": {
+                "projectPath": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Shared\\JLek.POS.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Components.WebAssembly": {
+              "target": "Package",
+              "version": "[8.0.28, )"
+            },
+            "Microsoft.AspNetCore.Components.WebAssembly.DevServer": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.28, )"
+            },
+            "Microsoft.NET.ILLink.Tasks": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.28, )",
+              "autoReferenced": true
+            },
+            "Microsoft.NET.Sdk.WebAssembly.Pack": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.28, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Runtime.Mono.browser-wasm",
+              "version": "[8.0.28, 8.0.28]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "browser-wasm": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

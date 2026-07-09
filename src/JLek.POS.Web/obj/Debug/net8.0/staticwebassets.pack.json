@@ -1,0 +1,57 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\bin\\Debug\\net8.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\obj\\Debug\\net8.0\\compressed\\gzuo1hr73v.gz",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\obj\\Debug\\net8.0\\scopedcss\\bundle\\JLek.POS.Web.styles.css",
+      "PackagePath": "staticwebassets\\JLek.POS.Web.styles.css"
+    },
+    {
+      "Id": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\wwwroot\\css\\app.css",
+      "PackagePath": "staticwebassets\\css\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\wwwroot\\icon-192.png",
+      "PackagePath": "staticwebassets\\icon-192.png"
+    },
+    {
+      "Id": "C:\\Users\\waray\\Desktop\\JLEK-POS\\src\\JLek.POS.Web\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.JLek.POS.Web.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.JLek.POS.Web.props",
+      "PackagePath": "build\\JLek.POS.Web.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.JLek.POS.Web.props",
+      "PackagePath": "buildMultiTargeting\\JLek.POS.Web.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.JLek.POS.Web.props",
+      "PackagePath": "buildTransitive\\JLek.POS.Web.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
