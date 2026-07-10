@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "JLek.POS.Web",
   "resources": {
-    "hash": "sha256-j4VKzQyGScNab6vHo40bVfLLNmhJ8+vEOmZ1H0Dvzsc=",
+    "hash": "sha256-eKtdhGlS5LP48Ouvyb678BN1Zojw1yObD+OPPDhr634=",
     "jsModuleNative": {
       "dotnet.native.8.0.28.4o31p33ngd.js": "sha256-YDHEHpc+/PUWFYa9BMCN3EcVlpemjKD024swcpPfMIQ="
     },
@@ -208,18 +208,18 @@
       "mscorlib.wasm": "sha256-K9Dyt2y2qc5iOiFtzVJ54OrivbmVXDxkD16w+GkNz6Y=",
       "netstandard.wasm": "sha256-cdbfmZR3ZtA/HeSPpbwrUoRjB1vl4OgPSKGeGSmtiug=",
       "System.Private.CoreLib.wasm": "sha256-naY/8zY/5LD24ypcNRlECeSByBMi44aNk+g16oi63Mc=",
-      "JLek.POS.Application.wasm": "sha256-v7/kI3UEDzPk64CXzAPeMwJZDSvYECsY2Qi9hW/UZJA=",
-      "JLek.POS.Domain.wasm": "sha256-CN999xYqjgg5Md6HmuSYxgk1rxnt2qNxeVckkM/f6PI=",
-      "JLek.POS.Infrastructure.wasm": "sha256-GKn3wpekMGi7cw7L1tg5o6GZVNLBeWkdjne5zwiUgbw=",
-      "JLek.POS.Shared.wasm": "sha256-T+DAS2qkKvbKZ2eedjr2FSE+RB1oKCKDnCJMQHw7Bxo=",
-      "JLek.POS.Web.wasm": "sha256-+qpCUkEQwvVW34uW5nvRxzchs/Gdssy3Byu+e0Clpr0="
+      "JLek.POS.Application.wasm": "sha256-ICi14ko7l3M2bjxH4Z6vbJnERcs7WBlxeUJtUbwQcEs=",
+      "JLek.POS.Domain.wasm": "sha256-2X/LFn9jGrpXuveX0IqF5T5ymx7R8w9saP0kffRNcwo=",
+      "JLek.POS.Infrastructure.wasm": "sha256-rtJku27vhj4wlm0qCs8mWFfw13Oslafw+1bY/3XVUv4=",
+      "JLek.POS.Shared.wasm": "sha256-VawqPsCrgiWjQoKJJ8q84LzgtyIo0Ia4JTJwdoE3Fbw=",
+      "JLek.POS.Web.wasm": "sha256-OQ1mS6dkQrc9y1WzVa4n5gePdMknxX9fDSjZV+SOHkM="
     },
     "pdb": {
-      "JLek.POS.Application.pdb": "sha256-uRRfKtq8dtWlKP1lh2AcxGlaRyG5/G+SDODVBh/weJ0=",
-      "JLek.POS.Infrastructure.pdb": "sha256-W5iaGOqKsvfvUwnI+kkNXKnSeYSen6cyX3iBvwCJ0iI=",
-      "JLek.POS.Shared.pdb": "sha256-bLRETCINz2wUj9/LFek/W2vOmxwvIruJl5fkNCGxtfI=",
-      "JLek.POS.Domain.pdb": "sha256-A0SqHUNyYo1U+ixQ7DAM4V8T54JrJE0ZX444EytMwU0=",
-      "JLek.POS.Web.pdb": "sha256-Pru2f5Bb3WPuGhvNX9JtuyK5LANs/OJ87ypDWKFNMow="
+      "JLek.POS.Application.pdb": "sha256-Yc8H8OiGeGkbHUhx4jE3PM+cxxcPcHtF+bL8OXV0Lok=",
+      "JLek.POS.Infrastructure.pdb": "sha256-EAapzpRjGayNjUwFv8xWWTrS1vRxZ0G2sEmCMCSiALM=",
+      "JLek.POS.Shared.pdb": "sha256-s4ffKLHdFJyYsv8dj03X1i0Xi/royMKjKjrSutA16IA=",
+      "JLek.POS.Domain.pdb": "sha256-p2gIh5tZ1Ubvk+k/xoBDhTUy4dGyIoLlqwYVK4n1fyo=",
+      "JLek.POS.Web.pdb": "sha256-+XCUj26jtRKckW9Qb5Rx96K4qd+ES8pPBfzX4ji21Qs="
     }
   },
   "cacheBootResources": true,

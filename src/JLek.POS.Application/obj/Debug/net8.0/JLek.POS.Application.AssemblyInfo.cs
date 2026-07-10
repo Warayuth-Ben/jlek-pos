@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JLek.POS.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3de9f0a4965a55a3b17cda7e58a5714d34dbfce9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b5ffbb62c678802fb5b7742b7ad75e762f0648f")]
 [assembly: System.Reflection.AssemblyProductAttribute("JLek.POS.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JLek.POS.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
