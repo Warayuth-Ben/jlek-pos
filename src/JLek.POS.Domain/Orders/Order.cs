@@ -1,5 +1,7 @@
 using JLek.POS.Domain.Common.Primitives;
 using JLek.POS.Domain.Common.ValueObjects;
+using JLek.POS.Domain.Orders.Events;
+using JLek.POS.Domain.Orders.Rules;
 using JLek.POS.Domain.Orders.ValueObjects;
 
 namespace JLek.POS.Domain.Orders;
@@ -16,7 +18,8 @@ public sealed class Order : AggregateRoot<OrderId>
 
     public OrderStatus Status { get; private set; }
 
-    public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
+    public IReadOnlyCollection<OrderItem> Items =>
+        _items.AsReadOnly();
 
     public Money Total =>
         _items.Aggregate(
@@ -25,7 +28,12 @@ public sealed class Order : AggregateRoot<OrderId>
 
     public static Order Create()
     {
-        return new(OrderId.New());
+        var order = new Order(OrderId.New());
+
+        order.RaiseDomainEvent(
+            new OrderCreatedEvent(order.Id));
+
+        return order;
     }
 
     public void AddItem(
@@ -33,6 +41,9 @@ public sealed class Order : AggregateRoot<OrderId>
         Quantity quantity,
         Money unitPrice)
     {
+        CheckRule(
+            new CannotAddItemToCompletedOrderRule(Status));
+
         var item = OrderItem.Create(
             menuItemId,
             quantity,
@@ -43,11 +54,23 @@ public sealed class Order : AggregateRoot<OrderId>
 
     public void Confirm()
     {
+        CheckRule(
+            new CannotConfirmEmptyOrderRule(_items.Count));
+
         Status = OrderStatus.Confirmed;
+
+        RaiseDomainEvent(
+            new OrderConfirmedEvent(Id));
     }
 
     public void Complete()
     {
+        CheckRule(
+            new CannotCompleteDraftOrderRule(Status));
+
         Status = OrderStatus.Completed;
+
+        RaiseDomainEvent(
+            new OrderCompletedEvent(Id));
     }
 }

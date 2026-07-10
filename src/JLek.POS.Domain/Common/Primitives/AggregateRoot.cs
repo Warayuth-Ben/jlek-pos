@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using JLek.POS.Domain.Common.Rules;
 
 namespace JLek.POS.Domain.Common.Primitives;
 
@@ -18,6 +19,14 @@ public abstract class AggregateRoot<TId> : Entity<TId>
     protected void RaiseDomainEvent(IDomainEvent domainEvent)
     {
         _domainEvents.Add(domainEvent);
+    }
+
+    protected static void CheckRule(IBusinessRule rule)
+    {
+        if (rule.IsBroken())
+        {
+            throw new BusinessRuleValidationException(rule);
+        }
     }
 
     public void ClearDomainEvents()
