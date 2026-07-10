@@ -1,4 +1,25 @@
 # AI Context
+-----
+## Latest Progress
+
+Completed
+
+- Domain Foundation completed
+- Order Aggregate implemented
+- Order State Machine aligned with documentation
+- Business Rules aligned with state machine
+- Domain Events implemented
+- Build PASS
+- Health Check PASS
+
+Current Focus
+
+Architecture Validation before implementing the next Aggregate.
+
+Next Target
+
+Order Session Aggregate.
+----
 
 ## Purpose
 
