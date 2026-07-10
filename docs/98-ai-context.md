@@ -1,419 +1,145 @@
-# AI Context
------
-## Latest Progress
+# Update AI Context
 
-Completed
+## Current Status
 
-- Domain Foundation completed
-- Order Aggregate implemented
-- Order State Machine aligned with documentation
-- Business Rules aligned with state machine
-- Domain Events implemented
-- Build PASS
-- Health Check PASS
+### Completed
 
-Current Focus
-
-Architecture Validation before implementing the next Aggregate.
-
-Next Target
-
-Order Session Aggregate.
-----
-
-## Purpose
-
-This document provides context for future AI sessions.
-
-It summarizes the project architecture, development philosophy, completed work, and current implementation status.
-
-This is not user documentation.
-
-This document exists to help future AI assistants continue development without rediscovering previous decisions.
+- Project Initialization completed.
+- Documentation Foundation completed.
+- Domain Foundation completed.
+- Shared Kernel completed.
+- Entity, Aggregate Root, Value Object and Result implemented.
+- Money and Quantity Value Objects implemented.
+- Initial Order Aggregate implemented.
+- Order Events implemented.
+- Order Business Rules implemented.
+- Order Aggregate refactored to align with the documented Order State Machine.
+- Removed business rules that were not supported by the documentation.
+- Domain implementation now follows Documentation First instead of generic DDD assumptions.
+- Solution builds successfully.
+- Health Check passed.
 
 ---
 
-# Project Overview
+## Architecture Decisions
 
-Project
+The project now follows the following implementation order:
 
-JLek POS
+Business
 
-Architecture
-
-- Clean Architecture
-- Domain Driven Design
-- Documentation First Development
-
-Primary Goal
-
-Build a long-term maintainable restaurant POS system.
-
-Understanding architecture is more important than writing code quickly.
-
----
-
-# Current Status
-
-Project Initialization
-
-? Complete
+↓
 
 Documentation
 
-? Complete
+↓
 
-Domain Foundation
+Architecture Validation
 
-? Complete
+↓
+
+Implementation
+
+↓
 
 Build
 
-? PASS
+↓
 
 Health Check
 
-? PASS
+↓
 
-Current Milestone
+Commit
 
-Ready to begin Order Aggregate implementation.
+Documentation is the Single Source of Truth.
+
+Implementation must never introduce business behavior that is not explicitly described by the documentation.
+
+When implementation and documentation differ, documentation takes precedence until intentionally updated.
 
 ---
 
-# Completed Documentation
+## Lessons Learned
 
-Completed
+Initial implementation followed generic Domain-Driven Design practices.
 
-- Engineering Standards
-- Business Rules
+Architecture review revealed that several assumptions were not explicitly supported by the project documentation.
+
+Examples:
+
+- Do not invent additional Order states.
+- Do not invent business rules.
+- Do not implement cross-Aggregate behavior before Aggregate boundaries are validated.
+- Kitchen workflow belongs to the Kitchen Ticket Aggregate.
+- Payment workflow belongs to the Bill Aggregate.
+
+Future implementation must always validate against:
+
 - Domain Model
 - System Use Cases
 - State Machines
 
-Documentation is considered frozen.
-
-Only modify documentation when business rules or architecture intentionally change.
+before writing code.
 
 ---
 
-# Completed Domain Foundation
+## Current Milestone
 
-Results
+Completed
 
-- Error
-- Result
+- Domain Foundation
+- Order Aggregate (Version 1)
 
-Primitives
+Current Focus
 
-- Entity
-- AggregateRoot
-- ValueObject
-- IDomainEvent
-- DomainEvent
+Architecture Validation.
 
-Rules
-
-- IBusinessRule
-- BusinessRuleValidationException
-
-Value Objects
-
-- Money
-- Quantity
-
-The Domain Foundation is complete and stable.
+The next Aggregate will not be implemented until Aggregate boundaries are confirmed from the documentation.
 
 ---
 
-# Architecture Rules
+## Next Planned Work
 
-Always preserve Clean Architecture.
-
-Dependencies always flow inward.
-
-Business
-
-?
-
-Domain
-
-?
-
-Application
-
-?
-
-Infrastructure
-
-?
-
-Presentation
-
-Never reverse dependencies.
-
-Documentation is the Single Source of Truth.
-
-Implementation follows documentation.
-
-Never invent business rules.
+1. Review Domain Model.
+2. Validate Aggregate Boundaries.
+3. Review Order Session.
+4. Review Bill.
+5. Review Kitchen Ticket.
+6. Lock Architecture.
+7. Continue Domain implementation.
 
 ---
 
-# Repository Philosophy
+## Development Workflow
 
-The repository is the project's memory.
-
-It contains
-
-- Documentation
-- Business Knowledge
-- Architecture
-- Design Decisions
-- Source Code
-
-Documentation has higher priority than implementation.
-
----
-
-# Development Workflow
-
-Always follow this order
+For every new Aggregate:
 
 Review Documentation
 
-?
+↓
+
+Architecture Validation
+
+↓
 
 Design
 
-?
+↓
 
-Implement
+Implementation
 
-?
+↓
 
 Build
 
-?
+↓
 
 Health Check
 
-?
+↓
 
 Commit
 
-Never skip Build.
+Never skip Architecture Validation.
 
-Never skip Health Check.
-
-Prefer small commits.
-
----
-
-# AI Working Rules
-
-Always understand existing architecture before adding code.
-
-Prefer extending existing code over redesigning.
-
-Avoid unnecessary abstractions.
-
-Avoid premature optimization.
-
-Do not rename folders unless necessary.
-
-Do not redesign completed documentation.
-
-Explain architectural reasoning before implementation whenever appropriate.
-
----
-
-# Lessons Learned
-
-Project initialization established several important rules.
-
-- Build after every milestone.
-- Perform Health Check after every phase.
-- Keep documentation stable.
-- Avoid unnecessary refactoring.
-- Follow standard .NET project structure.
-- Prefer incremental commits.
-
----
-
-# Next Milestone
-
-Order Aggregate
-
-Recommended implementation order
-
-1. OrderId
-2. OrderItemId
-3. OrderStatus
-4. OrderItem
-5. Order
-6. Domain Events
-7. Business Rules
-
-Complete the Aggregate before moving to the Application layer.
-
----
-
-# Recent Progress
-
-The Domain Foundation has been completed successfully.
-
-Completed components
-
-Results
-
-- Error
-- Result
-
-Primitives
-
-- Entity
-- AggregateRoot
-- ValueObject
-- IDomainEvent
-- DomainEvent
-
-Rules
-
-- IBusinessRule
-- BusinessRuleValidationException
-
-Value Objects
-
-- Money
-- Quantity
-
-The solution builds successfully.
-
-Health Check passed.
-
-The project is now ready to begin implementing the first Aggregate.
-
-------------
-- PowerShell here-strings are preferred for creating source files.
-- Generate complete source files instead of partial snippets.
-- Keep implementation incremental.
------
-
----
-
-# Update AI Context
-
-When the project owner requests
-
-Update AI Context
-
-The AI should automatically perform the following tasks.
-
-## 1. Update AI Documentation
-
-Update
-
-- docs/97-handoff.md
-- docs/98-ai-context.md
-- docs/99-project-status.md
-
----
-
-## 2. Update Current Progress
-
-Record
-
-- Current Phase
-- Current Milestone
-- Completed Work
-- Next Milestone
-- Build Status
-- Health Check Status
-
----
-
-## 3. Record Session Summary
-
-Summarize
-
-- What was implemented
-- New source files
-- Refactoring performed
-- Architecture decisions
-- Business decisions
-
----
-
-## 4. Record Lessons Learned
-
-Append any important development lessons discovered during the session.
-
-Avoid duplicates whenever possible.
-
----
-
-## 5. Update AI Context
-
-Update long-term project knowledge when necessary.
-
-Examples
-
-- New architecture decisions
-- New development workflow
-- New coding standards
-- New project conventions
-
-Do not overwrite existing decisions without reason.
-
----
-
-## 6. Generate Complete Files
-
-When updating AI documentation,
-
-always generate complete file contents.
-
-Do not generate partial snippets.
-
-Provide PowerShell commands using Here-String with Set-Content.
-
----
-
-## 7. Preserve Existing Context
-
-Never remove useful historical information unless it is obsolete.
-
-Prefer extending existing documentation.
-
-Avoid unnecessary documentation churn.
-
----
-
-## 8. Finish Checklist
-
-Before finishing
-
-Confirm
-
-- Build Status
-- Health Check
-- Current Milestone
-- Next Milestone
-- Documentation Status
-
-Ensure the project is ready for the next development session.
-
------
-
-# Notes
-
-The project owner prefers
-
-- Maintainability over speed.
-- Architecture over shortcuts.
-- Understanding before implementation.
-- Small incremental progress.
-- Stable foundations before adding features.
-
-Future AI assistants should preserve these principles throughout the project.
+Never implement behavior beyond documented business rules.
