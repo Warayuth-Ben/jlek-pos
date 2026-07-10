@@ -6,13 +6,7 @@ public enum OrderStatus
 
     Confirmed = 1,
 
-    Preparing = 2,
+    Completed = 2,
 
-    Ready = 3,
-
-    Served = 4,
-
-    Completed = 5,
-
-    Cancelled = 6
+    Cancelled = 3
 }

@@ -13,7 +13,7 @@ public sealed class OrderItem : Entity<OrderItemId>
     public Money UnitPrice { get; private set; }
 
     public Money TotalPrice =>
-        new(UnitPrice.Amount * Quantity.Value);
+        UnitPrice * Quantity.Value;
 
     private OrderItem(
         OrderItemId id,
@@ -41,6 +41,21 @@ public sealed class OrderItem : Entity<OrderItemId>
 
     public void ChangeQuantity(Quantity quantity)
     {
+        if (Quantity == quantity)
+        {
+            return;
+        }
+
         Quantity = quantity;
+    }
+
+    public void ChangeUnitPrice(Money unitPrice)
+    {
+        if (UnitPrice == unitPrice)
+        {
+            return;
+        }
+
+        UnitPrice = unitPrice;
     }
 }

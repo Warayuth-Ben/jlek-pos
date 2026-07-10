@@ -2,20 +2,20 @@ using JLek.POS.Domain.Common.Rules;
 
 namespace JLek.POS.Domain.Orders.Rules;
 
-public sealed class CannotCompleteDraftOrderRule : IBusinessRule
+public sealed class CannotConfirmNonDraftOrderRule : IBusinessRule
 {
     private readonly OrderStatus _status;
 
-    public CannotCompleteDraftOrderRule(OrderStatus status)
+    public CannotConfirmNonDraftOrderRule(OrderStatus status)
     {
         _status = status;
     }
 
     public bool IsBroken()
     {
-        return _status == OrderStatus.Draft;
+        return _status != OrderStatus.Draft;
     }
 
     public string Message =>
-        "A draft order cannot be completed.";
+        "Only draft orders can be confirmed.";
 }

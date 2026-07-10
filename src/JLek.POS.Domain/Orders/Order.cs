@@ -42,18 +42,54 @@ public sealed class Order : AggregateRoot<OrderId>
         Money unitPrice)
     {
         CheckRule(
-            new CannotAddItemToCompletedOrderRule(Status));
+            new CannotModifyConfirmedOrderRule(Status));
 
-        var item = OrderItem.Create(
-            menuItemId,
-            quantity,
-            unitPrice);
+        CheckRule(
+            new CannotModifyCancelledOrderRule(Status));
 
-        _items.Add(item);
+        _items.Add(
+            OrderItem.Create(
+                menuItemId,
+                quantity,
+                unitPrice));
+    }
+
+    public void RemoveItem(OrderItemId itemId)
+    {
+        CheckRule(
+            new CannotModifyConfirmedOrderRule(Status));
+
+        CheckRule(
+            new CannotModifyCancelledOrderRule(Status));
+
+        var item = _items.FirstOrDefault(x => x.Id == itemId);
+
+        if (item is not null)
+        {
+            _items.Remove(item);
+        }
+    }
+
+    public void ChangeItemQuantity(
+        OrderItemId itemId,
+        Quantity quantity)
+    {
+        CheckRule(
+            new CannotModifyConfirmedOrderRule(Status));
+
+        CheckRule(
+            new CannotModifyCancelledOrderRule(Status));
+
+        var item = _items.FirstOrDefault(x => x.Id == itemId);
+
+        item?.ChangeQuantity(quantity);
     }
 
     public void Confirm()
     {
+        CheckRule(
+            new CannotConfirmNonDraftOrderRule(Status));
+
         CheckRule(
             new CannotConfirmEmptyOrderRule(_items.Count));
 
@@ -66,7 +102,7 @@ public sealed class Order : AggregateRoot<OrderId>
     public void Complete()
     {
         CheckRule(
-            new CannotCompleteDraftOrderRule(Status));
+            new CannotCompleteNonConfirmedOrderRule(Status));
 
         Status = OrderStatus.Completed;
 
