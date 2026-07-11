@@ -652,3 +652,27 @@
 
 ###### JLek POS aims to preserve both.
 
+## 30-analysis
+
+Architecture Analysis Workspace
+
+Contains
+
+- Design Methodology
+- Design Principles
+- Business Analysis
+- Domain Discovery
+- Architecture Reasoning
+
+Purpose
+
+- Explain why the architecture looks the way it does.
+- Preserve design reasoning.
+- Support future architectural decisions.
+
+This section is NOT the official specification.
+
+It must never contradict the Specification.
+
+When conflicts exist, the Specification always takes precedence.
+

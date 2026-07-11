@@ -248,3 +248,199 @@
 
 ###### Implementation may begin.
 
+
+
+\# AD-001
+
+
+
+Title
+
+
+
+Freeze Official Specification
+
+
+
+Decision
+
+
+
+The official specification (00–10) becomes the documentation baseline.
+
+
+
+Analysis documents must never redefine the specification.
+
+
+
+\---
+
+
+
+\# AD-002
+
+
+
+Title
+
+
+
+Separate Analysis from Specification
+
+
+
+Decision
+
+
+
+Architecture reasoning is stored under
+
+
+
+docs/30-analysis
+
+
+
+Specification remains under
+
+
+
+docs/00–10
+
+
+
+\---
+
+
+
+\# AD-003
+
+
+
+Title
+
+
+
+Business-First Design Process
+
+
+
+Decision
+
+
+
+Software architecture must be derived from
+
+
+
+Business
+
+
+
+↓
+
+
+
+Business Analysis
+
+
+
+↓
+
+
+
+Business Objects
+
+
+
+↓
+
+
+
+Object Classification
+
+
+
+↓
+
+
+
+Behavior
+
+
+
+↓
+
+
+
+Strategic Domain Design
+
+
+
+↓
+
+
+
+Software Architecture
+
+
+
+\---
+
+
+
+\# AD-004
+
+
+
+Title
+
+
+
+Behavior-Driven Domain Design
+
+
+
+Decision
+
+
+
+Domain Models should be designed around business behaviors.
+
+
+
+Avoid CRUD-oriented modeling.
+
+
+
+\---
+
+
+
+\# AD-005
+
+
+
+Title
+
+
+
+Order-Centric Business Model
+
+
+
+Decision
+
+
+
+The business revolves around Orders.
+
+
+
+Tables support operations.
+
+
+
+They do not own business transactions.
+

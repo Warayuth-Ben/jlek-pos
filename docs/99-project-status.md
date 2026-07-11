@@ -1,240 +1,248 @@
-# JLEK POS - Project Status
+# Project Status
 
-## Current Status
-
-Current Phase
-
-✅ Architecture Review Complete
-
-Current Milestone
-
-✅ Initial Domain Prototype Complete
-
-Next Milestone
-
-Ordering Aggregate Redesign
+Last Updated: 2026-07-10
 
 ---
 
-## Build Status
+## Current Phase
 
-Solution
+Business Foundation Knowledge Capture
 
-✅ PASS
+---
 
-Build
+## Current Goal
 
-✅ PASS
+Capture real restaurant operational knowledge before implementing additional Domain logic.
 
-Health Check
-
-✅ PASS
-
-Repository
-
-✅ Healthy
+Focus on understanding the business rather than designing software.
 
 ---
 
 ## Completed
 
-### Project Setup
-
-- Git Repository
-- GitHub
-- Multi-project Solution
-- Project References
-- Build Verification
-
-### Documentation
-
-Completed
-
-- Engineering Standards
-- Business Rules
-- Domain Model
-- System Use Cases
-- State Machines
-
-Status
-
-Frozen
-
-### Domain Foundation
-
-Completed
-
-- Entity
-- Aggregate Root
-- Value Object
-- Domain Event
-- Business Rules
-- Money
-- Quantity
-
-Status
-
-Stable
-
-### Initial Ordering Prototype
-
-Completed
-
-- Order
-- Order Item
-- Order Events
-- Order Rules
-
-Status
-
-Stable
+- Business interview completed (Q1-Q35)
+- Restaurant operational workflow analyzed
+- Kitchen workflow identified
+- Payment workflow identified
+- Customer service workflow identified
+- Shared workspace workflow identified
+- Training approach identified
+- Business Foundation structure created
 
 ---
 
-## Architecture Review
+## Current Documentation Strategy
 
-Completed
+Changed from:
 
-Findings
+Book Writing
 
-- Documentation is internally consistent.
-- Domain Foundation is correct.
-- Aggregate Boundary requires redesign before continuing implementation.
+to
 
-Decision
+Knowledge Capture
 
-Do not continue incremental refactoring.
+Reason:
 
-Begin a new Ordering Aggregate redesign phase.
+- Prevent knowledge loss
+- Faster documentation
+- Easier review
+- Easier traceability
+- Book will be written after enough knowledge has been collected.
 
 ---
 
-## Current Architecture
+## Current Template
+
+Each chapter contains
+
+- Source
+- Interview Log
+- Business Knowledge
+- Design Impact
+- Open Questions
+
+Interview Log is currently the highest priority.
+
+# Current Status
+
+The project is currently in the Business Discovery phase.
+
+Software implementation has been intentionally paused.
+
+The current objective is to capture real restaurant operational knowledge before continuing Domain and Application development.
+
+The project is stable.
+
+No implementation work is currently in progress.
+
+---
+
+# Current Milestone
+
+Business Foundation
+
+Status
+
+Knowledge Capture
+
+Completed
+
+- Business Interview (Q1-Q35)
+- Initial Business Foundation structure
+- Documentation strategy redesign
+- Knowledge Capture workflow established
+- Interview-driven documentation approach approved
+
+---
+
+# Major Decision
+
+The documentation strategy has changed.
+
+Previous approach
+
+Write documentation directly as a book.
+
+Current approach
+
+Interview
+
+↓
+
+Knowledge Capture
+
+↓
+
+Review
+
+↓
+
+Business Foundation Book
+
+↓
+
+Business Rules
+
+↓
+
+Domain Model
+
+↓
 
 Architecture
-
-- Clean Architecture
-- Domain-Driven Design
-- Documentation First
-
-Workflow
-
-Business
-
-↓
-
-Documentation
-
-↓
-
-Architecture Design
-
-↓
-
-Architecture Review
-
-↓
-
-Architecture Approval
 
 ↓
 
 Implementation
 
-↓
-
-Build
-
-↓
-
-Health Check
-
-↓
-
-Commit
+The team agreed that capturing business knowledge is significantly more important than polishing documentation at this stage.
 
 ---
 
-## Repository Status
+# Documentation Structure
 
-Documentation
+Business Foundation is located at
 
-✅ Frozen
+docs/
 
-Foundation
+01-business-foundation/
 
-✅ Stable
+Current chapters
 
-Prototype
+- 01 The Origin
+- 02 Customer Before System
+- 03 The Restaurant Before the Software
+- 04 Kitchen is the Operational Boundary
+- 05 Payment is not the End
 
-✅ Stable
+Current status
 
-Architecture
+Draft
 
-✅ Reviewed
-
-Ordering Aggregate Redesign
-
-⏳ Planned
-
-Application Layer
-
-Not Started
-
-Infrastructure
-
-Not Started
-
-Presentation
-
-Not Started
+Knowledge Capture
 
 ---
 
-## Next Work
+# Documentation Template
 
-Phase
+Each chapter should use the following template.
 
-Ordering Aggregate Redesign
+- Status
+- Source
+- Interview Log
+- Business Knowledge
+- Design Impact
+- Open Questions
 
-Goals
-
-- Design Order Session.
-- Define Aggregate responsibilities.
-- Define Aggregate boundaries.
-- Define Domain Events.
-- Define Business Rule ownership.
-- Approve architecture.
-- Start implementation.
+Interview Log is considered the primary source of business knowledge.
 
 ---
 
-## Development Rules
+# Business Interview Progress
 
-Always
+Completed
 
-- Review Documentation
-- Complete Architecture Design
-- Review Architecture
-- Approve Architecture
-- Implement
-- Build
-- Health Check
-- Commit
+Q1-Q35
 
-Never
+Topics covered include
 
-- Skip Architecture Review
-- Skip Build
-- Skip Health Check
-- Implement undocumented business behavior
+- Customer Service
+- Kitchen
+
+# Current Progress
+
+## Business Knowledge
+
+✅ Business Interview completed
+
+Q001–Q146 completed.
+
+Business knowledge baseline established.
 
 ---
 
-## Notes
+## Specification
 
-The current implementation is considered the first working prototype.
+Official Specification (00–10)
 
-The next implementation will be based on the approved Ordering Aggregate architecture rather than incremental refactoring.
+Status
 
-The documentation is now the primary reference for future development.
+Frozen
+
+No structural changes should be made without an Architecture Decision.
+
+---
+
+## Analysis
+
+30-analysis created.
+
+Current documents
+
+- 00 Design Methodology
+- 01 Design Principles
+- 10 Business Analysis
+- 20 Business Object Discovery
+- 30 Object Classification
+- 40 Behavior Analysis
+- 50 Strategic Domain Design
+- 60 Software Architecture
+- 90 Domain Blueprint
+
+Purpose
+
+Architecture reasoning only.
+
+Does not redefine the Specification.
+
+---
+
+## Next Step
+
+Begin Domain Layer implementation using
+
+- Official Specification
+
+supported by
+
+- 30-analysis

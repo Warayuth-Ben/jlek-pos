@@ -1,110 +1,95 @@
-# JLEK POS - AI Handoff
+# Next Milestone
 
-## Current Status
+Architecture Analysis completed.
 
-The current milestone has been completed successfully.
+Business Analysis completed.
 
-Completed
+Business Knowledge completed.
 
-- Documentation review
-- Domain Foundation
-- Shared Kernel
-- Initial Order implementation
-- Business Rules
-- Domain Events
-- Solution Build
-- Health Check
-- Architecture Review
-
-The repository is currently stable.
+Specification frozen.
 
 ---
 
-## Important Discovery
+# Next Objective
 
-During the architecture review, the team confirmed that the Domain Model defines:
+Begin implementation of
 
-Ordering Context
+JLek.POS.Domain
 
-Aggregate Root
+---
 
-- Order Session
+Implementation order
+
+1.
+
+Shared Kernel
+
+↓
+
+2.
+
+Value Objects
+
+↓
+
+3.
 
 Entities
 
-- Order
-- Order Item
+↓
 
-The current implementation was originally created with Order as the Aggregate Root.
+4.
 
-This architectural difference was intentionally discovered before Application and Infrastructure development.
+Aggregate Roots
 
-No large-scale refactoring has been performed.
+↓
+
+5.
+
+Domain Services
+
+↓
+
+6.
+
+Specifications
+
+↓
+
+7.
+
+Repositories
+
+↓
+
+8.
+
+Domain Events
+
+↓
+
+9.
+
+Unit Tests
 
 ---
 
-## Current Decision
+During implementation
 
-The current implementation remains as the first working prototype.
-
-No further refactoring should continue from the existing implementation.
-
-Instead, the Ordering Aggregate will be redesigned as a completely new milestone.
-
-The completed prototype remains valuable as a learning reference.
-
----
-
-## Next Milestone
-
-Ordering Aggregate Redesign
-
-Objectives
-
-- Design Order Session.
-- Define Aggregate responsibilities.
-- Define Aggregate boundaries.
-- Define Domain Events.
-- Define Business Rule ownership.
-- Approve architecture.
-- Begin implementation after approval.
-
----
-
-## Development Workflow
+Always verify
 
 Business
 
 ↓
 
-Documentation
+Specification
 
 ↓
 
-Architecture Design
+Analysis
 
 ↓
 
-Architecture Review
+Source Code
 
-↓
-
-Architecture Approval
-
-↓
-
-Implementation
-
-↓
-
-Build
-
-↓
-
-Health Check
-
-↓
-
-Commit
-
-This workflow should be followed for all future development.
+The implementation must preserve all business rules discovered during Business Interview.
