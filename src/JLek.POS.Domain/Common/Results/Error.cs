@@ -6,4 +6,10 @@ public sealed record Error(
 {
     public static readonly Error None =
         new(string.Empty, string.Empty);
+
+    public bool IsNone =>
+        this == None;
+
+    public bool IsFailure =>
+        !IsNone;
 }

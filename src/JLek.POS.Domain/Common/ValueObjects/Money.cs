@@ -30,7 +30,7 @@ public sealed class Money : ValueObject
 
     public static Money operator -(Money left, Money right)
     {
-        return new(left.Amount - right.Amount);
+        return From(left.Amount - right.Amount);
     }
 
     public static Money operator *(Money money, int quantity)
@@ -41,10 +41,5 @@ public sealed class Money : ValueObject
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return Amount;
-    }
-
-    public override string ToString()
-    {
-        return Amount.ToString("0.00");
     }
 }

@@ -4,10 +4,10 @@ public class Result
 {
     protected Result(bool isSuccess, Error error)
     {
-        if (isSuccess && error != Error.None)
+        if (isSuccess && error.IsFailure)
             throw new ArgumentException("A successful result cannot contain an error.");
 
-        if (!isSuccess && error == Error.None)
+        if (!isSuccess && error.IsNone)
             throw new ArgumentException("A failed result must contain an error.");
 
         IsSuccess = isSuccess;
@@ -22,11 +22,11 @@ public class Result
 
     public static Result Success()
     {
-        return new Result(true, Error.None);
+        return new(true, Error.None);
     }
 
     public static Result Failure(Error error)
     {
-        return new Result(false, error);
+        return new(false, error);
     }
 }
