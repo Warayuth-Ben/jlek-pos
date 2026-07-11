@@ -96,142 +96,104 @@ Understanding the business is.
 
 Read
 
+docs/97-AI-Docs/96-ai-onboarding.md
 
+docs/97-AI-Docs/01-AI_ENGINEERING_STANDARD.md     Understand how AI must work.
+  
+docs/97-AI-Docs/02-AI_CONSTITUTION.md       Understand the rules AI must always follow.
 
-\- 96-ai-onboarding.md
+docs/97-AI-Docs/03-AI_CERTIFICATION.md
 
+docs/97-AI-Docs/04-AI_WORKFLOW.md
 
+docs/97-AI-Docs/98-ai-context.md   Understand the current architecture and implementation.
+
+docs/97-AI-Docs/99-project-status.md  Understand current project progress.
 
 Understand the project philosophy.
 
 
 
-\---
 
+## Step 2
 
-
-\## Step 2
-
-
-
-Read
-
-
-
-\- 01-AI\_ENGINEERING\_STANDARD.md
-
-
-
-Understand how AI must work.
-
-
-
-\---
-
-
-
-\## Step 3
-
-
-
-Read
-
-
-
-\- 02-AI\_CONSTITUTION.md
-
-
-
-Understand the rules AI must always follow.
-
-
-
-\---
-
-
-
-\## Step 4
-
-
-
-Read
-
-
-
-\- 98-ai-context.md
-
-
-
-Understand the current architecture and implementation.
-
-
-
-\---
-
-
-
-\## Step 5
-
-
-
-Read
-
-
-
-\- 99-project-status.md
-
-
-
-Understand current project progress.
-
-
-
-\---
-
-
-
-\## Step 6
-
-
-
-Read only the documents related to your task.
-
-
+Read only the documentation related to your current task.
 
 Examples
 
 
+### Ordering
 
-Order
+Read:
 
+- docs/01-business-rules/
+- docs/02-domain-model/
+- docs/03-system-use-cases/
+- docs/04-state-machines/
+- docs/08-api/
 
+### Application Layer
 
-→ 01-business-rules
+Read:
 
-
-
-→ 02-domain-model
-
-
-
-Kitchen
-
-
-
-→ Kitchen documents
+- docs/05-application/
 
 
+### Technical / Infrastructure
 
-Payment
+Read:
+
+- docs/06-technical/
+- docs/07-database/
 
 
+### UI
 
-→ Payment documents
+Read:
+
+- docs/09-ui/
 
 
+### Testing
 
-Avoid reading unrelated documents unless required.
+Read:
 
+- docs/10-testing/
+
+
+### Development Standards
+
+Read:
+
+- docs/11-development/
+
+
+### Business Knowledge
+
+Read only when business understanding is required:
+
+- docs/20-thai/
+- docs/21-knowledge-book/
+
+
+### Analysis / Design
+
+Read when the task involves design decisions:
+
+- docs/30-analysis/
+- docs/98-decisions/
+
+
+### References
+
+Optional:
+
+- docs/99-references/
+- docs/diagrams/
+
+Do not read every document.
+
+Read only the folders required for your current task.
 
 
 \---
