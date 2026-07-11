@@ -897,4 +897,64 @@ Before completing any task, the AI should verify:
 ###### □ Self review has been completed
 
 \---------------------------
+Verified means the information has been directly confirmed by evidence.
 
+Believed means the information is assumed without verified evidence.
+
+
+The AI must never mark information as VERIFIED
+unless verification has actually been performed.
+
+The word
+
+VERIFIED
+
+is reserved exclusively for evidence that has been directly confirmed.
+
+False verification is considered a critical engineering violation.
+-------------------------------
+Every VERIFIED statement must include enough evidence
+for a human reviewer to independently confirm it.
+
+Examples
+
+✓ Repository path
+
+✓ Exact filename
+
+✓ Exact heading
+
+✓ Exact class
+
+✓ Exact method
+
+✓ Exact namespace
+
+Without evidence,
+
+VERIFIED must not be used.
+--------------------------------
+The AI must explicitly distinguish between
+
+Verified
+
+Observed
+
+Assumed
+
+Unknown
+
+The AI must never upgrade
+
+Unknown
+
+to
+
+VERIFIED BY
+
+Repository Path
+
+Heading
+
+Evidence.
+------------------------------
