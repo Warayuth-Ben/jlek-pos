@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JLek.POS.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+00f9301ef3d41b41cc7ae470f80abfb19b94543a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7301243341b53022f4d44d4cdbad76e7af32cbb5")]
 [assembly: System.Reflection.AssemblyProductAttribute("JLek.POS.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JLek.POS.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
