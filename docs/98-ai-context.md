@@ -1,251 +1,91 @@
-# AI Handoff
+# AI Context
 
-Last Updated: 2026-07-11
+Current milestone:
 
----
+Backend Foundation completed successfully.
 
-# Current Project Status
+Current technology stack
 
-The project has successfully completed the initial Domain implementation based on the frozen Business Specification.
+- .NET 8
+- Clean Architecture
+- CQRS
+- EF Core
+- PostgreSQL 17
+- Minimal API
+- Swagger
 
-The architecture foundation is now considered stable.
+Implemented
 
-Current Build Status
-
-✅ Build PASS
-
----
-
-# Completed Milestones
-
-## Business
-
-- Business Interview completed (Q001–Q146)
-- Business Knowledge consolidated
-- Business Rules extracted
-- Operational workflow identified
-- Exception scenarios identified
-- Business Philosophy documented
-
----
-
-## Documentation
-
-Official Specification
-
-Status
-
-🔒 Frozen
-
-Documents
-
-00–10
-
-Architecture Analysis
-
-Status
-
-Completed
-
-Documents
-
-30-analysis
-
-Purpose
-
-Architecture reasoning only.
-
-No structural changes to the Specification.
-
----
-
-## Domain Layer
-
-Completed
-
-### Shared Kernel
-
+- Aggregate Root
 - Entity
-- AggregateRoot
 - ValueObject
-- DomainEvent
-- IDomainEvent
-- Result
-- Result<T>
-- Error
-- Money
-- Quantity
-- BusinessRule
-- BusinessRuleValidationException
+- Strongly Typed IDs
+- Repository
+- Domain Events
+- Business Rules
+- EF Core Configuration
+- PostgreSQL Migration
 
-Status
+Verified
 
-🔒 Frozen
+POST /orders
 
----
+returns
 
-### Order Domain
+201 Created
 
-Completed
+and saves data into PostgreSQL successfully.
 
-- Order
-- OrderItem
-- OrderSession (Version 1)
-- OrderStatus
-- OrderId
-- OrderItemId
-- OrderSessionId
+Current limitations
 
-Business Rules
+API currently returns Domain Entity directly.
 
-Completed
+DomainEvents are serialized to the client.
 
-Domain Events
+Need DTO layer before expanding APIs.
 
-Completed
-
-Status
-
-🔒 Version 1 Frozen
-
-Build
-
-✅ PASS
-
----
-
-## Application Layer
-
-Completed
-
-CQRS Skeleton
-
-Abstractions
-
-- ICommand
-- ICommandHandler
-- IQuery<TResult>
-- IQueryHandler<TQuery, TResult>
-
-Commands
-
-- CreateOrder
-- AddItem
-- ConfirmOrder
-- CompleteOrder
-
-Current Handlers
-
-Skeleton only
-
-(No business logic yet)
-
-Build
-
-✅ PASS
-
----
-
-# Architecture Decisions
-
-The following foundations are now locked.
-
-- Shared Kernel
-- Order Aggregate V1
-- CQRS Abstractions
-
-Future development should extend these components rather than redesign them.
-
----
-
-# Development Principles
-
-Business
-
-↓
-
-Specification
-
-↓
-
-Architecture
-
-↓
-
-Code
-
-Business rules always have priority over software implementation.
-
-Implementation must preserve the operational workflow discovered during the Business Interview.
-
----
-
-# Next Phase
-
-Application Implementation
-
-Implementation order
+Next priorities
 
 1.
-
-Repository Interfaces
-
-↓
+Create Response DTOs
 
 2.
-
-Infrastructure Layer
-
-↓
+Remove DomainEvents from API responses
 
 3.
-
-Persistence
-
-↓
+GET /orders
 
 4.
-
-Application Handlers
-
-↓
+GET /orders/{id}
 
 5.
-
-Web API
-
-↓
+Add Item
 
 6.
+Confirm Order
 
-Blazor UI
+7.
+Complete Order
 
----
+8.
+Menu Module
 
-# Important Notes
+9.
+Table Module
 
-The current objective is no longer designing the architecture.
+10.
+Kitchen Queue
 
-The architecture foundation is considered complete.
+Development rules
 
-Future work should focus on implementing business functionality on top of the existing foundation.
+Never expose Domain Entity directly.
 
-Avoid unnecessary refactoring unless required by business rules.
+Always return DTOs.
 
----
+Keep Domain pure.
 
-# Current Checkpoint
+Application contains use cases.
 
-Checkpoint
+Infrastructure contains EF Core only.
 
-Application Skeleton
-
-Status
-
-✅ Completed
-
-Build
-
-✅ PASS
-
-The project is ready to begin repository implementation and application logic.
+Presentation contains HTTP only.
