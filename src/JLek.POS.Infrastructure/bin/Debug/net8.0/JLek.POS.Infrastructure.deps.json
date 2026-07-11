@@ -923,7 +923,8 @@
       },
       "JLek.POS.Application/1.0.0": {
         "dependencies": {
-          "JLek.POS.Domain": "1.0.0"
+          "JLek.POS.Domain": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2"
         },
         "runtime": {
           "JLek.POS.Application.dll": {

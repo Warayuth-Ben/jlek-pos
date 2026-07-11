@@ -1,0 +1,6 @@
+@JLek.POS.Api_HostAddress = http://localhost:5287
+
+GET {{JLek.POS.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

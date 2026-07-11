@@ -1308,7 +1308,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
-          "JLek.POS.Domain": "1.0.0"
+          "JLek.POS.Domain": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2"
         },
         "compile": {
           "bin/placeholder/JLek.POS.Application.dll": {}
@@ -2598,7 +2599,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
-          "JLek.POS.Domain": "1.0.0"
+          "JLek.POS.Domain": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2"
         },
         "compile": {
           "bin/placeholder/JLek.POS.Application.dll": {}
