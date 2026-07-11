@@ -1,14 +1,28 @@
-using JLek.POS.Application.Abstractions;
+using JLek.POS.Application.Abstractions.Repositories;
+using JLek.POS.Domain.Orders;
 
 namespace JLek.POS.Application.Features.Orders.Commands.CreateOrder;
 
 public sealed class CreateOrderCommandHandler
-    : ICommandHandler<CreateOrderCommand>
 {
-    public Task Handle(
-        CreateOrderCommand command,
-        CancellationToken cancellationToken)
+    private readonly IOrderRepository _repository;
+
+    public CreateOrderCommandHandler(
+        IOrderRepository repository)
     {
-        throw new NotImplementedException();
+        _repository = repository;
+    }
+
+    public async Task<Order> Handle(
+        CreateOrderCommand command,
+        CancellationToken cancellationToken = default)
+    {
+        var order = Order.Create();
+
+        await _repository.AddAsync(
+            order,
+            cancellationToken);
+
+        return order;
     }
 }

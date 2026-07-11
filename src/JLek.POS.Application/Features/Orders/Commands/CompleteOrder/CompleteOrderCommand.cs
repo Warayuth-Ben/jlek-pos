@@ -1,6 +1,6 @@
-using JLek.POS.Application.Abstractions;
+using JLek.POS.Domain.Orders.ValueObjects;
 
 namespace JLek.POS.Application.Features.Orders.Commands.CompleteOrder;
 
 public sealed record CompleteOrderCommand(
-    Guid OrderId) : ICommand;
+    OrderId OrderId);

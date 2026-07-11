@@ -1,9 +1,9 @@
-using JLek.POS.Application.Abstractions;
+using JLek.POS.Domain.Orders.ValueObjects;
 
 namespace JLek.POS.Application.Features.Orders.Commands.AddItem;
 
 public sealed record AddItemCommand(
-    Guid OrderId,
+    OrderId OrderId,
     Guid MenuItemId,
     int Quantity,
-    decimal UnitPrice) : ICommand;
+    decimal UnitPrice);

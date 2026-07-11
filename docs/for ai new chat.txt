@@ -2,3 +2,10 @@
 99-project-status
 
 Update project context.
+
+กฎที่เราจะใช้ต่อจากนี้
+📄 แก้ไฟล์ = ส่งทั้งไฟล์
+🔨 ทุก Patch ต้อง Build ผ่าน
+✅ Build ผ่าน = Commit
+📌 จบ Milestone = Update 97 / 98 / 99
+🔒 Foundation ที่ Freeze แล้วจะไม่รื้อ เว้นแต่ Business เปลี่ยนจริง

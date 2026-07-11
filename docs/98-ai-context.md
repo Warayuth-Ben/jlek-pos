@@ -1,75 +1,170 @@
-# AI Context
+# AI Handoff
 
-Last Updated: 2026-07-10
-
----
-
-## Current Focus
-
-Business Foundation
-
-Knowledge Capture
-
-Restaurant Interview
+Last Updated: 2026-07-11
 
 ---
 
-## Business Interview Progress
+# Current Project Status
+
+The project has successfully completed the initial Domain implementation based on the frozen Business Specification.
+
+The architecture foundation is now considered stable.
+
+Current Build Status
+
+✅ Build PASS
+
+---
+
+# Completed Milestones
+
+## Business
+
+- Business Interview completed (Q001–Q146)
+- Business Knowledge consolidated
+- Business Rules extracted
+- Operational workflow identified
+- Exception scenarios identified
+- Business Philosophy documented
+
+---
+
+## Documentation
+
+Official Specification
+
+Status
+
+🔒 Frozen
+
+Documents
+
+00–10
+
+Architecture Analysis
+
+Status
 
 Completed
 
-Q1-Q35
+Documents
 
-Current Status
+30-analysis
 
-Knowledge Extraction
+Purpose
 
----
+Architecture reasoning only.
 
-## Important Findings
-
-- Customer comes before the system.
-- Restaurant workflow drives software design.
-- Kitchen is the operational boundary.
-- Payment is the business boundary.
-- Add-on Order is required after kitchen starts.
-- Shared workspace is preferred over table ownership.
-- Human decisions are preferred over software restrictions.
-- Service recovery is part of the business.
-- Simplicity is preferred over unnecessary features.
-- New employees learn by working, not by reading manuals.
+No structural changes to the Specification.
 
 ---
 
-## Documentation Strategy
+## Domain Layer
 
-Current Priority
+Completed
 
-Capture knowledge first.
+### Shared Kernel
 
-Do not spend time polishing wording.
+- Entity
+- AggregateRoot
+- ValueObject
+- DomainEvent
+- IDomainEvent
+- Result
+- Result<T>
+- Error
+- Money
+- Quantity
+- BusinessRule
+- BusinessRuleValidationException
 
-Book writing comes later.
+Status
 
-Priority
+🔒 Frozen
 
-Interview
+---
 
-↓
+### Order Domain
 
-Knowledge Capture
+Completed
 
-↓
-
-Business Foundation Book
-
-↓
+- Order
+- OrderItem
+- OrderSession (Version 1)
+- OrderStatus
+- OrderId
+- OrderItemId
+- OrderSessionId
 
 Business Rules
 
+Completed
+
+Domain Events
+
+Completed
+
+Status
+
+🔒 Version 1 Frozen
+
+Build
+
+✅ PASS
+
+---
+
+## Application Layer
+
+Completed
+
+CQRS Skeleton
+
+Abstractions
+
+- ICommand
+- ICommandHandler
+- IQuery<TResult>
+- IQueryHandler<TQuery, TResult>
+
+Commands
+
+- CreateOrder
+- AddItem
+- ConfirmOrder
+- CompleteOrder
+
+Current Handlers
+
+Skeleton only
+
+(No business logic yet)
+
+Build
+
+✅ PASS
+
+---
+
+# Architecture Decisions
+
+The following foundations are now locked.
+
+- Shared Kernel
+- Order Aggregate V1
+- CQRS Abstractions
+
+Future development should extend these components rather than redesign them.
+
+---
+
+# Development Principles
+
+Business
+
 ↓
 
-DDD
+Specification
 
 ↓
 
@@ -79,26 +174,78 @@ Architecture
 
 Code
 
----
+Business rules always have priority over software implementation.
 
-## Documentation Template
-
-Each Business Foundation chapter should contain
-
-- Source
-- Interview Log
-- Business Knowledge
-- Design Impact
-- Open Questions
-
-Interview Log is considered the source of truth.
+Implementation must preserve the operational workflow discovered during the Business Interview.
 
 ---
 
-## Next Steps
+# Next Phase
 
-- Finish Interview Log for chapters 01-05.
-- Continue business interview (Q36+).
-- Expand Business Foundation.
-- Update Business Rules.
-- Continue Domain Design.
+Application Implementation
+
+Implementation order
+
+1.
+
+Repository Interfaces
+
+↓
+
+2.
+
+Infrastructure Layer
+
+↓
+
+3.
+
+Persistence
+
+↓
+
+4.
+
+Application Handlers
+
+↓
+
+5.
+
+Web API
+
+↓
+
+6.
+
+Blazor UI
+
+---
+
+# Important Notes
+
+The current objective is no longer designing the architecture.
+
+The architecture foundation is considered complete.
+
+Future work should focus on implementing business functionality on top of the existing foundation.
+
+Avoid unnecessary refactoring unless required by business rules.
+
+---
+
+# Current Checkpoint
+
+Checkpoint
+
+Application Skeleton
+
+Status
+
+✅ Completed
+
+Build
+
+✅ PASS
+
+The project is ready to begin repository implementation and application logic.

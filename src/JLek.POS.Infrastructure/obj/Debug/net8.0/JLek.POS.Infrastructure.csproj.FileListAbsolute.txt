@@ -16,3 +16,5 @@ C:\Users\waray\Desktop\JLEK-POS\src\JLek.POS.Infrastructure\obj\Debug\net8.0\JLe
 C:\Users\waray\Desktop\JLEK-POS\src\JLek.POS.Infrastructure\obj\Debug\net8.0\refint\JLek.POS.Infrastructure.dll
 C:\Users\waray\Desktop\JLEK-POS\src\JLek.POS.Infrastructure\obj\Debug\net8.0\JLek.POS.Infrastructure.pdb
 C:\Users\waray\Desktop\JLEK-POS\src\JLek.POS.Infrastructure\obj\Debug\net8.0\ref\JLek.POS.Infrastructure.dll
+C:\Users\waray\Desktop\JLEK-POS\src\JLek.POS.Infrastructure\bin\Debug\net8.0\JLek.POS.Infrastructure.runtimeconfig.json
+C:\Users\waray\Desktop\JLEK-POS\src\JLek.POS.Infrastructure\obj\Debug\net8.0\JLek.POS.Infrastructure.genruntimeconfig.cache
