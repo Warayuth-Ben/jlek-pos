@@ -6,14 +6,14 @@ namespace JLek.POS.Domain.Orders;
 
 public sealed class OrderItem : Entity<OrderItemId>
 {
-    public Guid MenuItemId { get; private set; }
-
-    public Quantity Quantity { get; private set; }
-
-    public Money UnitPrice { get; private set; }
-
-    public Money TotalPrice =>
-        UnitPrice * Quantity.Value;
+    // Constructor สำหรับ EF Core
+    private OrderItem()
+        : base(OrderItemId.From(Guid.Empty))
+    {
+        MenuItemId = Guid.Empty;
+        Quantity = Quantity.Zero;
+        UnitPrice = Money.Zero;
+    }
 
     private OrderItem(
         OrderItemId id,
@@ -26,6 +26,15 @@ public sealed class OrderItem : Entity<OrderItemId>
         Quantity = quantity;
         UnitPrice = unitPrice;
     }
+
+    public Guid MenuItemId { get; private set; }
+
+    public Quantity Quantity { get; private set; }
+
+    public Money UnitPrice { get; private set; }
+
+    public Money TotalPrice =>
+        UnitPrice * Quantity.Value;
 
     public static OrderItem Create(
         Guid menuItemId,

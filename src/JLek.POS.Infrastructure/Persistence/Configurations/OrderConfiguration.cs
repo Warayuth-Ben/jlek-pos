@@ -1,4 +1,5 @@
 using JLek.POS.Domain.Orders;
+using JLek.POS.Infrastructure.Persistence.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,9 +15,18 @@ public sealed class OrderConfiguration
 
         builder.HasKey(x => x.Id);
 
-        builder.Ignore(x => x.DomainEvents);
+        builder.Property(x => x.Id)
+               .HasConversion(new OrderIdConverter())
+               .ValueGeneratedNever();
 
         builder.Property(x => x.Status)
                .HasConversion<int>();
+
+        builder.Ignore(x => x.DomainEvents);
+        builder.Ignore(x => x.Total);
+
+        builder.HasMany(x => x.Items)
+               .WithOne()
+               .OnDelete(DeleteBehavior.Cascade);
     }
 }

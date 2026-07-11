@@ -10,6 +10,13 @@ public sealed class Order : AggregateRoot<OrderId>
 {
     private readonly List<OrderItem> _items = [];
 
+    // Constructor สำหรับ EF Core
+    private Order()
+        : base(OrderId.From(Guid.Empty))
+    {
+        Status = OrderStatus.Draft;
+    }
+
     private Order(OrderId id)
         : base(id)
     {
@@ -41,11 +48,8 @@ public sealed class Order : AggregateRoot<OrderId>
         Quantity quantity,
         Money unitPrice)
     {
-        CheckRule(
-            new CannotModifyConfirmedOrderRule(Status));
-
-        CheckRule(
-            new CannotModifyCancelledOrderRule(Status));
+        CheckRule(new CannotModifyConfirmedOrderRule(Status));
+        CheckRule(new CannotModifyCancelledOrderRule(Status));
 
         _items.Add(
             OrderItem.Create(
@@ -56,11 +60,8 @@ public sealed class Order : AggregateRoot<OrderId>
 
     public void RemoveItem(OrderItemId itemId)
     {
-        CheckRule(
-            new CannotModifyConfirmedOrderRule(Status));
-
-        CheckRule(
-            new CannotModifyCancelledOrderRule(Status));
+        CheckRule(new CannotModifyConfirmedOrderRule(Status));
+        CheckRule(new CannotModifyCancelledOrderRule(Status));
 
         var item = _items.FirstOrDefault(x => x.Id == itemId);
 
@@ -74,11 +75,8 @@ public sealed class Order : AggregateRoot<OrderId>
         OrderItemId itemId,
         Quantity quantity)
     {
-        CheckRule(
-            new CannotModifyConfirmedOrderRule(Status));
-
-        CheckRule(
-            new CannotModifyCancelledOrderRule(Status));
+        CheckRule(new CannotModifyConfirmedOrderRule(Status));
+        CheckRule(new CannotModifyCancelledOrderRule(Status));
 
         var item = _items.FirstOrDefault(x => x.Id == itemId);
 
@@ -87,26 +85,20 @@ public sealed class Order : AggregateRoot<OrderId>
 
     public void Confirm()
     {
-        CheckRule(
-            new CannotConfirmNonDraftOrderRule(Status));
-
-        CheckRule(
-            new CannotConfirmEmptyOrderRule(_items.Count));
+        CheckRule(new CannotConfirmNonDraftOrderRule(Status));
+        CheckRule(new CannotConfirmEmptyOrderRule(_items.Count));
 
         Status = OrderStatus.Confirmed;
 
-        RaiseDomainEvent(
-            new OrderConfirmedEvent(Id));
+        RaiseDomainEvent(new OrderConfirmedEvent(Id));
     }
 
     public void Complete()
     {
-        CheckRule(
-            new CannotCompleteNonConfirmedOrderRule(Status));
+        CheckRule(new CannotCompleteNonConfirmedOrderRule(Status));
 
         Status = OrderStatus.Completed;
 
-        RaiseDomainEvent(
-            new OrderCompletedEvent(Id));
+        RaiseDomainEvent(new OrderCompletedEvent(Id));
     }
 }
