@@ -1,5 +1,6 @@
-using JLek.POS.Application.Abstractions.Repositories;
+﻿using JLek.POS.Application.Abstractions.Repositories;
 using JLek.POS.Domain.Common.ValueObjects;
+using JLek.POS.Domain.Orders;
 
 namespace JLek.POS.Application.Features.Orders.Commands.AddItem;
 
@@ -13,7 +14,7 @@ public sealed class AddItemCommandHandler
         _repository = repository;
     }
 
-    public async Task Handle(
+    public async Task<Order> Handle(
         AddItemCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -34,5 +35,7 @@ public sealed class AddItemCommandHandler
         await _repository.UpdateAsync(
             order,
             cancellationToken);
+
+        return order;
     }
 }
