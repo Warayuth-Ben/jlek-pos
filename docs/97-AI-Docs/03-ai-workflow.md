@@ -1,6 +1,6 @@
 ﻿# AI Workflow
 
-Version: 1.0
+Version: 1.1
 
 Project: JLek POS
 
@@ -31,6 +31,10 @@ Verification
 
 ↓
 
+Existing Implementation Review
+
+↓
+
 Understanding
 
 ↓
@@ -55,6 +59,14 @@ Implementation
 
 ↓
 
+Build Verification
+
+↓
+
+Runtime Verification
+
+↓
+
 Self Review
 
 ↓
@@ -65,20 +77,23 @@ Documentation Update
 
 # Phase 1 — Documentation
 
-Objective
+## Objective
 
 Understand the project before making conclusions.
 
-Required Actions
+## Required Actions
 
-- Read 00-start-here.md
-- Read AI Engineering Standard
-- Read AI Constitution
-- Read AI Context
-- Read Project Status
-- Read only relevant project documentation
+Read
 
-Output
+- 00-start-here.md
+- AI Engineering Standard
+- AI Constitution
+- AI Workflow
+- AI Context
+- Project Status
+- Only the documentation relevant to the requested scope
+
+## Output
 
 Verified understanding.
 
@@ -86,11 +101,11 @@ Verified understanding.
 
 # Phase 2 — Verification
 
-Objective
+## Objective
 
 Verify all information.
 
-Required Actions
+## Required Actions
 
 Verify
 
@@ -99,21 +114,53 @@ Verify
 - Source Code
 - Architecture
 
-Rules
+## Rules
 
 Never verify from memory.
 
 Never verify from assumptions.
 
-Output
+## Output
 
 Verified Facts.
 
 ---
 
-# Phase 3 — Understanding
+# Phase 3 — Existing Implementation Review
 
-Objective
+## Objective
+
+Understand how the current implementation works before proposing changes.
+
+## Required Actions
+
+Review only the implementation related to the requested scope.
+
+Examples
+
+- Endpoint
+- Request DTO
+- Response DTO
+- Command
+- Query
+- Handler
+- Repository
+- Aggregate
+- Existing Mapping
+
+## Rules
+
+Do not redesign before understanding the current implementation.
+
+## Output
+
+Verified implementation summary.
+
+---
+
+# Phase 4 — Understanding
+
+## Objective
 
 Understand the problem.
 
@@ -130,26 +177,26 @@ STOP.
 
 ---
 
-# Phase 4 — Analysis
+# Phase 5 — Analysis
 
-Objective
+## Objective
 
 Analyze only.
 
-Allowed
+## Allowed
 
 - Read documentation
 - Read source code
 - Produce reports
 - Ask questions
 
-Forbidden
+## Forbidden
 
 - Modify files
 - Generate implementation
 - Refactor code
 
-Output
+## Output
 
 Verified Facts
 
@@ -157,9 +204,9 @@ Findings
 
 ---
 
-# Phase 5 — Design
+# Phase 6 — Design
 
-Objective
+## Objective
 
 Design a solution.
 
@@ -170,17 +217,17 @@ The AI must explain
 - Risks
 - Alternatives
 
-No code.
+No implementation before approval.
 
-Output
+## Output
 
 Design Proposal.
 
 ---
 
-# Phase 6 — Human Review
+# Phase 7 — Human Review
 
-Objective
+## Objective
 
 Receive feedback.
 
@@ -194,19 +241,16 @@ The AI must not continue automatically.
 
 ---
 
-# Phase 7 — Approval
+# Phase 8 — Approval
 
 Implementation begins only after explicit approval.
 
 Examples
 
-Approved
-
-Continue
-
-Implement
-
-Proceed
+- Approved
+- Continue
+- Proceed
+- Implement
 
 Without approval,
 
@@ -214,26 +258,63 @@ STOP.
 
 ---
 
-# Phase 8 — Implementation
+# Phase 9 — Implementation
 
-Rules
+## Rules
 
 Implement only
 
 the approved milestone.
 
-Requirements
+## Requirements
 
 - Preserve architecture
 - Preserve Business Rules
 - Reuse existing code
 - Keep changes minimal
 
+The AI should recommend creating a Git checkpoint before implementation whenever practical.
+
 The AI must stop immediately after implementation.
 
 ---
 
-# Phase 9 — Self Review
+# Phase 10 — Build Verification
+
+## Objective
+
+Verify that the implementation compiles successfully.
+
+## Requirements
+
+- Build succeeds
+- No unexpected compile errors
+
+If the build fails,
+
+stop and resolve the issue before continuing.
+
+---
+
+# Phase 11 — Runtime Verification
+
+## Objective
+
+Verify the implementation at runtime.
+
+Examples
+
+- Swagger
+- HTTP Status Codes
+- Request DTO
+- Response DTO
+- Route Verification
+
+Implementation is not complete until runtime verification succeeds.
+
+---
+
+# Phase 12 — Self Review
 
 Before completion,
 
@@ -248,15 +329,15 @@ verify
 
 Separate
 
-Verified Facts
+## Verified Facts
 
-Findings
+## Findings
 
-Recommendations
+## Recommendations
 
 ---
 
-# Phase 10 — Documentation Update
+# Phase 13 — Documentation Update
 
 If implementation changes
 
@@ -273,6 +354,26 @@ until documentation impact has been considered.
 
 ---
 
+# Milestone Rule
+
+Each implementation should complete only one small milestone.
+
+Preferred examples
+
+- One endpoint
+- One business capability
+- One aggregate behavior
+
+Avoid implementing multiple features in a single milestone.
+
+Small milestones improve
+
+- reviewability
+- traceability
+- rollback safety
+
+---
+
 # Engineering Workflow Summary
 
 Read
@@ -280,6 +381,10 @@ Read
 ↓
 
 Verify
+
+↓
+
+Review Existing Implementation
 
 ↓
 
@@ -295,11 +400,11 @@ Design
 
 ↓
 
-Review
+Human Review
 
 ↓
 
-Approve
+Approval
 
 ↓
 
@@ -307,7 +412,15 @@ Implement
 
 ↓
 
-Review
+Build
+
+↓
+
+Runtime Verification
+
+↓
+
+Self Review
 
 ↓
 
@@ -325,7 +438,7 @@ The AI must stop immediately when
 - Architecture is unclear
 - Human approval has not been received
 
-Response
+## Response
 
 Insufficient information.
 
@@ -341,7 +454,7 @@ Never continue by guessing.
 
 # Deliverable Format
 
-Every report should follow this structure
+Every report should follow this structure.
 
 ## Verified Facts
 
@@ -355,4 +468,4 @@ Conclusions derived from verified facts.
 
 Optional.
 
-Only after approval or when explicitly requested.
+Provide recommendations only after approval or when explicitly requested.

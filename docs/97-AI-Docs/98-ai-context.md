@@ -1,6 +1,6 @@
 ﻿# AI Context
 
-Version: 1.0
+Version: 1.1
 
 Project: JLek POS
 
@@ -70,7 +70,7 @@ Documentation
 
 # Architecture Overview
 
-Presentation
+Presentation (API)
 
 ↓
 
@@ -101,6 +101,10 @@ Current implemented concepts
 - Domain Events
 - Business Rules
 
+Business Rules belong to Aggregate Roots.
+
+Aggregates are responsible for protecting domain invariants.
+
 ---
 
 # Infrastructure
@@ -123,8 +127,12 @@ Current implementation
 
 - Minimal API
 - Swagger
+- Request DTOs
+- Response DTOs
 
 Presentation contains HTTP concerns only.
+
+Presentation is responsible for mapping Domain models to HTTP responses.
 
 No Business Rules belong here.
 
@@ -135,11 +143,51 @@ No Business Rules belong here.
 The following principles are mandatory.
 
 - Never expose Domain Entities directly.
-- Always return DTOs.
+- Always return Response DTOs.
 - Keep Domain pure.
 - Application contains use cases only.
 - Infrastructure contains technical implementation only.
 - Presentation contains HTTP concerns only.
+- Business Rules belong to Aggregate Roots.
+- Handlers perform orchestration only.
+
+---
+
+# API Pattern
+
+All HTTP endpoints should follow this pattern.
+
+HTTP Request
+
+↓
+
+Request DTO
+
+↓
+
+Command / Query
+
+↓
+
+Handler
+
+↓
+
+Repository
+
+↓
+
+Aggregate Root
+
+↓
+
+Response DTO
+
+↓
+
+HTTP Response
+
+This pattern is the standard API implementation pattern for JLek POS.
 
 ---
 
@@ -147,24 +195,39 @@ The following principles are mandatory.
 
 Verified
 
-POST /orders
+- POST /orders
+- GET /orders/{id}
+- POST /orders/{id}/items
 
-Current behavior
+Verified behavior
 
-- Returns HTTP 201 Created
-- Successfully saves data into PostgreSQL
+- POST returns HTTP 201 Created.
+- GET by id returns HTTP 200 OK.
+- Unknown id returns HTTP 404 Not Found.
+- Add Item returns HTTP 200 OK.
+- All endpoints verified through Swagger.
+- Response DTOs are returned instead of Domain Entities.
 
 ---
 
 # Current Technical Limitations
 
-Current implementation still has the following limitations
+Known technical debt
 
-- API returns Domain Entities directly.
-- Domain Events are serialized to API responses.
-- Response DTO layer has not yet been implemented.
+High Priority
 
-These limitations are known and intentional until the next milestone.
+- Global Exception Middleware
+- Validation Layer
+
+Medium Priority
+
+- GET /orders
+
+Low Priority
+
+- API Versioning
+- Pagination
+- Response mapping organization
 
 ---
 

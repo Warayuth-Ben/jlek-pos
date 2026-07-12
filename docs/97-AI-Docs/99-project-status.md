@@ -1,12 +1,12 @@
 ﻿# Project Status
 
-Version: 1.0
+Version: 1.1
 
 Project: JLek POS
 
 Last Updated
 
-2026-07-11
+2026-07-12
 
 ---
 
@@ -24,7 +24,7 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Backend Foundation
+Basic Order API
 
 Status
 
@@ -86,12 +86,39 @@ Completed
 
 ✔ Swagger
 
+✔ Request DTO
+
+✔ Response DTO
+
+---
+
+## API
+
 ✔ POST /orders
 
 Verified
 
 - Returns HTTP 201 Created
-- Successfully persists data into PostgreSQL
+- Persists data into PostgreSQL
+- Returns Response DTO
+
+✔ GET /orders/{id}
+
+Verified
+
+- Returns HTTP 200 OK
+- Returns HTTP 404 Not Found when the order does not exist
+- Returns Response DTO
+
+✔ POST /orders/{id}/items
+
+Verified
+
+- Successfully adds items to an existing order
+- Returns HTTP 200 OK
+- Returns Response DTO
+
+All endpoints verified using Swagger.
 
 ---
 
@@ -99,11 +126,22 @@ Verified
 
 Verified
 
-- API returns Domain Entities directly.
-- Domain Events are serialized to API responses.
-- No Response DTO layer.
+High Priority
 
-No other verified architecture violations have been found.
+- Global Exception Middleware
+- Validation Layer
+
+Medium Priority
+
+- GET /orders
+
+Low Priority
+
+- API Versioning
+- Pagination
+- Response Mapping Organization
+
+No verified architecture violations have been found.
 
 ---
 
@@ -111,33 +149,33 @@ No other verified architecture violations have been found.
 
 Priority 1
 
-Create Response DTOs
+Implement Confirm Order API.
 
 Priority 2
 
-Stop returning Domain Entities.
+Implement Complete Order API.
 
 Priority 3
 
-Remove Domain Events from API responses.
+Implement GET /orders.
 
 ---
 
 # Next Milestone
 
-Order Query APIs
+Confirm Order
 
 Objectives
 
-- GET /orders
-- GET /orders/{id}
+- POST /orders/{id}/confirm
 
 Requirements
 
-- Return DTOs only
 - Preserve Clean Architecture
 - Preserve DDD
+- Preserve Aggregate boundaries
 - Preserve API consistency
+- Return Response DTO
 
 ---
 
@@ -145,10 +183,9 @@ Requirements
 
 Ordering
 
-- Add Item
-- Remove Item
-- Confirm Order
 - Complete Order
+- Remove Item
+- GET /orders
 
 Restaurant
 
@@ -171,6 +208,12 @@ Do not
 - introduce architecture changes
 - bypass Aggregate Roots
 
+Business Rules must remain inside Aggregate Roots.
+
+Handlers perform orchestration only.
+
+Presentation handles HTTP concerns only.
+
 ---
 
 # AI Handoff
@@ -183,26 +226,31 @@ the AI must
 
 2. Verify repository evidence.
 
-3. Understand Business Rules.
+3. Review the existing implementation.
 
-4. Obtain human approval.
+4. Understand Business Rules.
 
-5. Implement one milestone only.
+5. Obtain human approval.
 
-6. Perform self review.
+6. Implement one milestone only.
 
-7. Recommend documentation updates if required.
+7. Build successfully.
+
+8. Perform self review.
+
+9. Recommend documentation updates if required.
 
 ---
 
 # Success Criteria
 
-The next milestone is considered complete only when
+A milestone is complete only when
 
 - Build succeeds
+- Swagger verification succeeds
 - Architecture remains unchanged
 - Business Rules remain unchanged
-- API returns DTOs
+- API returns Response DTOs
 - Documentation is updated
 - Human review is completed
 
@@ -210,6 +258,34 @@ The next milestone is considered complete only when
 
 # Notes
 
-Current project status indicates that the Backend Foundation is complete.
+Backend Foundation and Basic Order API are complete.
 
-The project is ready to begin expanding the API layer through Response DTOs before implementing additional endpoints.
+The project now follows a standardized API implementation pattern.
+
+Request DTO
+
+↓
+
+Command / Query
+
+↓
+
+Handler
+
+↓
+
+Repository
+
+↓
+
+Aggregate Root
+
+↓
+
+Response DTO
+
+↓
+
+HTTP Response
+
+Future APIs should follow the same implementation pattern.
