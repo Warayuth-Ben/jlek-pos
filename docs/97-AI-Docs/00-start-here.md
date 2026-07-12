@@ -1,172 +1,154 @@
-\# JLek POS - Start Here
+﻿# AI Onboarding
 
-> Read this document first before working on the project.
+Welcome to the JLek POS project.
 
-\---
+This repository uses AI-assisted software engineering.
 
-\# Purpose
+Every AI participating in this project **must complete this onboarding process before performing any task**, including analysis, code review, implementation, refactoring, or documentation updates.
 
-This document is the entry point for every AI assistant and every developer joining the JLek POS project.
+Failure to complete this onboarding process may result in incorrect assumptions, architecture violations, or business rule inconsistencies.
 
-If this is a new session or your conversation context has been reset, always start here.
+---
 
-Documentation is the Source of Truth.
+# Mandatory Reading
 
-\---
+The following documents define the engineering standards of this project.
 
-\# Project Overview
+They must be read **in the following order**.
 
-JLek POS is a restaurant Point of Sale system designed using:
+---
 
-\- Clean Architecture
-
-\- Domain-Driven Design (DDD)
-
-\- CQRS
-
-\- Documentation-Driven Development
-
-The goal is not only to build software, but to preserve business knowledge, architectural decisions, and development standards over the lifetime of the project.
-
-\---
-
-\# Your Mission
-
-Your responsibility is to help develop the project while protecting:
-
-\- Business Rules
-
-\- Domain Model
-
-\- Architecture
-
-\- Documentation
-
-Writing code is not the primary goal.
-
-Understanding the business is.
-
-\---
-
-\# Read in This Order
-
-\## Step 1
+## Step 1 — Engineering Standard
 
 Read
 
-docs/97-AI-Docs/96-ai-onboarding.md
+`01-ai-engineering-standard.md`
 
-docs/97-AI-Docs/01-AI_ENGINEERING_STANDARD.md Understand how AI must work.
+Purpose
 
-docs/97-AI-Docs/02-AI_CONSTITUTION.md Understand the rules AI must always follow.
+Defines how the AI must think, verify information, communicate findings, and perform engineering tasks.
 
-docs/97-AI-Docs/03-AI_CERTIFICATION.md
+This document is mandatory.
 
-docs/97-AI-Docs/04-AI_WORKFLOW.md
+---
 
-docs/97-AI-Docs/98-ai-context.md Understand the current architecture and implementation.
+## Step 2 — AI Constitution
 
-docs/97-AI-Docs/99-project-status.md Understand current project progress.
+Read
 
-Understand the project philosophy.
+`02-ai-constitution.md`
 
-## Step 2
+Purpose
 
-### Ordering Capability
+Defines the fundamental rules the AI must never violate.
 
-Read the following folders.
+This document specifies what the AI is allowed to do and what it must never do.
 
-- docs/01-business-rules/
-- docs/02-domain-model/
-- docs/03-system-use-cases/
-- docs/04-state-machines/
-- docs/08-api/
+This document is mandatory.
 
-Find and read only the documents related to the current task.
+---
 
-Do not assume filenames.
+## Step 3 — Engineering Workflow
 
-# Finding Documents
+Read
 
-Documentation is organized by folders.
+`03-ai-workflow.md`
 
-File names may change over time.
+Purpose
 
-Always search inside the relevant folder.
+Defines the complete engineering workflow from documentation review to implementation and self-review.
 
-Do not assume a filename exists.
+Every task must follow this workflow.
 
-If the required document cannot be found,
+This document is mandatory.
 
-report
+---
 
-"Documentation not found"
+## Step 4 — Project Glossary
 
-instead of guessing.
+Read
 
-### Application Layer
+`04-ai-glossary.md`
 
-Read:
+Purpose
 
-- docs/05-application/
+Defines project-specific terminology.
 
-### Technical / Infrastructure
+Whenever an unfamiliar business or technical term appears,
 
-Read:
+consult this document before making assumptions.
 
-- docs/06-technical/
-- docs/07-database/
+---
 
-### UI
+## Step 5 — Prompt Library
 
-Read:
+Read
 
-- docs/09-ui/
+`05-ai-prompts.md`
 
-### Testing
+Purpose
 
-Read:
+Provides standard prompts and operating modes used throughout the project.
 
-- docs/10-testing/
+Examples include
 
-### Development Standards
+- Analysis Mode
+- Review Mode
+- Gap Analysis
+- Implementation Mode
+- Code Review Mode
 
-Read:
+Always follow these prompt templates whenever applicable.
 
-- docs/11-development/
+---
 
-### Business Knowledge
+## Step 6 — AI Context
 
-Read only when business understanding is required:
+Read
 
-- docs/20-thai/
-- docs/21-knowledge-book/
+`98-ai-context.md`
 
-### Analysis / Design
+Purpose
 
-Read when the task involves design decisions:
+Provides stable project knowledge.
 
-- docs/30-analysis/
-- docs/98-decisions/
+Includes
 
-### References
+- Architecture
+- Technology Stack
+- Development Principles
+- Current Technical Constraints
 
-Optional:
+Read this document before inspecting source code.
 
-- docs/99-references/
-- docs/diagrams/
+---
 
-Do not read every document.
+## Step 7 — Project Status
 
-Read only the folders required for your current task.
+Read
 
-\---
+`99-project-status.md`
 
-\# Standard Working Process
+Purpose
 
-Every task should follow this workflow.
+Provides the current implementation status.
 
-Requirement
+Includes
+
+- Current Milestone
+- Completed Features
+- Current Limitations
+- Next Priorities
+
+Read this document before starting any implementation.
+
+---
+
+# Mandatory Rules
+
+Every AI must follow these rules.
+
+Before writing code
 
 ↓
 
@@ -174,23 +156,65 @@ Read Documentation
 
 ↓
 
+Verify Repository Evidence
+
+↓
+
 Understand Business Rules
 
 ↓
 
-Review Architecture Decisions
+Understand Architecture
 
 ↓
 
-Assess Risk
+Wait for Human Approval
 
 ↓
 
-Design Proposal
+Implement
+
+The AI must never
+
+- Guess
+- Fabricate documentation
+- Fabricate repository structure
+- Invent Business Rules
+- Invent Architecture
+- Change Business Rules without approval
+- Change Architecture without approval
+
+---
+
+# Engineering Process
+
+Every engineering task must follow this sequence.
+
+Documentation
 
 ↓
 
-Clarify Questions (if required)
+Verification
+
+↓
+
+Understanding
+
+↓
+
+Analysis
+
+↓
+
+Design
+
+↓
+
+Human Review
+
+↓
+
+Approval
 
 ↓
 
@@ -204,106 +228,84 @@ Self Review
 
 Documentation Update
 
-↓
+No phase may be skipped.
 
-Human Review
+---
 
-\---
+# Stop Conditions
 
-\# Never Guess
+The AI must stop immediately when
 
-If documentation does not provide enough information,
+- documentation is insufficient
+- repository evidence cannot be verified
+- Business Rules are unclear
+- Architecture is unclear
+- additional information is required
+- human approval has not been received
 
-DO NOT GUESS.
+The AI must respond
 
-Always answer
+> Insufficient information.
 
-"ไม่พบข้อมูลเพียงพอ"
+The response must include
 
-Then explain
+- Verified Facts
+- Missing Information
+- Required Clarification
 
-\- what information is missing
+The AI must never continue by making assumptions.
 
-\- which documents have been reviewed
+---
 
-\- what clarification is required
+# Final Reminder
 
-\---
+Documentation is the Source of Truth.
 
-\# Human Decision
+Repository is the Source of Evidence.
 
-AI provides recommendations.
+Humans are the Source of Decisions.
 
-Humans make decisions.
+When uncertain,
 
-AI must not independently change
+Stop.
 
-\- Business Rules
+Verify.
 
-\- Architecture
+Ask.
 
-\- Aggregate Design
+Never Guess.
 
-\- State Machine
+--------
+---
 
-\- Project Standards
+# Definition of Completion
 
-without approval.
+AI onboarding is considered complete only when
 
-\---
+- All mandatory documents have been read.
+- Documentation has been verified.
+- Repository structure has been verified.
+- Current project status has been understood.
+- AI confirms that the Engineering Standard, Constitution, and Workflow will be followed.
 
-\# Documentation Priority
+Only after completing this onboarding process may the AI begin engineering tasks.
+----------
 
-When project documentation conflicts with general AI knowledge,
+# Required Completion Format
 
-Project documentation always takes priority.
+After completing onboarding,
 
-\---
+the AI must report
 
-\# Before Submitting Any Code
+## Documents Read
 
-Verify
+## Documents Not Found
 
-□ Business Rules respected
+## Documents Not Verified
 
-□ Aggregate boundaries respected
+## Compliance Status
 
-□ Clean Architecture preserved
+## Current Status
 
-□ DDD principles respected
-
-□ API contracts preserved
-
-□ Documentation still accurate
-
-\---
-
-\# If Context Is Lost
-
-Do not continue from memory.
-
-Return to this document.
-
-Repeat the reading process.
-
-Read only the documents required for the current task.
-
-\---
-
-\# Success Criteria
-
-A successful AI is not the AI that writes the most code.
-
-A successful AI is the AI that
-
-\- understands the business
-
-\- protects the architecture
-
-\- follows documentation
-
-\- asks when information is insufficient
-
-\- helps humans make better decisions
-
-Welcome to JLek POS.
+The AI must wait for further instructions.
+-----------

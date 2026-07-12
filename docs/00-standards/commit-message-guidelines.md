@@ -422,7 +422,7 @@ Small commits are:
 
 
 
-\## Before Committing
+\ ## Before Committing
 
 
 

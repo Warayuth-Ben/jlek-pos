@@ -1,150 +1,203 @@
-# AI Context
+﻿# AI Context
 
-Current milestone:
+Version: 1.0
 
-Backend Foundation completed successfully.
+Project: JLek POS
 
-Current technology stack
+---
 
-* .NET 8
-* Clean Architecture
-* CQRS
-* EF Core
-* PostgreSQL 17
-* Minimal API
-* Swagger
+# Purpose
 
-Implemented
+This document contains long-lived project knowledge.
 
-* Aggregate Root
-* Entity
-* ValueObject
-* Strongly Typed IDs
-* Repository
-* Domain Events
-* Business Rules
-* EF Core Configuration
-* PostgreSQL Migration
+The information in this document changes infrequently and should be considered stable context for every AI participating in the project.
+
+This document is NOT intended to track development progress.
+
+Current progress is maintained in
+
+99-project-status.md
+
+---
+
+# System Overview
+
+Project Name
+
+JLek POS
+
+System Type
+
+Restaurant Point of Sale (POS)
+
+Architecture
+
+Clean Architecture
+
+Design Methodology
+
+Domain-Driven Design (DDD)
+
+Application Pattern
+
+CQRS
+
+---
+
+# Technology Stack
+
+Framework
+
+- .NET 8
+
+Database
+
+- PostgreSQL 17
+
+ORM
+
+- EF Core
+
+API
+
+- Minimal API
+
+Documentation
+
+- Swagger
+
+---
+
+# Architecture Overview
+
+Presentation
+
+↓
+
+Application
+
+↓
+
+Domain
+
+↓
+
+Infrastructure
+
+Dependencies always point inward.
+
+The Domain Layer must remain independent.
+
+---
+
+# Domain Model
+
+Current implemented concepts
+
+- Aggregate Root
+- Entity
+- Value Objects
+- Strongly Typed IDs
+- Domain Events
+- Business Rules
+
+---
+
+# Infrastructure
+
+Current implementation
+
+- Repository Pattern
+- EF Core Configuration
+- PostgreSQL Migration
+
+Infrastructure contains technical implementation only.
+
+Business Rules do not belong here.
+
+---
+
+# Presentation
+
+Current implementation
+
+- Minimal API
+- Swagger
+
+Presentation contains HTTP concerns only.
+
+No Business Rules belong here.
+
+---
+
+# Development Principles
+
+The following principles are mandatory.
+
+- Never expose Domain Entities directly.
+- Always return DTOs.
+- Keep Domain pure.
+- Application contains use cases only.
+- Infrastructure contains technical implementation only.
+- Presentation contains HTTP concerns only.
+
+---
+
+# Verified APIs
 
 Verified
 
 POST /orders
 
-returns
+Current behavior
 
-201 Created
+- Returns HTTP 201 Created
+- Successfully saves data into PostgreSQL
 
-and saves data into PostgreSQL successfully.
+---
 
-Current limitations
+# Current Technical Limitations
 
-API currently returns Domain Entity directly.
+Current implementation still has the following limitations
 
-DomainEvents are serialized to the client.
+- API returns Domain Entities directly.
+- Domain Events are serialized to API responses.
+- Response DTO layer has not yet been implemented.
 
-Need DTO layer before expanding APIs.
+These limitations are known and intentional until the next milestone.
 
-Next priorities
+---
 
-1. 
+# AI Mandatory Reading
 
-Create Response DTOs
+Before performing implementation,
 
-2. 
+read
 
-Remove DomainEvents from API responses
+1. 00-start-here.md
 
-3. 
+2. 01-ai-engineering-standard.md
 
-GET /orders
+3. 02-ai-constitution.md
 
-4. 
+4. 03-ai-workflow.md
 
-GET /orders/{id}
+5. 04-ai-glossary.md
 
-5. 
+6. 99-project-status.md
 
-Add Item
+---
 
-6. 
+# AI Reminder
 
-Confirm Order
+Project documentation
 
-7. 
+is the Source of Truth.
 
-Complete Order
+Repository
 
-8. 
+is the Source of Evidence.
 
-Menu Module
+Human
 
-9. 
-
-Table Module
-
-10. 
-
-Kitchen Queue
-
-Development rules
-
-Never expose Domain Entity directly.
-
-Always return DTOs.
-
-Keep Domain pure.
-
-Application contains use cases.
-
-Infrastructure contains EF Core only.
-
-Presentation contains HTTP only.
-
-\--------------
-
-\# Standard 17 — Search Before Cite
-
-
-
-Before citing any documentation,
-
-
-
-the AI must first locate the document in the repository.
-
-
-
-The AI must never cite documentation
-
-
-
-from memory,
-
-
-
-prior conversations,
-
-
-
-or assumed project structure.
-
-
-
-Every documentation citation must originate
-
-
-
-from a repository search
-
-followed by opening the document.
-
-
-
-Searching is mandatory.
-
-
-
-Memory is not.
-
-\---------------
-
+is the Source of Decisions.

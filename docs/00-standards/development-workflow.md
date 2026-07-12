@@ -254,7 +254,7 @@ Changes should only be made if:
 - A factual error is discovered
 
 Avoid revisiting completed documentation for stylistic improvements alone.
-
+ 
 ---
 
 # Milestones

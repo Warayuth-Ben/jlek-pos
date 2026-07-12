@@ -484,7 +484,7 @@ Future maintainability is more important than short-term convenience.
 
 
 
-The goal of JLek POS is not simply to deliver a working application.
+The goal of JLek POS is not simply to deliver  a working application.
 
 
 
