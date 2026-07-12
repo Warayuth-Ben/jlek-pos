@@ -1,4 +1,5 @@
-using JLek.POS.Api.Requests;
+﻿using JLek.POS.Api.Requests;
+using JLek.POS.Api.Responses;
 using JLek.POS.Application.Features.Orders.Commands.CreateOrder;
 
 namespace JLek.POS.Api.Endpoints;
@@ -19,9 +20,11 @@ public static class OrderEndpoints
                 new CreateOrderCommand(),
                 cancellationToken);
 
+            var response = order.ToResponse();
+
             return Results.Created(
-                $"/orders/{order.Id}",
-                order);
+                $"/orders/{response.Id}",
+                response);
         });
 
         return app;
