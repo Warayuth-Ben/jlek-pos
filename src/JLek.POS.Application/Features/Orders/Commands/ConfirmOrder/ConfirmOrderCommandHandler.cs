@@ -1,4 +1,5 @@
-using JLek.POS.Application.Abstractions.Repositories;
+﻿using JLek.POS.Application.Abstractions.Repositories;
+using JLek.POS.Domain.Orders;
 
 namespace JLek.POS.Application.Features.Orders.Commands.ConfirmOrder;
 
@@ -12,7 +13,7 @@ public sealed class ConfirmOrderCommandHandler
         _repository = repository;
     }
 
-    public async Task Handle(
+    public async Task<Order> Handle(
         ConfirmOrderCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -30,5 +31,7 @@ public sealed class ConfirmOrderCommandHandler
         await _repository.UpdateAsync(
             order,
             cancellationToken);
+
+        return order;
     }
 }

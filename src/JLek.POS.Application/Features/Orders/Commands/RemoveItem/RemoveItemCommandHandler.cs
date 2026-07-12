@@ -1,20 +1,20 @@
 ﻿using JLek.POS.Application.Abstractions.Repositories;
 using JLek.POS.Domain.Orders;
 
-namespace JLek.POS.Application.Features.Orders.Commands.CompleteOrder;
+namespace JLek.POS.Application.Features.Orders.Commands.RemoveItem;
 
-public sealed class CompleteOrderCommandHandler
+public sealed class RemoveItemCommandHandler
 {
     private readonly IOrderRepository _repository;
 
-    public CompleteOrderCommandHandler(
+    public RemoveItemCommandHandler(
         IOrderRepository repository)
     {
         _repository = repository;
     }
 
     public async Task<Order> Handle(
-        CompleteOrderCommand command,
+        RemoveItemCommand command,
         CancellationToken cancellationToken = default)
     {
         var order = await _repository.GetByIdAsync(
@@ -26,7 +26,7 @@ public sealed class CompleteOrderCommandHandler
             throw new InvalidOperationException("Order not found.");
         }
 
-        order.Complete();
+        order.RemoveItem(command.OrderItemId);
 
         await _repository.UpdateAsync(
             order,

@@ -60,17 +60,17 @@ ORM
 
 API
 
-- Minimal API
+- ASP.NET Core Minimal API
 
 Documentation
 
-- Swagger
+- Swagger (OpenAPI)
 
 ---
 
 # Architecture Overview
 
-Presentation (API)
+Presentation
 
 ↓
 
@@ -101,9 +101,31 @@ Current implemented concepts
 - Domain Events
 - Business Rules
 
-Business Rules belong to Aggregate Roots.
+Current Aggregate
 
-Aggregates are responsible for protecting domain invariants.
+- Order
+- OrderItem
+
+---
+
+# Application Layer
+
+Current implementation
+
+Commands
+
+- CreateOrder
+- AddItem
+- RemoveItem
+- ConfirmOrder
+- CompleteOrder
+
+Queries
+
+- GetOrderById
+- GetOrders
+
+CQRS is used to separate commands from queries.
 
 ---
 
@@ -113,11 +135,11 @@ Current implementation
 
 - Repository Pattern
 - EF Core Configuration
-- PostgreSQL Migration
+- PostgreSQL
+- Aggregate Loading
+- Dependency Injection
 
-Infrastructure contains technical implementation only.
-
-Business Rules do not belong here.
+Repositories returning Aggregate Roots must load all state required by Business Rules.
 
 ---
 
@@ -127,14 +149,14 @@ Current implementation
 
 - Minimal API
 - Swagger
-- Request DTOs
-- Response DTOs
+- Response DTO
+- DTO Mapping
 
 Presentation contains HTTP concerns only.
 
-Presentation is responsible for mapping Domain models to HTTP responses.
+Business Rules belong exclusively to the Domain Layer.
 
-No Business Rules belong here.
+Domain Entities must never be returned directly.
 
 ---
 
@@ -143,51 +165,12 @@ No Business Rules belong here.
 The following principles are mandatory.
 
 - Never expose Domain Entities directly.
-- Always return Response DTOs.
+- Always return DTOs.
 - Keep Domain pure.
 - Application contains use cases only.
 - Infrastructure contains technical implementation only.
 - Presentation contains HTTP concerns only.
-- Business Rules belong to Aggregate Roots.
-- Handlers perform orchestration only.
-
----
-
-# API Pattern
-
-All HTTP endpoints should follow this pattern.
-
-HTTP Request
-
-↓
-
-Request DTO
-
-↓
-
-Command / Query
-
-↓
-
-Handler
-
-↓
-
-Repository
-
-↓
-
-Aggregate Root
-
-↓
-
-Response DTO
-
-↓
-
-HTTP Response
-
-This pattern is the standard API implementation pattern for JLek POS.
+- Business Rules remain inside Domain.
 
 ---
 
@@ -195,39 +178,66 @@ This pattern is the standard API implementation pattern for JLek POS.
 
 Verified
 
-- POST /orders
-- GET /orders/{id}
-- POST /orders/{id}/items
+POST /orders
 
-Verified behavior
+GET /orders
 
-- POST returns HTTP 201 Created.
-- GET by id returns HTTP 200 OK.
-- Unknown id returns HTTP 404 Not Found.
-- Add Item returns HTTP 200 OK.
-- All endpoints verified through Swagger.
-- Response DTOs are returned instead of Domain Entities.
+GET /orders/{id}
+
+POST /orders/{id}/items
+
+DELETE /orders/{id}/items/{itemId}
+
+POST /orders/{id}/confirm
+
+POST /orders/{id}/complete
+
+Current behavior
+
+- Returns Response DTOs
+- Successfully persists data into PostgreSQL
+- Preserves Clean Architecture
+- Preserves CQRS
+- Preserves DDD
 
 ---
 
 # Current Technical Limitations
 
-Known technical debt
+Current implementation intentionally defers
 
-High Priority
+- OrderResponse currently exposes only Order-level information.
+- OrderItemResponse has not yet been implemented.
+- Global Exception Handling has not yet been implemented.
+- ProblemDetails responses have not yet been implemented.
 
-- Global Exception Middleware
-- Validation Layer
+These limitations are intentional and belong to the next milestone.
 
-Medium Priority
+---
 
-- GET /orders
+# Frozen Milestone
 
-Low Priority
+Order API v1
 
-- API Versioning
-- Pagination
-- Response mapping organization
+Status
+
+Frozen
+
+Business Rules
+
+Frozen
+
+Architecture
+
+Frozen
+
+API Contracts
+
+Frozen
+
+Bug fixes remain allowed.
+
+Enhancements require a new milestone.
 
 ---
 

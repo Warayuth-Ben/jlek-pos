@@ -1,4 +1,4 @@
-using JLek.POS.Application.Abstractions.Repositories;
+﻿using JLek.POS.Application.Abstractions.Repositories;
 using JLek.POS.Domain.Orders;
 using JLek.POS.Domain.Orders.ValueObjects;
 using JLek.POS.Infrastructure.Persistence;
@@ -21,9 +21,18 @@ public sealed class OrderRepository : IOrderRepository
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Orders
+            .Include(x => x.Items)
             .FirstOrDefaultAsync(
                 x => x.Id == id,
                 cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Order>> GetAllAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Orders
+            .Include(x => x.Items)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task AddAsync(

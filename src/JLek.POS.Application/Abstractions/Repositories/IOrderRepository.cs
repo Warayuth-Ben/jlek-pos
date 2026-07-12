@@ -1,4 +1,4 @@
-using JLek.POS.Domain.Orders;
+﻿using JLek.POS.Domain.Orders;
 using JLek.POS.Domain.Orders.ValueObjects;
 
 namespace JLek.POS.Application.Abstractions.Repositories;
@@ -7,6 +7,9 @@ public interface IOrderRepository
 {
     Task<Order?> GetByIdAsync(
         OrderId id,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Order>> GetAllAsync(
         CancellationToken cancellationToken = default);
 
     Task AddAsync(

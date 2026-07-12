@@ -24,11 +24,11 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Basic Order API
+Order API v1
 
 Status
 
-Completed
+Frozen
 
 ---
 
@@ -64,6 +64,34 @@ Completed
 
 ✔ Repository Contracts
 
+✔ Order Aggregate
+
+✔ OrderItem Entity
+
+---
+
+## Application
+
+### Commands
+
+✔ CreateOrder
+
+✔ AddItem
+
+✔ RemoveItem
+
+✔ ConfirmOrder
+
+✔ CompleteOrder
+
+### Queries
+
+✔ GetOrderById
+
+✔ GetOrders
+
+✔ CQRS Foundation
+
 ---
 
 ## Infrastructure
@@ -78,6 +106,10 @@ Completed
 
 ✔ Database Creation
 
+✔ Aggregate Loading
+
+✔ Dependency Injection
+
 ---
 
 ## Presentation
@@ -86,39 +118,54 @@ Completed
 
 ✔ Swagger
 
-✔ Request DTO
-
 ✔ Response DTO
 
----
-
-## API
+✔ DTO Mapping
 
 ✔ POST /orders
 
-Verified
-
-- Returns HTTP 201 Created
-- Persists data into PostgreSQL
-- Returns Response DTO
+✔ GET /orders
 
 ✔ GET /orders/{id}
 
-Verified
-
-- Returns HTTP 200 OK
-- Returns HTTP 404 Not Found when the order does not exist
-- Returns Response DTO
-
 ✔ POST /orders/{id}/items
 
+✔ DELETE /orders/{id}/items/{itemId}
+
+✔ POST /orders/{id}/confirm
+
+✔ POST /orders/{id}/complete
+
 Verified
 
-- Successfully adds items to an existing order
-- Returns HTTP 200 OK
-- Returns Response DTO
+- Returns Response DTOs
+- Successfully persists data into PostgreSQL
+- Build succeeds
+- Swagger verified
+- Clean Architecture preserved
+- DDD preserved
+- CQRS preserved
 
-All endpoints verified using Swagger.
+---
+
+# Frozen Components
+
+Order Aggregate
+
+Order API
+
+Business Rules
+
+API Contracts
+
+Repository Contracts
+
+Changes are limited to
+
+- Bug Fixes
+- Security Fixes
+
+Enhancements require a new milestone.
 
 ---
 
@@ -126,66 +173,31 @@ All endpoints verified using Swagger.
 
 Verified
 
-High Priority
-
-- Global Exception Middleware
-- Validation Layer
-
-Medium Priority
-
-- GET /orders
-
-Low Priority
-
-- API Versioning
-- Pagination
-- Response Mapping Organization
+- OrderResponse currently exposes only Order-level information.
+- OrderItemResponse has not yet been implemented.
+- Global Exception Handling has not yet been implemented.
+- ProblemDetails response has not yet been implemented.
 
 No verified architecture violations have been found.
 
 ---
 
-# Current Priorities
-
-Priority 1
-
-Implement Confirm Order API.
-
-Priority 2
-
-Implement Complete Order API.
-
-Priority 3
-
-Implement GET /orders.
-
----
-
 # Next Milestone
 
-Confirm Order
+Order API v1.1
 
 Objectives
 
-- POST /orders/{id}/confirm
-
-Requirements
-
-- Preserve Clean Architecture
-- Preserve DDD
-- Preserve Aggregate boundaries
-- Preserve API consistency
-- Return Response DTO
+- OrderResponse v2
+- OrderItemResponse
+- Complete Remove Item verification
+- Global Exception Handling
+- ProblemDetails
+- Standard API Error Responses
 
 ---
 
 # Future Milestones
-
-Ordering
-
-- Complete Order
-- Remove Item
-- GET /orders
 
 Restaurant
 
@@ -194,6 +206,12 @@ Restaurant
 - Kitchen Queue
 - Payment
 - Reporting
+
+Presentation
+
+- Web UI
+- Authentication
+- Authorization
 
 ---
 
@@ -205,14 +223,10 @@ Do not
 
 - expose Domain Entities
 - move Business Rules outside Domain
-- introduce architecture changes
+- redesign Aggregate Boundaries
 - bypass Aggregate Roots
-
-Business Rules must remain inside Aggregate Roots.
-
-Handlers perform orchestration only.
-
-Presentation handles HTTP concerns only.
+- violate CQRS
+- violate Clean Architecture
 
 ---
 
@@ -226,66 +240,70 @@ the AI must
 
 2. Verify repository evidence.
 
-3. Review the existing implementation.
+3. Understand Business Rules.
 
-4. Understand Business Rules.
+4. Obtain human approval.
 
-5. Obtain human approval.
+5. Implement one milestone only.
 
-6. Implement one milestone only.
+6. Perform self review.
 
-7. Build successfully.
-
-8. Perform self review.
-
-9. Recommend documentation updates if required.
+7. Recommend documentation updates if required.
 
 ---
 
 # Success Criteria
 
-A milestone is complete only when
+The next milestone is considered complete only when
 
 - Build succeeds
-- Swagger verification succeeds
 - Architecture remains unchanged
 - Business Rules remain unchanged
 - API returns Response DTOs
-- Documentation is updated
-- Human review is completed
+- Global Exception Handling implemented
+- Documentation updated
+- Human review completed
+
+---
+
+# Overall Progress
+
+Architecture
+
+██████████ 100%
+
+Domain
+
+█████████░ 95%
+
+Application
+
+█████████░ 95%
+
+Infrastructure
+
+█████████░ 90%
+
+API
+
+█████████░ 90%
+
+UI
+
+░░░░░░░░░░ 0%
+
+Estimated Overall Progress
+
+≈ 50%
 
 ---
 
 # Notes
 
-Backend Foundation and Basic Order API are complete.
+Order API v1 is considered complete and frozen.
 
-The project now follows a standardized API implementation pattern.
+The next development milestone focuses on API maturity
 
-Request DTO
+(Response DTO v2, Remove Item verification, Global Exception Handling)
 
-↓
-
-Command / Query
-
-↓
-
-Handler
-
-↓
-
-Repository
-
-↓
-
-Aggregate Root
-
-↓
-
-Response DTO
-
-↓
-
-HTTP Response
-
-Future APIs should follow the same implementation pattern.
+before expanding into the Menu Module and Presentation Layer.

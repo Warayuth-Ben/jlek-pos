@@ -540,3 +540,105 @@ Line
 instead of
 
 File only.
+---------
+---
+
+# Standard 26 — Explicit Service Injection
+
+When using ASP.NET Minimal API,
+
+Application Handlers must always be injected explicitly using
+
+[FromServices]
+
+instead of relying on parameter inference.
+
+This applies to
+
+- Command Handlers
+- Query Handlers
+
+Rationale
+
+Explicit service injection
+
+- improves readability
+- prevents runtime inference errors
+- provides consistent endpoint signatures
+
+---
+
+# Standard 27 — Handler Registration
+
+Whenever a new
+
+- Command Handler
+- Query Handler
+
+is created,
+
+it must also be registered in
+
+Application/DependencyInjection.cs
+
+before runtime testing.
+
+Build success alone
+
+does not verify
+
+Dependency Injection registration.
+
+Runtime verification is required.
+
+---
+
+# Standard 28 — Aggregate Completeness
+
+Repositories returning Aggregate Roots
+
+must load all state required by Business Rules.
+
+Incomplete Aggregate loading
+
+may cause Business Rules
+
+to produce incorrect results,
+
+even when database data is correct.
+
+Repositories should eagerly load
+
+all Aggregate members
+
+required by Domain behavior.
+
+---
+
+# Standard 29 — Checkpoint Before Implementation
+
+Before implementing an approved milestone,
+
+the AI should recommend creating
+
+a Git checkpoint.
+
+Example
+
+git commit -m "checkpoint: before ..."
+
+The checkpoint should be created
+
+before
+
+- file creation
+- file modification
+- refactoring
+- architectural changes
+
+This enables
+
+- safe rollback
+- isolated milestones
+- easier review
+- lower implementation risk

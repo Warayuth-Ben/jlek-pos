@@ -1,9 +1,14 @@
 ﻿using JLek.POS.Api.Requests;
 using JLek.POS.Api.Responses;
 using JLek.POS.Application.Features.Orders.Commands.AddItem;
+using JLek.POS.Application.Features.Orders.Commands.CompleteOrder;
+using JLek.POS.Application.Features.Orders.Commands.ConfirmOrder;
 using JLek.POS.Application.Features.Orders.Commands.CreateOrder;
+using JLek.POS.Application.Features.Orders.Commands.RemoveItem;
 using JLek.POS.Application.Features.Orders.Queries.GetOrderById;
+using JLek.POS.Application.Features.Orders.Queries.GetOrders;
 using JLek.POS.Domain.Orders.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JLek.POS.Api.Endpoints;
 
@@ -16,23 +21,33 @@ public static class OrderEndpoints
 
         group.MapPost("/", async (
             CreateOrderRequest request,
-            CreateOrderCommandHandler handler,
+            [FromServices] CreateOrderCommandHandler handler,
             CancellationToken cancellationToken) =>
         {
             var order = await handler.Handle(
                 new CreateOrderCommand(),
                 cancellationToken);
 
-            var response = order.ToResponse();
-
             return Results.Created(
-                $"/orders/{response.Id}",
-                response);
+                $"/orders/{order.Id}",
+                order.ToResponse());
+        });
+
+        group.MapGet("/", async (
+            [FromServices] GetOrdersQueryHandler handler,
+            CancellationToken cancellationToken) =>
+        {
+            var orders = await handler.Handle(
+                new GetOrdersQuery(),
+                cancellationToken);
+
+            return Results.Ok(
+                orders.Select(x => x.ToResponse()));
         });
 
         group.MapGet("/{id:guid}", async (
             Guid id,
-            GetOrderByIdQueryHandler handler,
+            [FromServices] GetOrderByIdQueryHandler handler,
             CancellationToken cancellationToken) =>
         {
             var order = await handler.Handle(
@@ -51,7 +66,7 @@ public static class OrderEndpoints
         group.MapPost("/{id:guid}/items", async (
             Guid id,
             AddItemRequest request,
-            AddItemCommandHandler handler,
+            [FromServices] AddItemCommandHandler handler,
             CancellationToken cancellationToken) =>
         {
             var order = await handler.Handle(
@@ -60,6 +75,47 @@ public static class OrderEndpoints
                     request.MenuItemId,
                     request.Quantity,
                     request.UnitPrice),
+                cancellationToken);
+
+            return Results.Ok(order.ToResponse());
+        });
+
+        group.MapDelete("/{id:guid}/items/{itemId:guid}", async (
+            Guid id,
+            Guid itemId,
+            [FromServices] RemoveItemCommandHandler handler,
+            CancellationToken cancellationToken) =>
+        {
+            var order = await handler.Handle(
+                new RemoveItemCommand(
+                    OrderId.From(id),
+                    OrderItemId.From(itemId)),
+                cancellationToken);
+
+            return Results.Ok(order.ToResponse());
+        });
+
+        group.MapPost("/{id:guid}/confirm", async (
+            Guid id,
+            [FromServices] ConfirmOrderCommandHandler handler,
+            CancellationToken cancellationToken) =>
+        {
+            var order = await handler.Handle(
+                new ConfirmOrderCommand(
+                    OrderId.From(id)),
+                cancellationToken);
+
+            return Results.Ok(order.ToResponse());
+        });
+
+        group.MapPost("/{id:guid}/complete", async (
+            Guid id,
+            [FromServices] CompleteOrderCommandHandler handler,
+            CancellationToken cancellationToken) =>
+        {
+            var order = await handler.Handle(
+                new CompleteOrderCommand(
+                    OrderId.From(id)),
                 cancellationToken);
 
             return Results.Ok(order.ToResponse());
