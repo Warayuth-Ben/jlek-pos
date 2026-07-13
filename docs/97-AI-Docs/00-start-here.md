@@ -309,3 +309,24 @@ the AI must report
 
 The AI must wait for further instructions.
 -----------
+
+## Final Readiness Check
+
+Before accepting any implementation request, confirm:
+
+- [ ] AI Engineering Standard loaded
+- [ ] AI Constitution loaded
+- [ ] AI Workflow loaded
+- [ ] AI Context loaded
+- [ ] Project Status loaded
+- [ ] Required project documents loaded
+- [ ] No missing references
+- [ ] Ready for implementation
+
+When onboarding is complete:
+
+1. Summarize your current understanding.
+2. List all documents loaded.
+3. Report missing references.
+4. Confirm readiness.
+5. Wait for the user's next instruction.

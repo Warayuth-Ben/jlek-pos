@@ -469,3 +469,21 @@ Conclusions derived from verified facts.
 Optional.
 
 Provide recommendations only after approval or when explicitly requested.
+
+-----
+## Verification Checklist
+
+Before referring to any project artifact:
+
+- [ ] File exists
+- [ ] Folder exists
+- [ ] Class exists
+- [ ] Method exists
+- [ ] Business Rule exists
+- [ ] Documentation exists
+
+If any item cannot be verified:
+
+Report
+
+> Not yet verified.

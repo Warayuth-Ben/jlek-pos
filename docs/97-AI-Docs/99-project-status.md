@@ -6,7 +6,7 @@ Project: JLek POS
 
 Last Updated
 
-2026-07-12
+2026-07-13
 
 ---
 
@@ -45,6 +45,12 @@ Frozen
 ✔ Project References
 
 ✔ Build Success
+
+## AI Guidance
+
+✔ Repository-level AI instructions file added
+
+✔ AI onboarding documentation acknowledged and applied
 
 ---
 
