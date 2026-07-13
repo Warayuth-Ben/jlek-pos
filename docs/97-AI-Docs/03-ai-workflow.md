@@ -590,3 +590,22 @@ Instead report
 > Not yet verified.
 
 AI confidence is never considered evidence.
+----------------------
+
+# Context Reuse
+Context Reuse ต้องเกิดหลังจาก Onboarding สำเร็จเท่านั้น
+
+If AI onboarding has already been completed
+and the verified context remains available,
+
+the AI should reuse the existing context.
+
+Do not repeat onboarding unnecessarily.
+
+Re-onboarding is required only when:
+
+- Context has been lost
+- Conversation restarted
+- Repository changed
+- Documentation updated
+- Human explicitly requests re-onboarding

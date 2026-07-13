@@ -8,9 +8,26 @@ Every AI participating in this project **must complete this onboarding process b
 
 Failure to complete this onboarding process may result in incorrect assumptions, architecture violations, or business rule inconsistencies.
 
+#
+
+When a document specifies a filename,
+
+the AI must use the filename exactly as written.
+
+The AI must never construct, infer, rename, abbreviate, or normalize filenames.
+
+If the file cannot be found,
+
+re-read the source document and quote the filename exactly before reporting an error.
 ---
 
 # Mandatory Reading
+
+**Every document listed in this section is mandatory.**
+
+**AI onboarding is not complete until every document listed below has been successfully read.**
+
+**No document in this section is optional.**
 
 The following documents define the engineering standards of this project.
 
@@ -70,13 +87,17 @@ Read
 
 `04-ai-glossary.md`
 
+This document is mandatory.
+
 Purpose
 
 Defines project-specific terminology.
 
-Whenever an unfamiliar business or technical term appears,
+The AI must read this document during onboarding.
 
-consult this document before making assumptions.
+Do not postpone reading until an unfamiliar term appears.
+
+AI onboarding is not complete until this document has been read.
 
 ---
 
@@ -85,6 +106,8 @@ consult this document before making assumptions.
 Read
 
 `05-ai-prompts.md`
+
+This document is mandatory.
 
 Purpose
 
@@ -98,7 +121,9 @@ Examples include
 - Implementation Mode
 - Code Review Mode
 
-Always follow these prompt templates whenever applicable.
+The AI must read this document during onboarding.
+
+AI onboarding is not complete until this document has been read.
 
 ---
 
@@ -107,6 +132,8 @@ Always follow these prompt templates whenever applicable.
 Read
 
 `98-ai-context.md`
+
+This document is mandatory.
 
 Purpose
 
@@ -119,7 +146,9 @@ Includes
 - Development Principles
 - Current Technical Constraints
 
-Read this document before inspecting source code.
+The AI must read this document during onboarding before performing any engineering task.
+
+AI onboarding is not complete until this document has been read.
 
 ---
 
@@ -128,6 +157,8 @@ Read this document before inspecting source code.
 Read
 
 `99-project-status.md`
+
+This document is mandatory.
 
 Purpose
 
@@ -140,7 +171,9 @@ Includes
 - Current Limitations
 - Next Priorities
 
-Read this document before starting any implementation.
+The AI must read this document during onboarding.
+
+AI onboarding is not complete until this document has been read.
 
 ---
 
@@ -275,21 +308,21 @@ Ask.
 
 Never Guess.
 
---------
 ---
 
 # Definition of Completion
 
 AI onboarding is considered complete only when
 
-- All mandatory documents have been read.
+- All documents listed under **Mandatory Reading** have been read.
 - Documentation has been verified.
 - Repository structure has been verified.
 - Current project status has been understood.
 - AI confirms that the Engineering Standard, Constitution, and Workflow will be followed.
 
 Only after completing this onboarding process may the AI begin engineering tasks.
-----------
+
+---
 
 # Required Completion Format
 
@@ -308,7 +341,8 @@ the AI must report
 ## Current Status
 
 The AI must wait for further instructions.
------------
+
+---
 
 ## Final Readiness Check
 
@@ -317,16 +351,18 @@ Before accepting any implementation request, confirm:
 - [ ] AI Engineering Standard loaded
 - [ ] AI Constitution loaded
 - [ ] AI Workflow loaded
+- [ ] AI Glossary loaded
+- [ ] AI Prompt Library loaded
 - [ ] AI Context loaded
 - [ ] Project Status loaded
-- [ ] Required project documents loaded
+- [ ] All Mandatory Reading documents loaded
 - [ ] No missing references
-- [ ] Ready for implementation
+- [ ] Ready for the next task
 
 When onboarding is complete:
 
 1. Summarize your current understanding.
 2. List all documents loaded.
 3. Report missing references.
-4. Confirm readiness.
+4. Confirm compliance.
 5. Wait for the user's next instruction.
