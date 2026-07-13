@@ -1,6 +1,6 @@
 ﻿# AI Workflow
 
-Version: 1.1
+Version: 1.2
 
 Project: JLek POS
 
@@ -15,6 +15,7 @@ The workflow ensures that every implementation is
 - understandable
 - reviewable
 - traceable
+- verifiable
 - safe
 
 The AI must never skip workflow steps.
@@ -44,6 +45,10 @@ Analysis
 ↓
 
 Design
+
+↓
+
+Evidence Audit
 
 ↓
 
@@ -120,6 +125,24 @@ Never verify from memory.
 
 Never verify from assumptions.
 
+Never infer project structure from common software patterns.
+
+Never assume the existence of
+
+- files
+- folders
+- classes
+- interfaces
+- methods
+- commands
+- queries
+- handlers
+- repositories
+- aggregates
+- APIs
+
+without repository verification.
+
 ## Output
 
 Verified Facts.
@@ -152,6 +175,8 @@ Examples
 
 Do not redesign before understanding the current implementation.
 
+Reference only verified implementation.
+
 ## Output
 
 Verified implementation summary.
@@ -174,6 +199,10 @@ The AI must explain
 If these cannot be explained,
 
 STOP.
+
+## Output
+
+Verified understanding.
 
 ---
 
@@ -219,13 +248,65 @@ The AI must explain
 
 No implementation before approval.
 
+The proposal must be based only on verified facts.
+
 ## Output
 
 Design Proposal.
 
 ---
 
-# Phase 7 — Human Review
+# Phase 7 — Evidence Audit
+
+## Objective
+
+Verify that every statement in the proposal is supported by evidence.
+
+## Required Actions
+
+Review the complete proposal.
+
+Verify every reference to
+
+- Documentation
+- Source Code
+- Files
+- Folders
+- Classes
+- Interfaces
+- Methods
+- Commands
+- Queries
+- Handlers
+- APIs
+- Business Rules
+- Architecture
+
+## Rules
+
+Never reference an unverified project artifact.
+
+If any referenced artifact cannot be verified,
+
+replace it with
+
+> Not yet verified.
+
+Confidence is not evidence.
+
+Unknown information must never be presented as fact.
+
+## Output
+
+### Verified Facts
+
+### Unverified Items
+
+### Corrections
+
+---
+
+# Phase 8 — Human Review
 
 ## Objective
 
@@ -241,7 +322,7 @@ The AI must not continue automatically.
 
 ---
 
-# Phase 8 — Approval
+# Phase 9 — Approval
 
 Implementation begins only after explicit approval.
 
@@ -258,7 +339,7 @@ STOP.
 
 ---
 
-# Phase 9 — Implementation
+# Phase 10 — Implementation
 
 ## Rules
 
@@ -279,7 +360,7 @@ The AI must stop immediately after implementation.
 
 ---
 
-# Phase 10 — Build Verification
+# Phase 11 — Build Verification
 
 ## Objective
 
@@ -296,7 +377,7 @@ stop and resolve the issue before continuing.
 
 ---
 
-# Phase 11 — Runtime Verification
+# Phase 12 — Runtime Verification
 
 ## Objective
 
@@ -314,7 +395,7 @@ Implementation is not complete until runtime verification succeeds.
 
 ---
 
-# Phase 12 — Self Review
+# Phase 13 — Self Review
 
 Before completion,
 
@@ -337,7 +418,7 @@ Separate
 
 ---
 
-# Phase 13 — Documentation Update
+# Phase 14 — Documentation Update
 
 If implementation changes
 
@@ -400,6 +481,10 @@ Design
 
 ↓
 
+Evidence Audit
+
+↓
+
 Human Review
 
 ↓
@@ -440,13 +525,13 @@ The AI must stop immediately when
 
 ## Response
 
-Insufficient information.
-
 State
 
-- What is verified
-- What is missing
-- What requires clarification
+## Verified Facts
+
+## Missing Information
+
+## Clarification Required
 
 Never continue by guessing.
 
@@ -458,11 +543,19 @@ Every report should follow this structure.
 
 ## Verified Facts
 
-Only verified information.
+Only information supported by verified evidence.
 
 ## Findings
 
-Conclusions derived from verified facts.
+Derived only from verified facts.
+
+## Unverified Items
+
+List anything that could not be verified.
+
+Use
+
+> Not yet verified.
 
 ## Recommendations
 
@@ -470,20 +563,30 @@ Optional.
 
 Provide recommendations only after approval or when explicitly requested.
 
------
-## Verification Checklist
+---
 
-Before referring to any project artifact:
+# Verification Checklist
+
+Before referring to any project artifact
+
+verify
 
 - [ ] File exists
 - [ ] Folder exists
 - [ ] Class exists
+- [ ] Interface exists
 - [ ] Method exists
 - [ ] Business Rule exists
 - [ ] Documentation exists
 
-If any item cannot be verified:
+If any item cannot be verified
 
-Report
+- Do not reference it.
+- Do not infer it.
+- Do not generate implementation from it.
+
+Instead report
 
 > Not yet verified.
+
+AI confidence is never considered evidence.
