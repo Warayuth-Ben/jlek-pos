@@ -93,6 +93,15 @@ public sealed class Order : AggregateRoot<OrderId>
         RaiseDomainEvent(new OrderConfirmedEvent(Id));
     }
 
+    public void Cancel()
+    {
+        CheckRule(new CannotCancelNonConfirmedOrderRule(Status));
+
+        Status = OrderStatus.Cancelled;
+
+        RaiseDomainEvent(new OrderCancelledEvent(Id));
+    }
+
     public void Complete()
     {
         CheckRule(new CannotCompleteNonConfirmedOrderRule(Status));

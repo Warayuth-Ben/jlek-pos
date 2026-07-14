@@ -9,6 +9,13 @@ Every AI participating in this project **must complete this onboarding process b
 Failure to complete this onboarding process may result in incorrect assumptions, architecture violations, or business rule inconsistencies.
 
 #
+File paths and filenames are authoritative.
+
+The AI must never infer filenames from sequence numbers,
+similar names, previous conversations, or memory.
+
+Always verify the filename by enumerating the parent directory first.
+.
 
 When a document specifies a filename,
 
@@ -397,3 +404,27 @@ When onboarding is complete:
 3. Report missing references.
 4. Confirm compliance.
 5. Wait for the user's next instruction.
+
+--------------
+The Required Completion Format is mandatory.
+
+The AI must not replace it with a natural language summary.
+
+The AI must use the exact section headings specified below.
+
+Any alternative completion format is considered incomplete onboarding.
+-------------
+Every finding must be classified as one of the following:
+
+Verified Fact
+Repository Gap
+Engineering Suggestion
+
+The AI must never present an Engineering Suggestion
+as if it were a Verified Fact.
+
+If the repository contains no evidence,
+the AI must explicitly state:
+
+"This is an engineering suggestion,
+not repository evidence."

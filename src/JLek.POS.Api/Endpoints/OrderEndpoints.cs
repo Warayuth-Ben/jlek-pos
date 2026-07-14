@@ -1,6 +1,7 @@
 ﻿using JLek.POS.Api.Requests;
 using JLek.POS.Api.Responses;
 using JLek.POS.Application.Features.Orders.Commands.AddItem;
+using JLek.POS.Application.Features.Orders.Commands.CancelOrder;
 using JLek.POS.Application.Features.Orders.Commands.CompleteOrder;
 using JLek.POS.Application.Features.Orders.Commands.ConfirmOrder;
 using JLek.POS.Application.Features.Orders.Commands.CreateOrder;
@@ -115,6 +116,19 @@ public static class OrderEndpoints
         {
             var order = await handler.Handle(
                 new CompleteOrderCommand(
+                    OrderId.From(id)),
+                cancellationToken);
+
+            return Results.Ok(order.ToResponse());
+        });
+
+        group.MapPost("/{id:guid}/cancel", async (
+            Guid id,
+            [FromServices] CancelOrderCommandHandler handler,
+            CancellationToken cancellationToken) =>
+        {
+            var order = await handler.Handle(
+                new CancelOrderCommand(
                     OrderId.From(id)),
                 cancellationToken);
 
