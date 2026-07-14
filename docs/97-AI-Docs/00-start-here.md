@@ -12,6 +12,16 @@ Failure to complete this onboarding process may result in incorrect assumptions,
 
 When a document specifies a filename,
 
+When a document specifies a path,
+
+the AI must open that exact path.
+
+The AI must not search for the file in other directories.
+
+The AI must not infer alternative locations.
+
+Repository search is allowed only after the exact path has been verified to be unavailable.
+
 the AI must use the filename exactly as written.
 
 The AI must never construct, infer, rename, abbreviate, or normalize filenames.
@@ -19,7 +29,18 @@ The AI must never construct, infer, rename, abbreviate, or normalize filenames.
 If the file cannot be found,
 
 re-read the source document and quote the filename exactly before reporting an error.
----
+
+The AI must not report:
+
+- Task Completed
+- Onboarding Completed
+- Ready
+
+unless every mandatory document has been successfully opened and read.
+
+If any mandatory document has not been read,
+
+## continue onboarding instead of completing the task.
 
 # Mandatory Reading
 
@@ -39,7 +60,7 @@ They must be read **in the following order**.
 
 Read
 
-`01-ai-engineering-standard.md`
+docs/97-AI-Docs/01-ai-engineering-standard.md
 
 Purpose
 
@@ -53,7 +74,7 @@ This document is mandatory.
 
 Read
 
-`02-ai-constitution.md`
+docs/97-AI-Docs/02-ai-constitution.md
 
 Purpose
 
@@ -69,7 +90,7 @@ This document is mandatory.
 
 Read
 
-`03-ai-workflow.md`
+docs/97-AI-Docs/03-ai-workflow.md
 
 Purpose
 
@@ -85,7 +106,7 @@ This document is mandatory.
 
 Read
 
-`04-ai-glossary.md`
+docs/97-AI-Docs/04-ai-glossary.md
 
 This document is mandatory.
 
@@ -99,13 +120,23 @@ Do not postpone reading until an unfamiliar term appears.
 
 AI onboarding is not complete until this document has been read.
 
+The AI must copy the filename exactly.
+
+The AI must not paraphrase filenames.
+
+The AI must not rewrite filenames.
+
+The AI must not generate a filename from memory.
+
+The filename must be copied character-for-character.
+
 ---
 
 ## Step 5 — Prompt Library
 
 Read
 
-`05-ai-prompts.md`
+docs/97-AI-Docs/05-ai-prompts.md
 
 This document is mandatory.
 
@@ -131,7 +162,7 @@ AI onboarding is not complete until this document has been read.
 
 Read
 
-`98-ai-context.md`
+docs/97-AI-Docs/98-ai-context.md
 
 This document is mandatory.
 
@@ -156,7 +187,7 @@ AI onboarding is not complete until this document has been read.
 
 Read
 
-`99-project-status.md`
+docs/97-AI-Docs/99-project-status.md
 
 This document is mandatory.
 
