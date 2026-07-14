@@ -5,7 +5,7 @@ namespace JLek.POS.Domain
     public class Customer
     {
         public string Name { get; set; }
-        
+
         public void Print()
         {
             Console.WriteLine("Customer");
