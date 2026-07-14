@@ -404,3 +404,43 @@ Report
 
 Never continue by guessing.
 --------------
+
+### Repository Verification Principle
+
+Repository search is not authoritative.
+
+Search results are advisory.
+
+Failure to find a file using search is NOT sufficient evidence that the file does not exist.
+
+When possible, verify using:
+
+- Directory traversal
+- Exact path access
+- Direct file reading
+
+If verification cannot be completed,
+report repository evidence as insufficient.
+----------------
+### Tool Scope Verification
+
+The AI must understand and explicitly state the scope of every tool operation.
+
+Examples include:
+
+- Search scope
+- Directory scope
+- Repository scope
+
+Do not infer broader scope than the tool or prompt explicitly specifies.
+----------------
+
+### Evidence Consistency
+
+The AI must maintain consistency with previously verified evidence.
+
+Later tool results must not invalidate earlier verified evidence without explicit re-verification.
+
+When evidence conflicts,
+
+report the conflict instead of replacing earlier verified facts.

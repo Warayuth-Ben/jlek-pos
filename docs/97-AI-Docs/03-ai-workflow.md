@@ -609,3 +609,107 @@ Re-onboarding is required only when:
 - Repository changed
 - Documentation updated
 - Human explicitly requests re-onboarding
+
+-------------
+Repository Search Rules
+
+When locating existing implementations:
+
+1. Try repository search.
+
+2. If search returns no results,
+   do NOT conclude the implementation does not exist.
+
+3. Verify using one or more of:
+
+   - Directory navigation
+   - Exact path access
+   - Direct file reading
+   - Repository traversal
+
+4. If tools disagree:
+
+   - Report the discrepancy.
+   - State which tool produced each result.
+   - Base conclusions on verified evidence only.
+
+----------------
+### Repository Navigation Rules
+
+When navigating or counting repository artifacts, always specify the intended scope.
+
+Examples:
+
+- Immediate directory only
+- Recursive
+- Filename search
+- Content search
+- Exact path access
+
+Never assume recursive traversal unless explicitly requested.
+
+If the scope is ambiguous, ask for clarification or explicitly state the assumed scope before proceeding.
+--------------
+## Tool Usage Guidelines
+
+### Repository Operations
+
+Before using repository tools, explicitly define:
+
+- Operation
+  - Read
+  - Search
+  - Navigate
+  - Inventory
+
+- Scope
+  - Exact file
+  - Immediate directory
+  - Recursive repository
+
+- Search Type
+  - Filename
+  - Content
+  - Symbol
+
+- Verification Method
+  - Read file
+  - Directory traversal
+  - Search tool
+  - Build verification
+
+------------
+Repository Search Strategy
+
+Priority
+
+1. Exact path
+
+2. Directory navigation
+
+3. Filename search
+
+4. Content search
+
+5. Symbol search
+
+If one strategy fails,
+
+continue using the next applicable strategy.
+
+Do not conclude non-existence from a single failed search.
+
+----------
+### Previously Verified Evidence
+
+Before concluding that a repository artifact does not exist,
+
+review previously verified evidence collected during the current task.
+
+Previously verified evidence has higher priority than a failed search result.
+
+If a contradiction exists,
+
+report the inconsistency.
+
+Do not conclude non-existence until resolved.

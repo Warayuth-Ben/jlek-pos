@@ -169,3 +169,44 @@ The following benchmark results were affected by the execution environment rathe
 - Recursive repository indexing
 
 These limitations should not be interpreted as model deficiencies unless reproduced under a fully verified environment.
+
+### Verified Observations
+
+- read_file successfully accessed Entity.cs.
+- search_files did not return the same file.
+- Directory traversal successfully located Common/.
+- Workspace navigation worked correctly.
+
+### Conclusion
+
+Repository navigation is functioning.
+
+Search behavior appears to depend on the underlying tool implementation rather than the model itself.
+
+Repository-wide search benchmarks should distinguish between
+
+- Directory traversal
+- Exact path access
+- Filename search
+- Content search
+
+These capabilities should not be evaluated as a single metric.
+---------
+### Search Capability
+
+Search should be benchmarked separately:
+
+- Filename Search
+- Path Search
+- Full-text Search
+- Symbol Search
+
+These are different capabilities and must not be evaluated as a single metric.
+-----------
+## Evidence Consistency
+
+Tests whether the AI maintains consistency across multiple tool invocations.
+
+The AI must not invalidate previously verified evidence without explicit re-verification.
+
+Conflicting tool outputs must be reported rather than silently replacing verified facts.

@@ -642,3 +642,13 @@ This enables
 - isolated milestones
 - easier review
 - lower implementation risk
+-------------------
+# Standard 30 —  When working with repositories:
+
+- Distinguish between directory listing and recursive traversal.
+- Distinguish between filename search and content search.
+- Distinguish between exact path access and repository search.
+
+A repository search result is not authoritative unless verified.
+
+All repository reports must explicitly state the search scope.
