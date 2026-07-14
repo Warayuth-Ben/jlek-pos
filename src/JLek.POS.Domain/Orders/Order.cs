@@ -62,6 +62,7 @@ public sealed class Order : AggregateRoot<OrderId>
     {
         CheckRule(new CannotModifyConfirmedOrderRule(Status));
         CheckRule(new CannotModifyCancelledOrderRule(Status));
+        CheckRule(new CannotModifyCompletedOrderRule(Status));
 
         var item = _items.FirstOrDefault(x => x.Id == itemId);
 

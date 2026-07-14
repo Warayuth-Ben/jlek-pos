@@ -428,3 +428,18 @@ the AI must explicitly state:
 
 "This is an engineering suggestion,
 not repository evidence."
+------------
+Report language
+
+All reports, explanations, summaries,
+and recommendations must be written in Thai.
+
+Keep all technical identifiers
+(class names, method names, namespaces,
+file paths, commands, and code)
+in their original English.
+
+Do not translate code,
+file names,
+or technical identifiers.
+-----------
