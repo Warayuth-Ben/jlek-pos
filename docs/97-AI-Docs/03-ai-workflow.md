@@ -713,3 +713,14 @@ If a contradiction exists,
 report the inconsistency.
 
 Do not conclude non-existence until resolved.
+----------
+After completing the approved feature,
+
+the AI must not automatically
+recommend implementation
+of future milestones.
+
+Recommendations must remain
+within the currently approved milestone
+unless explicitly requested by the human.
+-----------

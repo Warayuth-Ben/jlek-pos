@@ -2,6 +2,7 @@
 using JLek.POS.Api.Responses;
 using JLek.POS.Application.Features.Orders.Commands.AddItem;
 using JLek.POS.Application.Features.Orders.Commands.CancelOrder;
+using JLek.POS.Application.Features.Orders.Responses;
 using JLek.POS.Application.Features.Orders.Commands.CompleteOrder;
 using JLek.POS.Application.Features.Orders.Commands.ConfirmOrder;
 using JLek.POS.Application.Features.Orders.Commands.CreateOrder;
@@ -31,7 +32,7 @@ public static class OrderEndpoints
 
             return Results.Created(
                 $"/orders/{order.Id}",
-                order.ToResponse());
+                OrderResponseV2.FromDomain(order));
         });
 
         group.MapGet("/", async (
@@ -43,7 +44,7 @@ public static class OrderEndpoints
                 cancellationToken);
 
             return Results.Ok(
-                orders.Select(x => x.ToResponse()));
+                orders.Select(x => OrderResponseV2.FromDomain(x)));
         });
 
         group.MapGet("/{id:guid}", async (
@@ -61,7 +62,7 @@ public static class OrderEndpoints
                 return Results.NotFound();
             }
 
-            return Results.Ok(order.ToResponse());
+            return Results.Ok(OrderResponseV2.FromDomain(order));
         });
 
         group.MapPost("/{id:guid}/items", async (
@@ -78,7 +79,7 @@ public static class OrderEndpoints
                     request.UnitPrice),
                 cancellationToken);
 
-            return Results.Ok(order.ToResponse());
+            return Results.Ok(OrderResponseV2.FromDomain(order));
         });
 
         group.MapDelete("/{id:guid}/items/{itemId:guid}", async (
@@ -93,7 +94,7 @@ public static class OrderEndpoints
                     OrderItemId.From(itemId)),
                 cancellationToken);
 
-            return Results.Ok(order.ToResponse());
+            return Results.Ok(OrderResponseV2.FromDomain(order));
         });
 
         group.MapPost("/{id:guid}/confirm", async (
@@ -106,7 +107,7 @@ public static class OrderEndpoints
                     OrderId.From(id)),
                 cancellationToken);
 
-            return Results.Ok(order.ToResponse());
+            return Results.Ok(OrderResponseV2.FromDomain(order));
         });
 
         group.MapPost("/{id:guid}/complete", async (
@@ -119,7 +120,7 @@ public static class OrderEndpoints
                     OrderId.From(id)),
                 cancellationToken);
 
-            return Results.Ok(order.ToResponse());
+            return Results.Ok(OrderResponseV2.FromDomain(order));
         });
 
         group.MapPost("/{id:guid}/cancel", async (
@@ -132,7 +133,7 @@ public static class OrderEndpoints
                     OrderId.From(id)),
                 cancellationToken);
 
-            return Results.Ok(order.ToResponse());
+            return Results.Ok(OrderResponseV2.FromDomain(order));
         });
 
         return app;
