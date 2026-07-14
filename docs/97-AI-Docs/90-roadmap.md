@@ -62,3 +62,23 @@ Phase 11
 
 Deployment
 
+
+
+\--------
+
+หลังจาก Commit งานปัจจุบันแล้ว
+
+
+
+✅ OrderResponse v2
+
+🔜 Complete Remove Item Verification
+
+🔜 Global Exception Handling
+
+🔜 ProblemDetails
+
+🔜 Standard API Error Responses
+
+🔜 Unit Tests
+
