@@ -510,7 +510,31 @@ Technology implements those rules.
 
 \---
 
+\### Terminology Note
 
+
+
+**Product** is the terminology used in the Catalog documentation.
+
+
+
+**Menu Item** is the terminology used in the Ordering context (`docs/02-domain-model/ubiquitous-language.md`).
+
+
+
+Within the current implementation (v1), these terms refer to the same business concept.
+
+
+
+Future implementations may differentiate them further.
+
+
+
+Not yet verified.
+
+
+
+\---
 
 \## Relationship to Other Domains
 
