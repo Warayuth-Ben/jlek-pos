@@ -217,7 +217,7 @@ Implementation
 
 ✔ ProductCategory Aggregate
 
-⬜ Ingredient Aggregate
+✔ Ingredient Aggregate
 
 ⬜ Infrastructure
 
