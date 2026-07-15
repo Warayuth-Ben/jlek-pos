@@ -24,12 +24,15 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Order API v1
+Menu Module
 
 Status
 
-Frozen
+Domain Implementation (In Progress)
 
+Completed
+- Architecture Design ✅
+- Product Aggregate ✅
 ---
 
 # Completed
@@ -73,6 +76,10 @@ Frozen
 ✔ Order Aggregate
 
 ✔ OrderItem Entity
+
+✔ Product Aggregate (Menu Module)
+
+
 
 ---
 
@@ -182,6 +189,42 @@ Changes are limited to
 Enhancements require a new milestone.
 
 ---
+# Menu Module Progress
+
+Architecture
+
+✔ Business Rules
+
+✔ Vocabulary
+
+✔ Aggregate Boundary
+
+✔ Domain Model
+
+✔ Repository Contract
+
+✔ CQRS Design
+
+✔ Application Flow
+
+✔ API Contract
+
+✔ Persistence Design
+
+Implementation
+
+✔ Product Aggregate
+
+⬜ ProductCategory Aggregate
+
+⬜ Ingredient Aggregate
+
+⬜ Infrastructure
+
+⬜ Application
+
+⬜ API
+--
 
 # Current Technical Debt
 
@@ -211,7 +254,7 @@ Objectives
 
 Restaurant
 
-- Menu Module
+- ✅ Menu Module (In Progress)
 - Table Module
 - Kitchen Queue
 - Payment
