@@ -6,7 +6,7 @@ Project: JLek POS
 
 Last Updated
 
-2026-07-13
+2026-07-14
 
 ---
 
@@ -90,6 +90,8 @@ Frozen
 
 ✔ CompleteOrder
 
+✔ CancelOrder
+
 ### Queries
 
 ✔ GetOrderById
@@ -126,6 +128,10 @@ Frozen
 
 ✔ Response DTO
 
+✔ Response DTO v2
+
+✔ OrderItemResponse
+
 ✔ DTO Mapping
 
 ✔ POST /orders
@@ -141,6 +147,8 @@ Frozen
 ✔ POST /orders/{id}/confirm
 
 ✔ POST /orders/{id}/complete
+
+✔ POST /orders/{id}/cancel
 
 Verified
 
@@ -179,8 +187,6 @@ Enhancements require a new milestone.
 
 Verified
 
-- OrderResponse currently exposes only Order-level information.
-- OrderItemResponse has not yet been implemented.
 - Global Exception Handling has not yet been implemented.
 - ProblemDetails response has not yet been implemented.
 
@@ -194,8 +200,6 @@ Order API v1.1
 
 Objectives
 
-- OrderResponse v2
-- OrderItemResponse
 - Complete Remove Item verification
 - Global Exception Handling
 - ProblemDetails
@@ -310,6 +314,27 @@ Order API v1 is considered complete and frozen.
 
 The next development milestone focuses on API maturity
 
-(Response DTO v2, Remove Item verification, Global Exception Handling)
+(Remove Item verification, Global Exception Handling, Standard API Error Responses)
 
 before expanding into the Menu Module and Presentation Layer.
+
+---
+
+Bug Fixes (Order API v1 — Frozen)
+
+- Added CannotModifyCompletedOrderRule to Order.RemoveItem()
+  to align the implementation with the documented business rule
+  that Completed orders are not editable.
+
+----
+# Verified During This Milestone
+
+Verified by Human Review
+
+- Repository evidence reviewed.
+- Architecture review completed.
+- DDD review completed.
+- CQRS review completed.
+- git diff reviewed before merge.
+
+No architecture drift was identified during this milestone.
