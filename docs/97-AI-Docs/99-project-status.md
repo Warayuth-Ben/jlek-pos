@@ -28,11 +28,13 @@ Menu Module
 
 Status
 
-Domain Implementation (In Progress)
+Infrastructure Implementation (In Progress)
 
 Completed
-- Architecture Design ✅
-- Product Aggregate ✅
+
+✔ Architecture Design
+✔ Domain Implementation
+✔ EF Core Configuration
 ---
 
 # Completed
@@ -81,6 +83,8 @@ Completed
 
 ✔ ProductCategory Aggregate (Menu Module)
 
+✔ Ingredient Aggregate (Menu Module)
+
 ---
 
 ## Application
@@ -124,6 +128,12 @@ Completed
 ✔ Aggregate Loading
 
 ✔ Dependency Injection
+
+✔ Catalog EF Core Configuration
+
+✔ Strongly Typed ID Converters
+
+✔ Entity Configurations
 
 ---
 
@@ -187,6 +197,45 @@ Changes are limited to
 - Security Fixes
 
 Enhancements require a new milestone.
+---
+# Menu Module Progress
+
+Architecture
+
+✔ Business Rules
+✔ Vocabulary
+✔ Aggregate Boundary
+✔ Domain Model
+✔ Repository Contract
+✔ CQRS Design
+✔ Application Flow
+✔ API Contract
+✔ Persistence Design
+
+Implementation
+
+Domain
+✔ Product Aggregate
+✔ ProductCategory Aggregate
+✔ Ingredient Aggregate
+
+Infrastructure
+✔ EF Core Configuration
+⬜ Repository Implementation
+⬜ Migration
+
+Application
+⬜ CQRS Handlers
+⬜ Queries
+⬜ Commands
+
+API
+⬜ Endpoints
+⬜ Request DTOs
+⬜ Response DTOs
+
+Testing
+⬜ Integration Tests
 
 ---
 # Menu Module Progress
@@ -237,24 +286,23 @@ No verified architecture violations have been found.
 
 ---
 
-# Next Milestone
-
-Order API v1.1
+Menu Module Infrastructure
 
 Objectives
 
-- Complete Remove Item verification
-- Global Exception Handling
-- ProblemDetails
-- Standard API Error Responses
-
+- Product Repository
+- ProductCategory Repository
+- Ingredient Repository
+- Build Verification
+- Repository Review
 ---
 
 # Future Milestones
 
 Restaurant
 
-- ✅ Menu Module (In Progress)
+- Menu Module Application
+- Menu Module API
 - Table Module
 - Kitchen Queue
 - Payment
@@ -265,7 +313,6 @@ Presentation
 - Web UI
 - Authentication
 - Authorization
-
 ---
 
 # Known Constraints
@@ -321,19 +368,19 @@ Architecture
 
 Domain
 
-█████████░ 95%
-
-Application
-
-█████████░ 95%
+██████████ 100%
 
 Infrastructure
 
-█████████░ 90%
+██████░░░░ 60%
+
+Application
+
+░░░░░░░░░░ 0%
 
 API
 
-█████████░ 90%
+░░░░░░░░░░ 0%
 
 UI
 
@@ -341,7 +388,7 @@ UI
 
 Estimated Overall Progress
 
-≈ 50%
+≈ 62%
 
 ---
 
@@ -375,3 +422,11 @@ Verified by Human Review
 - git diff reviewed before merge.
 
 No architecture drift was identified during this milestone.
+-----
+Menu Module
+
+Architecture, Domain implementation, and EF Core Configuration are complete.
+
+Implementation will continue with Repository implementations before proceeding to the Application and API layers.
+
+Aggregate boundaries, CQRS design, repository contracts, API contract, and persistence decisions remain frozen.
