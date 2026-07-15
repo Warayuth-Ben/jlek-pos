@@ -79,7 +79,7 @@ Completed
 
 ✔ Product Aggregate (Menu Module)
 
-
+✔ ProductCategory Aggregate (Menu Module)
 
 ---
 
@@ -215,7 +215,7 @@ Implementation
 
 ✔ Product Aggregate
 
-⬜ ProductCategory Aggregate
+✔ ProductCategory Aggregate
 
 ⬜ Ingredient Aggregate
 
