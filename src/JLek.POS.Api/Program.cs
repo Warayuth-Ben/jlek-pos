@@ -1,3 +1,4 @@
+using JLek.POS.Api.Middleware;
 using JLek.POS.Infrastructure;
 using JLek.POS.Api.Endpoints;
 using JLek.POS.Application;
@@ -12,6 +13,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 var app = builder.Build();
 
 // Middleware
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
