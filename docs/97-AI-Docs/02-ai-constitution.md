@@ -138,25 +138,9 @@ that statement must not be presented as fact.
 
 Implementation follows approval.
 
-Workflow
+The AI must follow the engineering workflow defined in:
 
-Analysis
-
-↓
-
-Design
-
-↓
-
-Human Review
-
-↓
-
-Approval
-
-↓
-
-Implementation
+docs/97-AI-Docs/03-ai-workflow.md
 
 Implementation without approval is prohibited.
 

@@ -269,6 +269,10 @@ Verification
 
 ↓
 
+Existing Implementation Review
+
+↓
+
 Understanding
 
 ↓
@@ -281,6 +285,10 @@ Design
 
 ↓
 
+Evidence Audit
+
+↓
+
 Human Review
 
 ↓
@@ -290,6 +298,14 @@ Approval
 ↓
 
 Implementation
+
+↓
+
+Build Verification
+
+↓
+
+Runtime Verification
 
 ↓
 

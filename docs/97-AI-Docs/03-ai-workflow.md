@@ -1,6 +1,6 @@
 ﻿# AI Workflow
 
-Version: 1.2
+Version: 1.3
 
 Project: JLek POS
 
@@ -86,7 +86,25 @@ Documentation Update
 
 Understand the project before making conclusions.
 
+## Context Reuse
+
+If AI onboarding has already been completed in the current conversation,
+and the verified context remains available,
+the AI must reuse the existing context.
+
+Do not repeat onboarding unnecessarily.
+
+Re-onboarding is required only when:
+
+- Context has been lost
+- Conversation restarted
+- Repository changed
+- Documentation updated
+- Human explicitly requests re-onboarding
+
 ## Required Actions
+
+If onboarding has not been completed in this conversation:
 
 Read
 
@@ -97,6 +115,36 @@ Read
 - AI Context
 - Project Status
 - Only the documentation relevant to the requested scope
+
+If onboarding has been completed and context is verified:
+
+- Reuse existing context.
+- Read only the documentation relevant to the requested scope.
+- Do not re-read previously verified documents unless:
+  - the scope changes,
+  - documentation changes,
+  - repository changes,
+  - or context has been lost.
+
+## Documentation Priority
+
+When determining business requirements:
+
+Priority
+
+1. Business Documentation (docs/)
+2. AI Documentation (docs/97-AI-Docs/)
+3. Source Code
+4. Engineering Recommendations
+
+Business documentation is the primary source for business requirements.
+
+Source code is the primary source for implementation verification.
+
+If documentation and implementation differ:
+
+- Report the discrepancy.
+- Do not automatically choose either one.
 
 ## Output
 
@@ -118,6 +166,58 @@ Verify
 - Repository
 - Source Code
 - Architecture
+
+## Verification Scope
+
+Before verification, explicitly define:
+
+- Documentation Scope
+- Repository Scope
+- Search Scope
+
+Examples
+
+Documentation
+
+- docs/01-business-rules/
+- docs/02-domain-model/
+- docs/03-system-use-cases/
+- docs/04-state-machines/
+
+AI Documentation
+
+- docs/97-AI-Docs/
+
+Repository
+
+- src/
+- or the relevant project directory (for example: src/JLek.POS.Domain)
+
+Search Scope
+
+- Exact path
+- Immediate directory
+- Recursive repository
+- Filename
+- Content
+- Symbol
+
+Never use an undefined scope.
+## Previously Verified Evidence
+
+Before concluding that a repository artifact does not exist:
+
+- Review previously verified evidence collected during the current task.
+- Previously verified evidence has higher priority than a failed search result.
+
+If a contradiction exists:
+
+- Report the inconsistency.
+- Do not conclude non-existence until resolved.
+
+Repository evidence collected during the current task has higher priority than assumptions.
+
+Previously verified evidence must not be discarded because of one failed search.
 
 ## Rules
 
@@ -171,6 +271,62 @@ Examples
 - Aggregate
 - Existing Mapping
 
+## Repository Search Strategy
+
+When locating existing implementations, use the following priority:
+
+1. Exact path
+2. Directory navigation
+3. Filename search
+4. Content search
+5. Symbol search
+
+If one strategy fails, continue using the next applicable strategy.
+
+Do not conclude non-existence from a single failed search.
+
+## Repository Navigation Rules
+
+When navigating or counting repository artifacts, always specify the intended scope.
+
+Examples:
+
+- Immediate directory only
+- Recursive
+- Filename search
+- Content search
+- Exact path access
+
+Never assume recursive traversal unless explicitly requested.
+
+If the scope is ambiguous, ask for clarification or explicitly state the assumed scope before proceeding.
+
+## Tool Usage Guidelines
+
+Before using repository tools, explicitly define:
+
+- Operation
+  - Read
+  - Search
+  - Navigate
+  - Inventory
+
+- Scope
+  - Exact file
+  - Immediate directory
+  - Recursive repository
+
+- Search Type
+  - Filename
+  - Content
+  - Symbol
+
+- Verification Method
+  - Read file
+  - Directory traversal
+  - Search tool
+  - Build verification
+
 ## Rules
 
 Do not redesign before understanding the current implementation.
@@ -196,7 +352,7 @@ The AI must explain
 - Existing Design
 - Constraints
 
-If these cannot be explained,
+If these cannot be explained:
 
 STOP.
 
@@ -286,7 +442,7 @@ Verify every reference to
 
 Never reference an unverified project artifact.
 
-If any referenced artifact cannot be verified,
+If any referenced artifact cannot be verified:
 
 replace it with
 
@@ -324,6 +480,8 @@ The AI must not continue automatically.
 
 # Phase 9 — Approval
 
+## Objective
+
 Implementation begins only after explicit approval.
 
 Examples
@@ -333,7 +491,7 @@ Examples
 - Proceed
 - Implement
 
-Without approval,
+Without approval:
 
 STOP.
 
@@ -343,9 +501,7 @@ STOP.
 
 ## Rules
 
-Implement only
-
-the approved milestone.
+Implement only the approved milestone.
 
 ## Requirements
 
@@ -357,6 +513,10 @@ the approved milestone.
 The AI should recommend creating a Git checkpoint before implementation whenever practical.
 
 The AI must stop immediately after implementation.
+
+After completing the approved feature, the AI must not automatically recommend implementation of future milestones.
+
+Recommendations must remain within the currently approved milestone unless explicitly requested by the human.
 
 ---
 
@@ -371,7 +531,7 @@ Verify that the implementation compiles successfully.
 - Build succeeds
 - No unexpected compile errors
 
-If the build fails,
+If the build fails:
 
 stop and resolve the issue before continuing.
 
@@ -397,9 +557,9 @@ Implementation is not complete until runtime verification succeeds.
 
 # Phase 13 — Self Review
 
-Before completion,
+## Objective
 
-verify
+Before completion, verify
 
 - Build consistency
 - Architecture
@@ -420,6 +580,8 @@ Separate
 
 # Phase 14 — Documentation Update
 
+## Objective
+
 If implementation changes
 
 - Business Rules
@@ -429,9 +591,7 @@ If implementation changes
 
 the AI must recommend documentation updates.
 
-Implementation is not complete
-
-until documentation impact has been considered.
+Implementation is not complete until documentation impact has been considered.
 
 ---
 
@@ -452,64 +612,6 @@ Small milestones improve
 - reviewability
 - traceability
 - rollback safety
-
----
-
-# Engineering Workflow Summary
-
-Read
-
-↓
-
-Verify
-
-↓
-
-Review Existing Implementation
-
-↓
-
-Understand
-
-↓
-
-Analyze
-
-↓
-
-Design
-
-↓
-
-Evidence Audit
-
-↓
-
-Human Review
-
-↓
-
-Approval
-
-↓
-
-Implement
-
-↓
-
-Build
-
-↓
-
-Runtime Verification
-
-↓
-
-Self Review
-
-↓
-
-Update Documentation
 
 ---
 
@@ -567,7 +669,7 @@ Provide recommendations only after approval or when explicitly requested.
 
 # Verification Checklist
 
-Before referring to any project artifact
+Before referring to any project artifact:
 
 verify
 
@@ -579,7 +681,7 @@ verify
 - [ ] Business Rule exists
 - [ ] Documentation exists
 
-If any item cannot be verified
+If any item cannot be verified:
 
 - Do not reference it.
 - Do not infer it.
@@ -590,137 +692,3 @@ Instead report
 > Not yet verified.
 
 AI confidence is never considered evidence.
-----------------------
-
-# Context Reuse
-Context Reuse ต้องเกิดหลังจาก Onboarding สำเร็จเท่านั้น
-
-If AI onboarding has already been completed
-and the verified context remains available,
-
-the AI should reuse the existing context.
-
-Do not repeat onboarding unnecessarily.
-
-Re-onboarding is required only when:
-
-- Context has been lost
-- Conversation restarted
-- Repository changed
-- Documentation updated
-- Human explicitly requests re-onboarding
-
--------------
-Repository Search Rules
-
-When locating existing implementations:
-
-1. Try repository search.
-
-2. If search returns no results,
-   do NOT conclude the implementation does not exist.
-
-3. Verify using one or more of:
-
-   - Directory navigation
-   - Exact path access
-   - Direct file reading
-   - Repository traversal
-
-4. If tools disagree:
-
-   - Report the discrepancy.
-   - State which tool produced each result.
-   - Base conclusions on verified evidence only.
-
-----------------
-### Repository Navigation Rules
-
-When navigating or counting repository artifacts, always specify the intended scope.
-
-Examples:
-
-- Immediate directory only
-- Recursive
-- Filename search
-- Content search
-- Exact path access
-
-Never assume recursive traversal unless explicitly requested.
-
-If the scope is ambiguous, ask for clarification or explicitly state the assumed scope before proceeding.
---------------
-## Tool Usage Guidelines
-
-### Repository Operations
-
-Before using repository tools, explicitly define:
-
-- Operation
-  - Read
-  - Search
-  - Navigate
-  - Inventory
-
-- Scope
-  - Exact file
-  - Immediate directory
-  - Recursive repository
-
-- Search Type
-  - Filename
-  - Content
-  - Symbol
-
-- Verification Method
-  - Read file
-  - Directory traversal
-  - Search tool
-  - Build verification
-
-------------
-Repository Search Strategy
-
-Priority
-
-1. Exact path
-
-2. Directory navigation
-
-3. Filename search
-
-4. Content search
-
-5. Symbol search
-
-If one strategy fails,
-
-continue using the next applicable strategy.
-
-Do not conclude non-existence from a single failed search.
-
-----------
-### Previously Verified Evidence
-
-Before concluding that a repository artifact does not exist,
-
-review previously verified evidence collected during the current task.
-
-Previously verified evidence has higher priority than a failed search result.
-
-If a contradiction exists,
-
-report the inconsistency.
-
-Do not conclude non-existence until resolved.
-----------
-After completing the approved feature,
-
-the AI must not automatically
-recommend implementation
-of future milestones.
-
-Recommendations must remain
-within the currently approved milestone
-unless explicitly requested by the human.
------------

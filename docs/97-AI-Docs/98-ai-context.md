@@ -257,7 +257,9 @@ read
 
 5. 04-ai-glossary.md
 
-6. 99-project-status.md
+6. 05-ai-prompts.md
+
+7. 99-project-status.md
 
 ---
 

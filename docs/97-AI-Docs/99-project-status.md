@@ -246,19 +246,13 @@ Before implementation,
 
 the AI must
 
-1. Read AI documentation.
-
-2. Verify repository evidence.
-
-3. Understand Business Rules.
-
-4. Obtain human approval.
-
-5. Implement one milestone only.
-
-6. Perform self review.
-
-7. Recommend documentation updates if required.
+1. Read AI Documentation
+2. Verify Repository Evidence
+3. Follow AI Workflow (docs/97-AI-Docs/03-ai-workflow.md)
+4. Obtain Human Approval
+5. Complete One Milestone
+6. Perform Self Review
+7. Update Documentation if required
 
 ---
 

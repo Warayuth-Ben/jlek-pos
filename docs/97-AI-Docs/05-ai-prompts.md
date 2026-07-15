@@ -260,6 +260,8 @@ Output
 
 - Summary
 - Files Modified
+- Build Verification
+- Runtime Verification
 - Self Review
 
 ---
