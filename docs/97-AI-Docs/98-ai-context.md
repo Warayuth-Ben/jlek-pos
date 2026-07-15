@@ -277,10 +277,10 @@ Human
 
 is the Source of Decisions.
 
----------
-## Frozen Domain Decisions
+---
+# Frozen Domain Decisions
 
-### Menu Module Aggregate Boundary (Verified)
+## Menu Module Aggregate Boundary (Verified)
 
 This aggregate boundary has been verified through Business Rules documentation and repository evidence.
 
@@ -296,9 +296,9 @@ This aggregate boundary has been verified through Business Rules documentation a
 | Availability | Value Object |
 | Selection Rule | Value Object (inside Option Group) |
 
-### Notes
+## Notes
 
 - This decision is frozen for Menu Module v1.
 - Future business requirements may require revisiting aggregate boundaries.
 - AI should reuse this verified decision during onboarding instead of re-analyzing it unless Business Rules or repository evidence changes.
-------------
+---
