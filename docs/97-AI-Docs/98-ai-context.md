@@ -302,3 +302,10 @@ This aggregate boundary has been verified through Business Rules documentation a
 - Future business requirements may require revisiting aggregate boundaries.
 - AI should reuse this verified decision during onboarding instead of re-analyzing it unless Business Rules or repository evidence changes.
 ---
+# Frozen Architecture Decisions
+
+- Repository Contract
+- CQRS
+- Application Flow
+- API Contract
+--------
