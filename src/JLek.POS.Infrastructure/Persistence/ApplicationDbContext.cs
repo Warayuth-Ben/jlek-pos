@@ -1,4 +1,5 @@
 using JLek.POS.Domain.Catalog;
+using JLek.POS.Domain.Kitchen;
 using JLek.POS.Domain.Orders;
 using JLek.POS.Domain.Tables;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,8 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<Ingredient> Ingredients => Set<Ingredient>();
 
     public DbSet<DiningTable> DiningTables => Set<DiningTable>();
+
+    public DbSet<KitchenTicket> KitchenTickets => Set<KitchenTicket>();
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
