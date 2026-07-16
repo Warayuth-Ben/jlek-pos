@@ -1,3 +1,4 @@
+using JLek.POS.Domain.Catalog;
 using JLek.POS.Domain.Orders;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,12 @@ public sealed class ApplicationDbContext : DbContext
     }
 
     public DbSet<Order> Orders => Set<Order>();
+
+    public DbSet<Product> Products => Set<Product>();
+
+    public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
+
+    public DbSet<Ingredient> Ingredients => Set<Ingredient>();
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
