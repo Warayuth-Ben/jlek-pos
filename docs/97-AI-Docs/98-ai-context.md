@@ -1325,6 +1325,28 @@ Testing order
 
 Business Rules should be tested before infrastructure behavior.
 
+## Verified Integration Testing Pattern
+
+Menu Module v1 integration tests implement the following pattern.
+
+- xUnit
+- Testcontainers PostgreSQL (one container per test class)
+- CustomWebApplicationFactory<Program>
+- FluentAssertions
+- Collection Fixture pattern for container lifecycle
+- No mocking
+- No fake repositories
+- No InMemory database
+
+Every test verifies:
+
+- HTTP Status Code
+- Response DTO
+- Database persistence
+- Aggregate state / Business Rules
+
+Future modules should reuse this testing infrastructure and pattern.
+
 ---
 
 # Refactoring Policy
@@ -2048,17 +2070,17 @@ not replacement.
 Preferred
 
 Existing Pattern
-        ↓
+↓
 Extend
-        ↓
+↓
 Review
-        ↓
+↓
 Freeze
 
 Avoid
 
 Existing Pattern
-        ↓
+↓
 Replace Everything
 
 ---
@@ -2080,6 +2102,7 @@ Menu Pattern
 - Owned Entities
 - Value Collections
 - Aggregate References
+- Integration Testing Infrastructure (Testcontainers + WebApplicationFactory)
 
 Future Patterns
 
@@ -2210,5 +2233,3 @@ Freeze confidently.
 Reuse everywhere.
 
 ---
-
-

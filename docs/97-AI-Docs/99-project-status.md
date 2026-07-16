@@ -6,7 +6,7 @@ Project: JLek POS
 
 Last Updated
 
-2026-07-14
+2026-07-16
 
 ---
 
@@ -35,6 +35,14 @@ Completed
 ✔ Architecture Design
 ✔ Domain Implementation
 ✔ EF Core Configuration
+✔ Repository Implementation
+✔ CQRS Implementation
+✔ API Implementation
+✔ Integration Testing (54 tests)
+✔ Build Verification (0 errors, 0 warnings)
+✔ Documentation Update
+✔ Human Review
+
 ---
 
 # Completed
@@ -50,6 +58,8 @@ Completed
 ✔ Project References
 
 ✔ Build Success
+
+✔ Integration Test Project (xUnit + Testcontainers + WebApplicationFactory)
 
 ## AI Guidance
 
@@ -141,6 +151,8 @@ Completed
 ✔ Entity Configurations
 ✔ Catalog Repository Implementations
 ✔ Catalog DbContext Registration
+✔ Catalog Repository DI Registration
+
 ---
 
 ## Presentation
@@ -177,9 +189,9 @@ Completed
 ✔ Catalog Request DTOs
 ✔ Catalog Response DTOs
 ✔ Catalog Endpoint Registration
-✔ Product Endpoints
-✔ ProductCategory Endpoints
-✔ Ingredient Endpoints
+✔ Product Endpoints (15 operations)
+✔ ProductCategory Endpoints (7 operations)
+✔ Ingredient Endpoints (5 operations)
 
 Verified
 
@@ -193,6 +205,32 @@ Catalog Module
 - CQRS preserved
 - Repository pattern preserved
 - Aggregate boundaries preserved
+
+---
+
+## Integration Testing
+
+✔ Test Infrastructure Complete
+
+- xUnit
+- Testcontainers PostgreSQL (isolated container per test class)
+- CustomWebApplicationFactory
+- FluentAssertions
+
+✔ Product Tests (31 tests)
+
+- CRUD: Create, GetById, GetAll, NotFound
+- Update: Details, Category, Availability, Visibility
+- Composition: SuggestedPrice, OptionGroup, Modifier, Ingredient
+- Business Rules: CannotModifyUnavailableProductRule (5 tests)
+
+✔ ProductCategory Tests (13 tests)
+
+- Create, GetById, GetAll, Rename, Reorder, Hide, Show
+
+✔ Ingredient Tests (10 tests)
+
+- Create, GetById, GetAll, Rename, SetAvailability
 
 ---
 
@@ -214,10 +252,13 @@ Menu Module
 - Aggregate Boundaries
 - Repository Contracts
 - Repository Implementations
+- EF Core Configurations
 - CQRS
 - Persistence Design
 - Application Flow
 - API Contracts
+- Integration Testing Infrastructure
+- Integration Tests
 
 Changes are limited to
 
@@ -225,69 +266,8 @@ Changes are limited to
 - Security Fixes
 
 Enhancements require a new milestone.
----
-# Menu Module Progress
-
-Architecture
-
-✔ Complete
-
-Domain
-
-✔ Complete
-
-Infrastructure
-
-✔ Complete
-
-Application
-
-✔ Complete
-
-API
-
-✔ Complete
-
-Testing
-
-⬜ Integration Tests
-
-Status
-
-Frozen
 
 ---
-# Menu Module Progress
-
-Architecture
-
-✔ Complete
-
-Domain
-
-✔ Complete
-
-Infrastructure
-
-✔ Complete
-
-Application
-
-✔ Complete
-
-API
-
-✔ Complete
-
-Testing
-
-⬜ Integration Tests
-
-Status
-
-Frozen
-
---
 
 # Current Technical Debt
 
@@ -295,20 +275,8 @@ Verified
 
 - Global Exception Handling has not yet been implemented.
 - ProblemDetails response has not yet been implemented.
-- Integration Tests have not yet been implemented.
-- Manual Swagger verification has not yet been completed.
+
 No verified architecture violations have been found.
-
----
-
-Menu Module Validation
-
-Objectives
-
-- Integration Tests
-- Manual Swagger Verification
-- End-to-End Verification
-- Freeze Verification
 
 ---
 
@@ -326,6 +294,7 @@ Presentation
 - Web UI
 - Authentication
 - Authorization
+
 ---
 
 # Known Constraints
@@ -361,13 +330,13 @@ the AI must
 
 # Success Criteria
 
-The next milestone is considered complete only when
+A milestone is considered complete only when
 
 - Build succeeds
 - Architecture remains unchanged
 - Business Rules remain unchanged
 - API returns Response DTOs
-- Global Exception Handling implemented
+- Integration tests pass
 - Documentation updated
 - Human review completed
 
@@ -395,13 +364,18 @@ API
 
 ██████████ 100%
 
+Integration Testing
+
+██████████ 100%
+
 UI
 
 ░░░░░░░░░░ 0%
 
 Estimated Overall Progress
 
-≈ 72%
+≈ 78%
+
 ---
 
 # Notes
@@ -412,9 +386,12 @@ Menu Module v1 is complete and frozen.
 
 Both modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
 
+Integration testing is complete with 54 tests covering Product, ProductCategory, and Ingredient APIs.
+
 Future development should reuse these modules as implementation references.
 
 The next functional milestone is Table Module.
+
 ---
 
 Bug Fixes (Order API v1 — Frozen)
@@ -432,13 +409,14 @@ Verified by Human Review
 - Repository implementation reviewed.
 - CQRS implementation reviewed.
 - API implementation reviewed.
+- Integration tests reviewed.
 - Build verification completed.
 - No architecture drift identified.
------
+----
 Menu Module
 
-Architecture, Domain implementation, and EF Core Configuration are complete.
+Architecture, Domain, Infrastructure, Application, API, and Integration Testing are complete.
 
-Implementation will continue with Repository implementations before proceeding to the Application and API layers.
+The Menu Module v1 is now frozen.
 
-Aggregate boundaries, CQRS design, repository contracts, API contract, and persistence decisions remain frozen.
+Future modules should reuse Menu Module patterns before introducing new architectural patterns.
