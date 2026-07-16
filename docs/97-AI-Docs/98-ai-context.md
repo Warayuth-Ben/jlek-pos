@@ -1781,3 +1781,261 @@ Premature optimization
 Architectural experimentation
 
 ---
+
+# AI Roles
+
+Different AI systems may perform different responsibilities.
+
+Architecture AI
+
+- Reviews architecture
+- Reviews DDD
+- Reviews CQRS
+- Reviews Aggregate boundaries
+
+Implementation AI
+
+- Implements code
+- Follows frozen architecture
+
+Review AI
+
+- Reviews implementation
+- Detects architecture drift
+
+Documentation AI
+
+- Updates documentation
+- Maintains AI Context
+- Maintains Project Status
+
+Human
+
+- Makes final decisions
+- Resolves ambiguity
+- Approves milestones
+
+---
+
+# Approval Levels
+
+Level 1
+
+Implementation
+
+↓
+
+Self Review
+
+Level 2
+
+Human Review
+
+↓
+
+Documentation Update
+
+Level 3
+
+Milestone Freeze
+
+↓
+
+Git Commit
+
+↓
+
+Next Milestone
+
+---
+
+# AI Escalation Rules
+
+AI must stop and ask for approval when
+
+- architecture changes
+
+- repository contracts change
+
+- aggregate boundaries change
+
+- business rules are unclear
+
+- evidence is insufficient
+
+Continue automatically only when
+
+- implementation follows frozen decisions.
+
+---
+
+# Evidence Confidence
+
+High
+
+- Business Rules
+- Frozen Documentation
+- Human Decision
+
+Medium
+
+- Repository Evidence
+
+Low
+
+- Existing comments
+- AI assumptions
+
+Never treat assumptions as verified facts.
+
+---
+
+# Module Independence
+
+Each module should
+
+- compile independently
+
+- expose only public contracts
+
+- avoid hidden dependencies
+
+Modules communicate only through
+
+- contracts
+
+or
+
+- identifiers
+
+---
+
+# Code Ownership
+
+Business Rules
+
+↓
+
+Domain
+
+Persistence
+
+↓
+
+Infrastructure
+
+Use Cases
+
+↓
+
+Application
+
+HTTP
+
+↓
+
+Presentation
+
+Ownership should never overlap.
+
+---
+
+# AI Review Checklist
+
+Before approval verify
+
+□ Architecture
+
+□ Build
+
+□ Naming
+
+□ CQRS
+
+□ Aggregate boundaries
+
+□ Repository pattern
+
+□ Layer responsibilities
+
+□ Documentation
+
+□ Frozen decisions
+
+□ Git readiness
+
+---
+
+# Module Freeze Checklist
+
+Before freezing a module
+
+□ Architecture frozen
+
+□ Domain complete
+
+□ Infrastructure complete
+
+□ Application complete
+
+□ API complete
+
+□ Build passes
+
+□ Documentation updated
+
+□ Human approval completed
+
+□ Git checkpoint created
+
+---
+
+# Release Checklist
+
+Every release should include
+
+□ Version
+
+□ Changelog
+
+□ Build Verification
+
+□ Documentation
+
+□ Human Approval
+
+□ Git Tag
+
+---
+
+# Knowledge Preservation
+
+Knowledge should be preserved in the following order
+
+Business Rules
+
+↓
+
+Architecture Decisions
+
+↓
+
+Engineering Handbook
+
+↓
+
+AI Context
+
+↓
+
+Project Status
+
+↓
+
+Source Code
+
+Never rely on AI memory alone.
+
+Long-term knowledge must exist in documentation.
+
+---
