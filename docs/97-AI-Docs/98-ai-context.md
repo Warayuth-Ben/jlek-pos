@@ -474,6 +474,89 @@ unless new verified business requirements require architectural changes.
 
 ---
 
+# Frozen Table Module v1
+
+Status
+
+Frozen
+
+## Verified Architecture
+
+The following implementation has been completed and verified.
+
+- Domain
+- Infrastructure
+- Application
+- API
+- Integration Testing
+- CI/CD
+
+## Frozen Components
+
+### Domain
+
+- DiningTable Aggregate (sole aggregate root)
+- Aggregate Boundaries (table status lifecycle)
+- Business Rules (CannotAssignOccupiedTableRule, CannotReleaseAvailableTableRule, CannotTransferToOccupiedTableRule)
+- Domain Events (TableAssigned, TableTransferred, TablesMerged, TablesSplit, TableReleased)
+- Strongly Typed IDs (TableId — reused from existing JLek.POS.Domain.ValueObjects)
+- Value Objects (TableStatus enum)
+- Cross-aggregate references by ID only (OrderSessionId)
+
+### Infrastructure
+
+- Repository Contract (IDiningTableRepository — frozen 4-method pattern)
+- Repository Implementation (DiningTableRepository)
+- EF Core Configuration (DiningTableConfiguration)
+- Value Converter (TableIdConverter)
+- ApplicationDbContext (DbSet<DiningTable>)
+- DI Registration
+
+### Application
+
+- CQRS (6 commands + 3 queries)
+- Command Handlers (Create, Assign, Transfer, Merge, Split, Release)
+- Query Handlers (GetById, GetAll, GetAvailable — LINQ filter, no new repo method)
+- Response DTO (DiningTableResponse with FromDomain)
+- Handler DI Registration
+
+### Presentation
+
+- Minimal API (9 endpoints via MapGroup("/tables"))
+- GET /tables/available (filtered via GetAllAsync + LINQ)
+- Results.Ok / Results.Created / Results.NotFound
+- Guid route constraints
+
+### Integration Testing
+
+- 17 integration tests
+- Business rule verification (3 rules)
+- Testcontainers PostgreSQL per test class
+
+### CI/CD
+
+- GitHub Actions CI Pipeline
+- Trigger: push/PR to main, develop
+- .NET 8.0 SDK
+- Docker available for Testcontainers
+
+## AI Guidance
+
+Future modules with multi-aggregate operations (e.g., Transfer) should follow the Table Module pattern:
+
+- Domain method accepts the related aggregate as a parameter (pure domain)
+- Handler loads both aggregates, calls domain method, persists both separately
+- Accepts non-atomic multi-aggregate updates for v1 when no verified business requirement for atomic transactions exists
+
+The Table Module also demonstrates:
+
+- Cross-bounded-context references by ID only (OrderSessionId)
+- GET /{resource}/available pattern using GetAllAsync + LINQ in query handler
+- SeedOccupiedTableAsync helper for testing occupied state
+- GitHub Actions CI with Testcontainers (no manual PostgreSQL setup)
+
+---
+
 # Reference Implementations
 
 The following modules are considered reference implementations.

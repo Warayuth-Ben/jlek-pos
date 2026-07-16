@@ -24,7 +24,7 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Menu Module v1
+Table Module v1
 
 Status
 
@@ -34,11 +34,11 @@ Completed
 
 ✔ Architecture Design
 ✔ Domain Implementation
-✔ EF Core Configuration
-✔ Repository Implementation
+✔ Infrastructure Implementation
 ✔ CQRS Implementation
 ✔ API Implementation
-✔ Integration Testing (54 tests)
+✔ Integration Testing (17 tests)
+✔ GitHub Actions CI Pipeline
 ✔ Build Verification (0 errors, 0 warnings)
 ✔ Documentation Update
 ✔ Human Review
@@ -60,6 +60,8 @@ Completed
 ✔ Build Success
 
 ✔ Integration Test Project (xUnit + Testcontainers + WebApplicationFactory)
+
+✔ GitHub Actions CI (.NET CI pipeline)
 
 ## AI Guidance
 
@@ -95,6 +97,8 @@ Completed
 
 ✔ Ingredient Aggregate (Menu Module)
 
+✔ DiningTable Aggregate (Table Module)
+
 ---
 
 ## Application
@@ -113,11 +117,22 @@ Completed
 
 ✔ CancelOrder
 
+✔ CreateDiningTable
+✔ AssignTable
+✔ TransferTable
+✔ MergeTables
+✔ SplitTable
+✔ ReleaseTable
+
 ### Queries
 
 ✔ GetOrderById
 
 ✔ GetOrders
+
+✔ GetDiningTableById
+✔ GetDiningTables
+✔ GetAvailableDiningTables
 
 ✔ CQRS Foundation
 ✔ Product CQRS
@@ -125,6 +140,9 @@ Completed
 ✔ Ingredient CQRS
 ✔ Catalog Response DTOs
 ✔ Catalog Repository Contracts
+✔ Table CQRS
+✔ Table Response DTOs
+✔ Table Repository Contracts
 
 ---
 
@@ -152,6 +170,10 @@ Completed
 ✔ Catalog Repository Implementations
 ✔ Catalog DbContext Registration
 ✔ Catalog Repository DI Registration
+✔ Table Repository Implementation
+✔ Table EF Core Configuration
+✔ Table DbContext Registration
+✔ Table Repository DI Registration
 
 ---
 
@@ -192,19 +214,8 @@ Completed
 ✔ Product Endpoints (15 operations)
 ✔ ProductCategory Endpoints (7 operations)
 ✔ Ingredient Endpoints (5 operations)
-
-Verified
-
-Catalog Module
-
-- Returns Response DTOs
-- Build succeeds
-- Swagger verified
-- Clean Architecture preserved
-- DDD preserved
-- CQRS preserved
-- Repository pattern preserved
-- Aggregate boundaries preserved
+✔ Table Minimal API
+✔ Table Endpoints (9 operations)
 
 ---
 
@@ -231,6 +242,23 @@ Catalog Module
 ✔ Ingredient Tests (10 tests)
 
 - Create, GetById, GetAll, Rename, SetAvailability
+
+✔ DiningTable Tests (17 tests)
+
+- Create, GetById, GetAll, GetAvailable
+- Assign, Transfer, Merge, Split, Release
+- Business Rules: CannotAssignOccupiedTableRule, CannotReleaseAvailableTableRule
+
+---
+
+## CI/CD
+
+✔ GitHub Actions CI Pipeline
+
+- Trigger: push/PR to main, develop
+- Steps: Checkout → Setup .NET 8.0 → Restore → Build (Release) → Test (Release)
+- Test results uploaded as artifacts on failure
+- Docker available for Testcontainers (no manual PostgreSQL install)
 
 ---
 
@@ -260,6 +288,25 @@ Menu Module
 - Integration Testing Infrastructure
 - Integration Tests
 
+Table Module
+
+- DiningTable Aggregate
+- Aggregate Boundaries
+- Business Rules
+- Domain Events
+- Repository Contracts
+- Repository Implementation
+- EF Core Configuration
+- CQRS
+- Application Flow
+- API Contracts
+- Integration Tests (17 tests)
+
+Infrastructure
+
+- Integration Testing Infrastructure
+- GitHub Actions CI Pipeline
+
 Changes are limited to
 
 - Bug Fixes
@@ -284,7 +331,6 @@ No verified architecture violations have been found.
 
 Restaurant
 
-- Table Module
 - Kitchen Queue
 - Payment
 - Reporting
@@ -294,6 +340,10 @@ Presentation
 - Web UI
 - Authentication
 - Authorization
+
+Infrastructure
+
+- Database Migrations (Table Module)
 
 ---
 
@@ -337,6 +387,7 @@ A milestone is considered complete only when
 - Business Rules remain unchanged
 - API returns Response DTOs
 - Integration tests pass
+- CI pipeline validates
 - Documentation updated
 - Human review completed
 
@@ -368,13 +419,17 @@ Integration Testing
 
 ██████████ 100%
 
+CI/CD
+
+██████████ 100%
+
 UI
 
 ░░░░░░░░░░ 0%
 
 Estimated Overall Progress
 
-≈ 78%
+≈ 82%
 
 ---
 
@@ -384,13 +439,17 @@ Order Module v1 is complete and frozen.
 
 Menu Module v1 is complete and frozen.
 
-Both modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
+Table Module v1 is complete and frozen.
 
-Integration testing is complete with 54 tests covering Product, ProductCategory, and Ingredient APIs.
+All three modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
+
+Integration testing is complete with 71 tests (54 Catalog + 17 Table).
+
+CI/CD pipeline is operational via GitHub Actions.
 
 Future development should reuse these modules as implementation references.
 
-The next functional milestone is Table Module.
+The next functional milestone is Kitchen Queue.
 
 ---
 
@@ -405,18 +464,20 @@ Bug Fixes (Order API v1 — Frozen)
 
 Verified by Human Review
 
-- Menu Module Architecture reviewed.
-- Repository implementation reviewed.
-- CQRS implementation reviewed.
-- API implementation reviewed.
-- Integration tests reviewed.
+- Table Module Architecture reviewed.
+- Table Domain implementation reviewed.
+- Table Infrastructure implementation reviewed.
+- Table CQRS implementation reviewed.
+- Table API implementation reviewed.
+- Table Integration tests reviewed.
+- GitHub Actions CI verified.
 - Build verification completed.
 - No architecture drift identified.
 ----
-Menu Module
+Table Module v1
 
-Architecture, Domain, Infrastructure, Application, API, and Integration Testing are complete.
+Architecture, Domain, Infrastructure, Application, API, Integration Testing, and CI/CD are complete.
 
-The Menu Module v1 is now frozen.
+The Table Module v1 is now frozen.
 
-Future modules should reuse Menu Module patterns before introducing new architectural patterns.
+Future modules should reuse Table Module patterns before introducing new architectural patterns.
