@@ -2039,3 +2039,176 @@ Never rely on AI memory alone.
 Long-term knowledge must exist in documentation.
 
 ---
+
+# Architecture Evolution Policy
+
+Architecture should evolve by extension,
+not replacement.
+
+Preferred
+
+Existing Pattern
+        ↓
+Extend
+        ↓
+Review
+        ↓
+Freeze
+
+Avoid
+
+Existing Pattern
+        ↓
+Replace Everything
+
+---
+
+# Pattern Catalog
+
+Verified Patterns
+
+Order Pattern
+
+- Aggregate
+- Repository
+- CQRS
+- API
+
+Menu Pattern
+
+- Aggregate Composition
+- Owned Entities
+- Value Collections
+- Aggregate References
+
+Future Patterns
+
+- Table
+- Kitchen
+- Payment
+
+---
+
+# Reuse Priority
+
+Before writing code
+
+Reuse
+
+1 Existing Aggregate
+
+2 Existing Value Object
+
+3 Existing Repository Pattern
+
+4 Existing CQRS Pattern
+
+5 Existing API Pattern
+
+Only create new implementations when reuse is impossible.
+
+---
+
+# Simplicity Rule
+
+When two implementations satisfy
+the same business requirement,
+
+prefer
+
+the simpler implementation.
+
+Do not introduce abstraction
+without verified need.
+
+---
+
+# YAGNI Policy
+
+Do not implement
+
+- future features
+
+- speculative abstractions
+
+- unused extension points
+
+Implement only verified business requirements.
+
+---
+
+# Technical Decision Record
+
+Every important technical decision should include
+
+Problem
+
+Decision
+
+Alternatives
+
+Trade-offs
+
+Evidence
+
+Human Approval
+
+---
+
+# Naming Stability
+
+Public names should change rarely.
+
+Prefer
+
+stable naming
+
+over
+
+perfect naming.
+
+---
+
+# Breaking Change Policy
+
+Breaking changes require
+
+- Human Approval
+
+- Documentation Update
+
+- New Milestone
+
+- Migration Strategy
+
+---
+
+# Long-term Maintainability
+
+Prefer code that is
+
+easy to understand
+
+over
+
+clever but difficult to maintain.
+
+Future maintainers
+are more important than
+short-term implementation speed.
+
+---
+
+# Engineering Motto
+
+Design once.
+
+Review carefully.
+
+Freeze confidently.
+
+Reuse everywhere.
+
+---
+
+
