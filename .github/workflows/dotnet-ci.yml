@@ -1,0 +1,43 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build JLek.POS.sln \
+              --configuration Release \
+              --no-restore
+
+      - name: Run Integration Tests
+        run: dotnet test JLek.POS.sln \
+              --configuration Release \
+              --no-build \
+              --logger trx \
+              --results-directory ./TestResults
+
+      - name: Upload Test Results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./TestResults
+          retention-days: 7
