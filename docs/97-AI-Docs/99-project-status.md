@@ -24,11 +24,11 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Menu Module
+Menu Module v1
 
 Status
 
-Infrastructure Implementation (In Progress)
+Frozen
 
 Completed
 
@@ -110,6 +110,11 @@ Completed
 ✔ GetOrders
 
 ✔ CQRS Foundation
+✔ Product CQRS
+✔ ProductCategory CQRS
+✔ Ingredient CQRS
+✔ Catalog Response DTOs
+✔ Catalog Repository Contracts
 
 ---
 
@@ -134,7 +139,8 @@ Completed
 ✔ Strongly Typed ID Converters
 
 ✔ Entity Configurations
-
+✔ Catalog Repository Implementations
+✔ Catalog DbContext Registration
 ---
 
 ## Presentation
@@ -167,29 +173,51 @@ Completed
 
 ✔ POST /orders/{id}/cancel
 
+✔ Catalog Minimal API
+✔ Catalog Request DTOs
+✔ Catalog Response DTOs
+✔ Catalog Endpoint Registration
+✔ Product Endpoints
+✔ ProductCategory Endpoints
+✔ Ingredient Endpoints
+
 Verified
 
+Catalog Module
+
 - Returns Response DTOs
-- Successfully persists data into PostgreSQL
 - Build succeeds
 - Swagger verified
 - Clean Architecture preserved
 - DDD preserved
 - CQRS preserved
+- Repository pattern preserved
+- Aggregate boundaries preserved
 
 ---
 
 # Frozen Components
 
-Order Aggregate
+Order Module
 
-Order API
+- Order Aggregate
+- Order API
+- Business Rules
+- API Contracts
+- Repository Contracts
 
-Business Rules
+Menu Module
 
-API Contracts
-
-Repository Contracts
+- Product Aggregate
+- ProductCategory Aggregate
+- Ingredient Aggregate
+- Aggregate Boundaries
+- Repository Contracts
+- Repository Implementations
+- CQRS
+- Persistence Design
+- Application Flow
+- API Contracts
 
 Changes are limited to
 
@@ -202,77 +230,63 @@ Enhancements require a new milestone.
 
 Architecture
 
-✔ Business Rules
-✔ Vocabulary
-✔ Aggregate Boundary
-✔ Domain Model
-✔ Repository Contract
-✔ CQRS Design
-✔ Application Flow
-✔ API Contract
-✔ Persistence Design
-
-Implementation
+✔ Complete
 
 Domain
-✔ Product Aggregate
-✔ ProductCategory Aggregate
-✔ Ingredient Aggregate
+
+✔ Complete
 
 Infrastructure
-✔ EF Core Configuration
-⬜ Repository Implementation
-⬜ Migration
+
+✔ Complete
 
 Application
-⬜ CQRS Handlers
-⬜ Queries
-⬜ Commands
+
+✔ Complete
 
 API
-⬜ Endpoints
-⬜ Request DTOs
-⬜ Response DTOs
+
+✔ Complete
 
 Testing
+
 ⬜ Integration Tests
+
+Status
+
+Frozen
 
 ---
 # Menu Module Progress
 
 Architecture
 
-✔ Business Rules
+✔ Complete
 
-✔ Vocabulary
+Domain
 
-✔ Aggregate Boundary
+✔ Complete
 
-✔ Domain Model
+Infrastructure
 
-✔ Repository Contract
+✔ Complete
 
-✔ CQRS Design
+Application
 
-✔ Application Flow
+✔ Complete
 
-✔ API Contract
+API
 
-✔ Persistence Design
+✔ Complete
 
-Implementation
+Testing
 
-✔ Product Aggregate
+⬜ Integration Tests
 
-✔ ProductCategory Aggregate
+Status
 
-✔ Ingredient Aggregate
+Frozen
 
-⬜ Infrastructure
-
-⬜ Application
-
-⬜ API
 --
 
 # Current Technical Debt
@@ -281,28 +295,27 @@ Verified
 
 - Global Exception Handling has not yet been implemented.
 - ProblemDetails response has not yet been implemented.
-
+- Integration Tests have not yet been implemented.
+- Manual Swagger verification has not yet been completed.
 No verified architecture violations have been found.
 
 ---
 
-Menu Module Infrastructure
+Menu Module Validation
 
 Objectives
 
-- Product Repository
-- ProductCategory Repository
-- Ingredient Repository
-- Build Verification
-- Repository Review
+- Integration Tests
+- Manual Swagger Verification
+- End-to-End Verification
+- Freeze Verification
+
 ---
 
 # Future Milestones
 
 Restaurant
 
-- Menu Module Application
-- Menu Module API
 - Table Module
 - Kitchen Queue
 - Payment
@@ -372,15 +385,15 @@ Domain
 
 Infrastructure
 
-██████░░░░ 60%
+██████████ 100%
 
 Application
 
-░░░░░░░░░░ 0%
+██████████ 100%
 
 API
 
-░░░░░░░░░░ 0%
+██████████ 100%
 
 UI
 
@@ -388,20 +401,20 @@ UI
 
 Estimated Overall Progress
 
-≈ 62%
-
+≈ 72%
 ---
 
 # Notes
 
-Order API v1 is considered complete and frozen.
+Order Module v1 is complete and frozen.
 
-The next development milestone focuses on API maturity
+Menu Module v1 is complete and frozen.
 
-(Remove Item verification, Global Exception Handling, Standard API Error Responses)
+Both modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
 
-before expanding into the Menu Module and Presentation Layer.
+Future development should reuse these modules as implementation references.
 
+The next functional milestone is Table Module.
 ---
 
 Bug Fixes (Order API v1 — Frozen)
@@ -415,13 +428,12 @@ Bug Fixes (Order API v1 — Frozen)
 
 Verified by Human Review
 
-- Repository evidence reviewed.
-- Architecture review completed.
-- DDD review completed.
-- CQRS review completed.
-- git diff reviewed before merge.
-
-No architecture drift was identified during this milestone.
+- Menu Module Architecture reviewed.
+- Repository implementation reviewed.
+- CQRS implementation reviewed.
+- API implementation reviewed.
+- Build verification completed.
+- No architecture drift identified.
 -----
 Menu Module
 
