@@ -474,6 +474,76 @@ unless new verified business requirements require architectural changes.
 
 ---
 
+# Frozen Kitchen Module v1
+
+Status
+
+Frozen
+
+## Verified Architecture
+
+The following implementation has been completed and verified.
+
+- Domain
+- Infrastructure
+- Application
+- API
+- Integration Testing
+
+## Frozen Components
+
+### Domain
+
+- KitchenTicket Aggregate (sole aggregate root)
+- KitchenItem Entity (snapshot — ItemName, Quantity, Notes — no Product reference)
+- State Machine: Pending → Preparing → Ready → Served
+- Business Rules (CannotModifyServedTicketRule, CannotStartPreparationOnNonPendingTicketRule, CannotCompletePreparationOnNonPreparingTicketRule, CannotServeNonReadyTicketRule)
+- Domain Events (KitchenTicketCreated, KitchenPreparationStarted, KitchenPreparationCompleted, KitchenItemsServed)
+- Strongly Typed IDs (KitchenTicketId, KitchenItemId)
+- Value Objects (KitchenTicketStatus enum)
+- Cross-bounded-context by ID only (no navigation to Order, Product, or Table)
+
+### Infrastructure
+
+- Repository Contract (IKitchenTicketRepository — frozen 4-method pattern)
+- Repository Implementation (KitchenTicketRepository)
+- EF Core Configuration (KitchenTicketConfiguration with OwnsMany<KitchenItem>)
+- Value Converters (KitchenTicketIdConverter, KitchenItemIdConverter)
+- ApplicationDbContext (DbSet<KitchenTicket>)
+- DI Registration
+
+### Application
+
+- CQRS (5 commands + 3 queries)
+- Command Handlers (Create, AddItem, StartPreparation, CompletePreparation, Serve)
+- Query Handlers (GetById, GetAll, GetActive — GetAllAsync + LINQ Where Status != Served + OrderBy TicketNumber)
+- Response DTOs (KitchenTicketResponse, KitchenItemResponse with FromDomain)
+- Handler DI Registration
+
+### Presentation
+
+- Minimal API (8 endpoints via MapGroup("/kitchen"))
+- GET /kitchen/active (filtered via GetAllAsync + LINQ)
+- Results.Ok / Results.Created / Results.NotFound
+- Guid route constraints
+
+### Integration Testing
+
+- 21 integration tests
+- State machine transitions (3 valid + 6 invalid)
+- Snapshot persistence verified
+- OwnsMany cascade verified
+
+## AI Guidance
+
+The Kitchen Module introduces the **Snapshot Aggregate pattern**: KitchenItem does NOT reference OrderItemId or ProductId. All data needed for kitchen preparation (ItemName, Quantity, Notes) is copied at ticket creation time. This ensures Kitchen never queries Product or Order after ticket creation.
+
+The state machine pattern follows the verified documentation strictly — no invented states beyond Pending, Preparing, Ready, Served.
+
+TicketNumber is passed as a parameter from the Application layer. A thread-safe SequenceService is needed for production multi-thread scenarios.
+
+---
+
 # Frozen Table Module v1
 
 Status

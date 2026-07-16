@@ -77,29 +77,11 @@ Status: Frozen
 
 Same 4-method contract as Order Module for each aggregate.
 
-### CQRS Pattern
-
-| Aggregate | Commands | Queries |
-|-----------|----------|---------|
-| Product | 13 | 2 |
-| ProductCategory | 5 | 2 |
-| Ingredient | 3 | 2 |
-
-### API Pattern
-
-| Group | Method | Route |
-|-------|--------|-------|
-| Products | POST/GET/PUT/DELETE | /products/{id}/... |
-| Categories | POST/GET/PUT | /categories/{id}/... |
-| Ingredients | POST/GET/PUT | /ingredients/{id}/... |
-
 ### Key Patterns
 
 - **Aggregate Composition**: Product owns OptionGroups (entities), SuggestedPrices (value objects), IngredientIds (references by ID)
 - **Owned Entities**: OptionGroup uses OwnsMany with owned entity pattern
 - **Value Collections**: SuggestedPrices and IngredientIds use OwnsMany with value object pattern
-- **EF Core Configuration**: IEntityTypeConfiguration<T> per aggregate
-- **Strongly Typed ID Converters**: ValueConverter<TId, Guid> for each strongly typed ID
 
 ---
 
@@ -112,10 +94,6 @@ Status: Frozen
 | Concept | Type | Details |
 |---------|------|---------|
 | DiningTable | Aggregate Root | Sole aggregate. Owns its status lifecycle. References OrderSession by ID only. |
-
-### Repository Pattern
-
-Same 4-method contract as Order Module.
 
 ### CQRS Pattern
 
@@ -143,34 +121,94 @@ Same 4-method contract as Order Module.
 - **Multi-Aggregate Operations**: Transfer and Merge update two DiningTables in one handler. Domain method receives the related aggregate as parameter. Handler persists each aggregate separately (two SaveChangesAsync calls).
 - **Cross-Bounded-Context References**: DiningTable references OrderSessionId by ID only. No navigation property. No FK constraint.
 - **Query Filtering via LINQ**: GetAvailable uses GetAllAsync() + Where() in handler. No additional repository method.
-- **Business Rules**: Rules are in Domain (CheckRule). Handler has existence validation only.
 
-### Testing Pattern
+---
+
+## Kitchen Module
+
+Status: Frozen
+
+### Aggregate
+
+| Concept | Type | Details |
+|---------|------|---------|
+| KitchenTicket | Aggregate Root | Sole aggregate. Owns preparation lifecycle. Contains KitchenItem snapshot entities. |
+| KitchenItem | Entity (snapshot) | Owned by KitchenTicket. Stores ItemName, Quantity, Notes. No reference to Product or Order. |
+
+### State Machine
+
+```
+Pending ──► Preparing ──► Ready ──► Served
+```
+
+Each transition triggers a domain event. Served tickets are immutable.
+
+### CQRS Pattern
+
+| Category | Count | Commands/Queries |
+|----------|-------|------------------|
+| Commands | 5 | Create, AddItem, StartPreparation, CompletePreparation, Serve |
+| Queries | 3 | GetById, GetAll, GetActive (LINQ: Where Status != Served + OrderBy TicketNumber) |
+
+### API Pattern
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | /kitchen | Create ticket (201 Created) |
+| GET | /kitchen | Get All |
+| GET | /kitchen/active | Get active tickets (LINQ filter) |
+| GET | /kitchen/{id} | Get By Id |
+| POST | /kitchen/{id}/items | Add kitchen item |
+| POST | /kitchen/{id}/start | Start preparation |
+| POST | /kitchen/{id}/complete | Complete preparation |
+| POST | /kitchen/{id}/serve | Serve items |
+
+### Key Patterns
+
+- **Snapshot Aggregate**: KitchenItem does NOT reference OrderItemId or ProductId. All data (ItemName, Quantity, Notes) is copied at ticket creation. Kitchen never queries Product or Order after ticket creation.
+- **State Machine**: Strictly follows verified 4-state lifecycle. Only Pending, Preparing, Ready, Served.
+- **TicketNumber**: Passed as parameter from Application layer. Placeholder — needs thread-safe SequenceService for production.
+- **Active Queue via GetAllAsync + LINQ**: GetActive uses `GetAllAsync()` + `Where(Status != Served)` + `OrderBy(TicketNumber)`. No new repository method.
+
+---
+
+## Shared Infrastructure Patterns
+
+### 4-Method Repository Contract (all modules)
 
 ```csharp
-[Collection("Catalog")]
-public sealed class DiningTableTests : IAsyncLifetime
-{
-    private readonly CustomWebApplicationFactory _factory;
-    private readonly HttpClient _client;
-    
-    // IAsyncLifetime: InitializeAsync() ensures DB created
-    // Helper methods: SeedTableAsync(), SeedOccupiedTableAsync()
-    
-    // Each test: Arrange → Act → Assert
-    // Verifies: HTTP status, Response DTO, Database persistence, Aggregate state
-}
+Task<T?> GetByIdAsync(TId id, CancellationToken ct);
+Task<IReadOnlyList<T>> GetAllAsync(CancellationToken ct);
+Task AddAsync(T entity, CancellationToken ct);
+Task UpdateAsync(T entity, CancellationToken ct);
 ```
+
+### EF Core Configuration Pattern
+
+```csharp
+builder.ToTable("TableName");
+builder.HasKey(x => x.Id);
+builder.Property(x => x.Id).HasConversion(new IdConverter()).ValueGeneratedNever();
+builder.Property(x => x.Status).HasConversion<int>();
+builder.Ignore(x => x.DomainEvents);
+// OwnsMany for owned entities/collections
+```
+
+### Integration Testing Pattern
+
+- CustomWebApplicationFactory<Program>
+- Testcontainers PostgreSQL (one container per test class)
+- xUnit Collection Fixture + IAsyncLifetime
+- FluentAssertions
+- No mocking. No InMemory database.
 
 ### CI/CD Pattern
 
-```yaml
-# .github/workflows/dotnet-ci.yml
-# Trigger: push/PR to main/develop
-# Steps: Checkout → Setup .NET 8.0 → Restore → Build (Release) → Test (Release)
-# Docker available for Testcontainers (no manual PostgreSQL)
-# Test artifacts uploaded on failure (TRX format)
-```
+- GitHub Actions
+- .NET 8.0 SDK
+- Docker (for Testcontainers)
+- Steps: Restore → Build (Release) → Test (Release)
+- TRX artifacts on failure
 
 ---
 
@@ -212,3 +250,6 @@ public sealed class DiningTableTests : IAsyncLifetime
 | Multi-aggregate domain method | Table Module | Domain method receives related aggregate |
 | GetAllAsync + LINQ filter | Table Module | Query filtering without new repo method |
 | GitHub Actions CI | Table Module | CI pipeline with Docker + Testcontainers |
+| Snapshot Aggregate pattern | Kitchen Module | Owned entity stores copied data, no cross-ref |
+| State machine with 4 states | Kitchen Module | Domain-enforced lifecycle transitions |
+| SeedTicketAtStatusAsync helper | Kitchen Module | Advances aggregate through state for testing |

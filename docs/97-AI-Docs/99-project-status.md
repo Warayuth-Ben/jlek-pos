@@ -24,7 +24,7 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Table Module v1
+Kitchen Module v1
 
 Status
 
@@ -37,8 +37,7 @@ Completed
 ✔ Infrastructure Implementation
 ✔ CQRS Implementation
 ✔ API Implementation
-✔ Integration Testing (17 tests)
-✔ GitHub Actions CI Pipeline
+✔ Integration Testing (21 tests)
 ✔ Build Verification (0 errors, 0 warnings)
 ✔ Documentation Update
 ✔ Human Review
@@ -99,6 +98,8 @@ Completed
 
 ✔ DiningTable Aggregate (Table Module)
 
+✔ KitchenTicket Aggregate (Kitchen Module)
+
 ---
 
 ## Application
@@ -123,6 +124,11 @@ Completed
 ✔ MergeTables
 ✔ SplitTable
 ✔ ReleaseTable
+✔ CreateKitchenTicket
+✔ AddKitchenItem
+✔ StartPreparation
+✔ CompletePreparation
+✔ ServeKitchenTicket
 
 ### Queries
 
@@ -133,6 +139,9 @@ Completed
 ✔ GetDiningTableById
 ✔ GetDiningTables
 ✔ GetAvailableDiningTables
+✔ GetKitchenTicketById
+✔ GetKitchenTickets
+✔ GetActiveKitchenTickets
 
 ✔ CQRS Foundation
 ✔ Product CQRS
@@ -143,6 +152,9 @@ Completed
 ✔ Table CQRS
 ✔ Table Response DTOs
 ✔ Table Repository Contracts
+✔ Kitchen CQRS
+✔ Kitchen Response DTOs
+✔ Kitchen Repository Contracts
 
 ---
 
@@ -174,6 +186,10 @@ Completed
 ✔ Table EF Core Configuration
 ✔ Table DbContext Registration
 ✔ Table Repository DI Registration
+✔ Kitchen Repository Implementation
+✔ Kitchen EF Core Configuration
+✔ Kitchen DbContext Registration
+✔ Kitchen Repository DI Registration
 
 ---
 
@@ -216,6 +232,8 @@ Completed
 ✔ Ingredient Endpoints (5 operations)
 ✔ Table Minimal API
 ✔ Table Endpoints (9 operations)
+✔ Kitchen Minimal API
+✔ Kitchen Endpoints (8 operations)
 
 ---
 
@@ -248,6 +266,14 @@ Completed
 - Create, GetById, GetAll, GetAvailable
 - Assign, Transfer, Merge, Split, Release
 - Business Rules: CannotAssignOccupiedTableRule, CannotReleaseAvailableTableRule
+
+✔ KitchenTicket Tests (21 tests)
+
+- Create, GetById, GetAll, GetActive (LINQ filter)
+- State machine: Pending → Preparing → Ready → Served
+- Invalid transitions: 6 Business Rule tests
+- Snapshot persistence: ItemName, Quantity, Notes
+- Owned collection: KitchenItems persistence and cascade
 
 ---
 
@@ -302,6 +328,22 @@ Table Module
 - API Contracts
 - Integration Tests (17 tests)
 
+Kitchen Module
+
+- KitchenTicket Aggregate
+- KitchenItem Entity (snapshot)
+- Aggregate Boundaries
+- State Machine (Pending → Preparing → Ready → Served)
+- Business Rules (4 rules)
+- Domain Events (5 events)
+- Repository Contracts
+- Repository Implementation
+- EF Core Configuration
+- CQRS
+- Application Flow
+- API Contracts
+- Integration Tests (21 tests)
+
 Infrastructure
 
 - Integration Testing Infrastructure
@@ -322,6 +364,7 @@ Verified
 
 - Global Exception Handling has not yet been implemented.
 - ProblemDetails response has not yet been implemented.
+- TicketNumber generation needs a thread-safe SequenceService for production.
 
 No verified architecture violations have been found.
 
@@ -331,7 +374,6 @@ No verified architecture violations have been found.
 
 Restaurant
 
-- Kitchen Queue
 - Payment
 - Reporting
 
@@ -343,7 +385,7 @@ Presentation
 
 Infrastructure
 
-- Database Migrations (Table Module)
+- Database Migrations (Table Module, Kitchen Module)
 
 ---
 
@@ -429,7 +471,7 @@ UI
 
 Estimated Overall Progress
 
-≈ 82%
+≈ 85%
 
 ---
 
@@ -441,15 +483,17 @@ Menu Module v1 is complete and frozen.
 
 Table Module v1 is complete and frozen.
 
-All three modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
+Kitchen Module v1 is complete and frozen.
 
-Integration testing is complete with 71 tests (54 Catalog + 17 Table).
+All four modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
+
+Integration testing is complete with 92 tests (54 Catalog + 17 Table + 21 Kitchen).
 
 CI/CD pipeline is operational via GitHub Actions.
 
 Future development should reuse these modules as implementation references.
 
-The next functional milestone is Kitchen Queue.
+The next functional milestone is Payment.
 
 ---
 
@@ -464,20 +508,19 @@ Bug Fixes (Order API v1 — Frozen)
 
 Verified by Human Review
 
-- Table Module Architecture reviewed.
-- Table Domain implementation reviewed.
-- Table Infrastructure implementation reviewed.
-- Table CQRS implementation reviewed.
-- Table API implementation reviewed.
-- Table Integration tests reviewed.
-- GitHub Actions CI verified.
+- Kitchen Module Architecture reviewed.
+- Kitchen Domain implementation reviewed.
+- Kitchen Infrastructure implementation reviewed.
+- Kitchen CQRS implementation reviewed.
+- Kitchen API implementation reviewed.
+- Kitchen Integration tests reviewed.
 - Build verification completed.
 - No architecture drift identified.
 ----
-Table Module v1
+Kitchen Module v1
 
-Architecture, Domain, Infrastructure, Application, API, Integration Testing, and CI/CD are complete.
+Architecture, Domain, Infrastructure, Application, API, and Integration Testing are complete.
 
-The Table Module v1 is now frozen.
+The Kitchen Module v1 is now frozen.
 
-Future modules should reuse Table Module patterns before introducing new architectural patterns.
+Future modules should reuse Kitchen Module patterns before introducing new architectural patterns.
