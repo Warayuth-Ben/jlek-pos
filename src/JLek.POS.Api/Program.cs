@@ -28,6 +28,7 @@ app.MapGet("/", () => Results.Ok("JLek POS API"));
 app.MapOrderEndpoints();
 app.MapCatalogEndpoints();
 app.MapTableEndpoints();
+app.MapKitchenEndpoints();
 app.Run();
 
 public partial class Program { }
