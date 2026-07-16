@@ -1,5 +1,6 @@
 using JLek.POS.Domain.Catalog;
 using JLek.POS.Domain.Orders;
+using JLek.POS.Domain.Tables;
 using Microsoft.EntityFrameworkCore;
 
 namespace JLek.POS.Infrastructure.Persistence;
@@ -19,6 +20,8 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
 
     public DbSet<Ingredient> Ingredients => Set<Ingredient>();
+
+    public DbSet<DiningTable> DiningTables => Set<DiningTable>();
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)

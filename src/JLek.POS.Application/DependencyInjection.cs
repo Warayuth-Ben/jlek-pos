@@ -33,6 +33,15 @@ using JLek.POS.Application.Features.Orders.Commands.CreateOrder;
 using JLek.POS.Application.Features.Orders.Commands.RemoveItem;
 using JLek.POS.Application.Features.Orders.Queries.GetOrderById;
 using JLek.POS.Application.Features.Orders.Queries.GetOrders;
+using JLek.POS.Application.Features.Tables.Commands.AssignTable;
+using JLek.POS.Application.Features.Tables.Commands.CreateDiningTable;
+using JLek.POS.Application.Features.Tables.Commands.MergeTables;
+using JLek.POS.Application.Features.Tables.Commands.ReleaseTable;
+using JLek.POS.Application.Features.Tables.Commands.SplitTable;
+using JLek.POS.Application.Features.Tables.Commands.TransferTable;
+using JLek.POS.Application.Features.Tables.Queries.GetAvailableDiningTables;
+using JLek.POS.Application.Features.Tables.Queries.GetDiningTableById;
+using JLek.POS.Application.Features.Tables.Queries.GetDiningTables;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JLek.POS.Application;
@@ -92,6 +101,19 @@ public static class DependencyInjection
         // Ingredient queries
         services.AddScoped<GetIngredientByIdQueryHandler>();
         services.AddScoped<GetIngredientsQueryHandler>();
+
+        // Table commands
+        services.AddScoped<CreateDiningTableCommandHandler>();
+        services.AddScoped<AssignTableCommandHandler>();
+        services.AddScoped<TransferTableCommandHandler>();
+        services.AddScoped<MergeTablesCommandHandler>();
+        services.AddScoped<SplitTableCommandHandler>();
+        services.AddScoped<ReleaseTableCommandHandler>();
+
+        // Table queries
+        services.AddScoped<GetDiningTableByIdQueryHandler>();
+        services.AddScoped<GetDiningTablesQueryHandler>();
+        services.AddScoped<GetAvailableDiningTablesQueryHandler>();
 
         return services;
     }
