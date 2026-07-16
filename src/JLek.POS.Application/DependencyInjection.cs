@@ -41,6 +41,14 @@ using JLek.POS.Application.Features.Tables.Commands.SplitTable;
 using JLek.POS.Application.Features.Tables.Commands.TransferTable;
 using JLek.POS.Application.Features.Tables.Queries.GetAvailableDiningTables;
 using JLek.POS.Application.Features.Tables.Queries.GetDiningTableById;
+using JLek.POS.Application.Features.Kitchen.Commands.AddKitchenItem;
+using JLek.POS.Application.Features.Kitchen.Commands.CompletePreparation;
+using JLek.POS.Application.Features.Kitchen.Commands.CreateKitchenTicket;
+using JLek.POS.Application.Features.Kitchen.Commands.ServeKitchenTicket;
+using JLek.POS.Application.Features.Kitchen.Commands.StartPreparation;
+using JLek.POS.Application.Features.Kitchen.Queries.GetActiveKitchenTickets;
+using JLek.POS.Application.Features.Kitchen.Queries.GetKitchenTicketById;
+using JLek.POS.Application.Features.Kitchen.Queries.GetKitchenTickets;
 using JLek.POS.Application.Features.Tables.Queries.GetDiningTables;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -114,6 +122,18 @@ public static class DependencyInjection
         services.AddScoped<GetDiningTableByIdQueryHandler>();
         services.AddScoped<GetDiningTablesQueryHandler>();
         services.AddScoped<GetAvailableDiningTablesQueryHandler>();
+
+        // Kitchen commands
+        services.AddScoped<CreateKitchenTicketCommandHandler>();
+        services.AddScoped<AddKitchenItemCommandHandler>();
+        services.AddScoped<StartPreparationCommandHandler>();
+        services.AddScoped<CompletePreparationCommandHandler>();
+        services.AddScoped<ServeKitchenTicketCommandHandler>();
+
+        // Kitchen queries
+        services.AddScoped<GetKitchenTicketByIdQueryHandler>();
+        services.AddScoped<GetKitchenTicketsQueryHandler>();
+        services.AddScoped<GetActiveKitchenTicketsQueryHandler>();
 
         return services;
     }
