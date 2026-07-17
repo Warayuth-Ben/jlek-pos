@@ -5,6 +5,7 @@ using JLek.POS.Application;
 var builder = WebApplication.CreateBuilder(args);
 
 // Services
+builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
