@@ -1,12 +1,12 @@
 ﻿# Project Status
 
-Version: 1.1
+Version: 1.2
 
 Project: JLek POS
 
 Last Updated
 
-2026-07-16
+2026-07-17
 
 ---
 
@@ -24,7 +24,7 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Kitchen Module v1
+Payment Module v1
 
 Status
 
@@ -37,7 +37,7 @@ Completed
 ✔ Infrastructure Implementation
 ✔ CQRS Implementation
 ✔ API Implementation
-✔ Integration Testing (21 tests)
+✔ Integration Testing (18 tests)
 ✔ Build Verification (0 errors, 0 warnings)
 ✔ Documentation Update
 ✔ Human Review
@@ -100,6 +100,8 @@ Completed
 
 ✔ KitchenTicket Aggregate (Kitchen Module)
 
+✔ Payment Aggregate (Payment Module)
+
 ---
 
 ## Application
@@ -129,6 +131,8 @@ Completed
 ✔ StartPreparation
 ✔ CompletePreparation
 ✔ ServeKitchenTicket
+✔ ReceivePayment
+✔ RefundPayment
 
 ### Queries
 
@@ -142,6 +146,8 @@ Completed
 ✔ GetKitchenTicketById
 ✔ GetKitchenTickets
 ✔ GetActiveKitchenTickets
+✔ GetPaymentById
+✔ GetPaymentsByOrderId
 
 ✔ CQRS Foundation
 ✔ Product CQRS
@@ -155,6 +161,9 @@ Completed
 ✔ Kitchen CQRS
 ✔ Kitchen Response DTOs
 ✔ Kitchen Repository Contracts
+✔ Payment CQRS
+✔ Payment Response DTOs
+✔ Payment Repository Contracts
 
 ---
 
@@ -190,6 +199,10 @@ Completed
 ✔ Kitchen EF Core Configuration
 ✔ Kitchen DbContext Registration
 ✔ Kitchen Repository DI Registration
+✔ Payment Repository Implementation
+✔ Payment EF Core Configuration
+✔ Payment DbContext Registration
+✔ Payment Repository DI Registration
 
 ---
 
@@ -234,6 +247,8 @@ Completed
 ✔ Table Endpoints (9 operations)
 ✔ Kitchen Minimal API
 ✔ Kitchen Endpoints (8 operations)
+✔ Payment Minimal API
+✔ Payment Endpoints (4 operations)
 
 ---
 
@@ -274,6 +289,13 @@ Completed
 - Invalid transitions: 6 Business Rule tests
 - Snapshot persistence: ItemName, Quantity, Notes
 - Owned collection: KitchenItems persistence and cascade
+
+✔ Payment Tests (18 tests)
+
+- Create, GetById, GetByOrderId, Refund
+- Business Rules: CannotPayCancelledOrder, CannotPayCompletedOrder, CannotAcceptInsufficientPayment, CannotRefundNonCompletedPayment
+- Money persistence: OrderTotal, AmountReceived, Change
+- PaymentMethod persistence: Cash, Card, QR, Credit
 
 ---
 
@@ -344,10 +366,27 @@ Kitchen Module
 - API Contracts
 - Integration Tests (21 tests)
 
+Payment Module
+
+- Payment Aggregate
+- Aggregate Boundaries
+- State Machine (Completed ↔ Refunded)
+- Business Rules (4 rules)
+- Domain Events (2 events)
+- Repository Contracts
+- Repository Implementation
+- EF Core Configuration
+- CQRS (2 commands + 2 queries)
+- Application Flow
+- API Contracts
+- Integration Tests (18 tests)
+
 Infrastructure
 
 - Integration Testing Infrastructure
 - GitHub Actions CI Pipeline
+- Global Exception Handling Middleware
+- ProblemDetails Response Standardization
 
 Changes are limited to
 
@@ -362,9 +401,8 @@ Enhancements require a new milestone.
 
 Verified
 
-- Global Exception Handling has not yet been implemented.
-- ProblemDetails response has not yet been implemented.
 - TicketNumber generation needs a thread-safe SequenceService for production.
+- Database Migration documentation needs updating (Table, Kitchen, Payment modules)
 
 No verified architecture violations have been found.
 
@@ -374,7 +412,6 @@ No verified architecture violations have been found.
 
 Restaurant
 
-- Payment
 - Reporting
 
 Presentation
@@ -385,7 +422,7 @@ Presentation
 
 Infrastructure
 
-- Database Migrations (Table Module, Kitchen Module)
+- Database Migrations (Table Module, Kitchen Module, Payment Module)
 
 ---
 
@@ -471,7 +508,7 @@ UI
 
 Estimated Overall Progress
 
-≈ 85%
+≈ 88%
 
 ---
 
@@ -485,15 +522,17 @@ Table Module v1 is complete and frozen.
 
 Kitchen Module v1 is complete and frozen.
 
-All four modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
+Payment Module v1 is complete and frozen.
 
-Integration testing is complete with 92 tests (54 Catalog + 17 Table + 21 Kitchen).
+All five modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
+
+Integration testing is complete with 110 tests (54 Catalog + 17 Table + 21 Kitchen + 18 Payment).
 
 CI/CD pipeline is operational via GitHub Actions.
 
 Future development should reuse these modules as implementation references.
 
-The next functional milestone is Payment.
+The next functional milestone is Reporting.
 
 ---
 
@@ -508,19 +547,21 @@ Bug Fixes (Order API v1 — Frozen)
 
 Verified by Human Review
 
-- Kitchen Module Architecture reviewed.
-- Kitchen Domain implementation reviewed.
-- Kitchen Infrastructure implementation reviewed.
-- Kitchen CQRS implementation reviewed.
-- Kitchen API implementation reviewed.
-- Kitchen Integration tests reviewed.
+- Payment Module Architecture reviewed.
+- Payment Domain implementation reviewed.
+- Payment Infrastructure implementation reviewed.
+- Payment CQRS implementation reviewed.
+- Payment API implementation reviewed.
+- Payment Integration tests reviewed.
 - Build verification completed.
+- Global Exception Handling implemented and reviewed.
+- ProblemDetails response standardization implemented and reviewed.
 - No architecture drift identified.
 ----
-Kitchen Module v1
+Payment Module v1
 
 Architecture, Domain, Infrastructure, Application, API, and Integration Testing are complete.
 
-The Kitchen Module v1 is now frozen.
+The Payment Module v1 is now frozen.
 
-Future modules should reuse Kitchen Module patterns before introducing new architectural patterns.
+Future modules should reuse Payment Module patterns before introducing new architectural patterns.

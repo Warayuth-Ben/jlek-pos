@@ -172,6 +172,68 @@ Each transition triggers a domain event. Served tickets are immutable.
 
 ---
 
+## Payment Module
+
+Status: Frozen
+
+### Aggregate
+
+| Concept | Type | Details |
+|---------|------|---------|
+| Payment | Aggregate Root | Sole aggregate. Created in Completed state. References Order by OrderId only. |
+
+### State Machine
+
+```
+Completed ⇄ Refunded
+```
+
+Payment is created directly in `Completed` state (no Pending for cash POS). The only transition is to `Refunded` (terminal).
+
+### Value Objects
+
+| Value Object | Details |
+|--------------|---------|
+| PaymentId | Strongly Typed ID (Guid) |
+| OrderTotal | Money — copied from Order at creation |
+| AmountReceived | Money — what customer paid |
+| Change | Money — AmountReceived - OrderTotal |
+| PaymentMethod | Enum: Cash, Card, QR, Credit |
+| PaymentStatus | Enum: Completed, Refunded |
+
+### Business Rules
+
+| Rule | Location | Enforces |
+|------|----------|----------|
+| CannotPayCancelledOrderRule | Domain (`Payment.Create(order, amount, method)`) | order.Status != Cancelled |
+| CannotPayCompletedOrderRule | Domain (`Payment.Create(order, amount, method)`) | order.Status != Completed |
+| CannotAcceptInsufficientPaymentRule | Domain (`Payment.Create(order, amount, method)`) | amountReceived >= order.Total |
+| CannotRefundNonCompletedPaymentRule | Domain (`payment.Refund(reason)`) | Status == Completed |
+
+### CQRS Pattern
+
+| Category | Count | Commands/Queries |
+|----------|-------|------------------|
+| Commands | 2 | ReceivePayment, RefundPayment |
+| Queries | 2 | GetPaymentById, GetPaymentsByOrderId (LINQ filter) |
+
+### API Pattern
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | /payments | Receive payment (201 Created) |
+| GET | /payments/{id} | Get By Id |
+| GET | /payments?orderId= | Get by OrderId (LINQ filter) |
+| POST | /payments/{id}/refund | Refund payment (with Reason) |
+
+### Key Patterns
+
+- **Cross-Aggregate Rules Inside Domain**: `Payment.Create(order, amountReceived, method)` receives `Order` as parameter and validates its status inside the Domain. This is DDD-correct — Business Rules stay in Domain, not Application.
+- **AmountReceived ≠ OrderTotal**: Three separate Money values: `OrderTotal`, `AmountReceived`, `Change`. Rule is `AmountReceived >= OrderTotal`, not `==`. This reflects real POS workflow (customer pays 100 for 85 order, system calculates Change = 15).
+- **RefundReason**: Refund accepts an optional `string? reason` for "ลูกค้าเปลี่ยนใจ", "คิดเงินผิด", etc.
+- **Domain Event Naming**: `PaymentReceivedEvent` (not `PaymentCreatedEvent`) — reflects business meaning ("ลูกค้าจ่ายเงินแล้ว"), not object creation.
+- **Global Exception Handling**: BusinessRuleValidationException returns 409 Conflict with ProblemDetails format.
+
 ## Shared Infrastructure Patterns
 
 ### 4-Method Repository Contract (all modules)
