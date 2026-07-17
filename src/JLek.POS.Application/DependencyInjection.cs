@@ -54,6 +54,9 @@ using JLek.POS.Application.Features.Payments.Commands.ReceivePayment;
 using JLek.POS.Application.Features.Payments.Commands.RefundPayment;
 using JLek.POS.Application.Features.Payments.Queries.GetPaymentById;
 using JLek.POS.Application.Features.Payments.Queries.GetPaymentsByOrderId;
+using JLek.POS.Application.Features.Reports.Queries.BestSellers;
+using JLek.POS.Application.Features.Reports.Queries.DailySales;
+using JLek.POS.Application.Features.Reports.Queries.SalesByPayment;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JLek.POS.Application;
@@ -146,6 +149,11 @@ public static class DependencyInjection
         // Payment queries
         services.AddScoped<GetPaymentByIdQueryHandler>();
         services.AddScoped<GetPaymentsByOrderIdQueryHandler>();
+
+        // Report queries
+        services.AddScoped<GetDailySalesReportQueryHandler>();
+        services.AddScoped<GetSalesByPaymentReportQueryHandler>();
+        services.AddScoped<GetBestSellerReportQueryHandler>();
 
         return services;
     }

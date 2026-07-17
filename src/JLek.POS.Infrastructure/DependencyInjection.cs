@@ -1,6 +1,9 @@
+using JLek.POS.Application.Abstractions;
 using JLek.POS.Application.Abstractions.Repositories;
+using JLek.POS.Domain.Common.Abstractions;
 using JLek.POS.Infrastructure.Persistence;
 using JLek.POS.Infrastructure.Repositories;
+using JLek.POS.Infrastructure.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +29,11 @@ public static class DependencyInjection
         services.AddScoped<IDiningTableRepository, DiningTableRepository>();
         services.AddScoped<IKitchenTicketRepository, KitchenTicketRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
+
+        // Reporting
+        services.AddScoped<IClock, SystemClock>();
+        services.AddScoped<IReportingDbContext>(
+            sp => sp.GetRequiredService<ApplicationDbContext>());
 
         return services;
     }

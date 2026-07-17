@@ -1,3 +1,4 @@
+using JLek.POS.Application.Abstractions;
 using JLek.POS.Domain.Catalog;
 using JLek.POS.Domain.Kitchen;
 using JLek.POS.Domain.Orders;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JLek.POS.Infrastructure.Persistence;
 
-public sealed class ApplicationDbContext : DbContext
+public sealed class ApplicationDbContext : DbContext, IReportingDbContext
 {
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options)
