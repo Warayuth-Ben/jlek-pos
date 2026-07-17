@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JLek.POS.Application\JLek.POS.Application.csproj" />
+    <ProjectReference Include="..\JLek.POS.Printing.Models\JLek.POS.Printing.Models.csproj" />
+  </ItemGroup>
+
+</Project>
