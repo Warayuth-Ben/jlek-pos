@@ -54,6 +54,12 @@ using JLek.POS.Application.Features.Payments.Commands.ReceivePayment;
 using JLek.POS.Application.Features.Payments.Commands.RefundPayment;
 using JLek.POS.Application.Features.Payments.Queries.GetPaymentById;
 using JLek.POS.Application.Features.Payments.Queries.GetPaymentsByOrderId;
+using JLek.POS.Application.Features.Receipt.Commands.PrintCustomerReceipt;
+using JLek.POS.Application.Features.Receipt.Commands.PrintKitchenTicket;
+using JLek.POS.Application.Features.Receipt.Commands.PrintRefundReceipt;
+using JLek.POS.Application.Features.Receipt.Configuration;
+using JLek.POS.Application.Features.Receipt.Services;
+using JLek.POS.Application.Abstractions;
 using JLek.POS.Application.Features.Reports.Queries.BestSellers;
 using JLek.POS.Application.Features.Reports.Queries.DailySales;
 using JLek.POS.Application.Features.Reports.Queries.SalesByPayment;
@@ -154,6 +160,24 @@ public static class DependencyInjection
         services.AddScoped<GetDailySalesReportQueryHandler>();
         services.AddScoped<GetSalesByPaymentReportQueryHandler>();
         services.AddScoped<GetBestSellerReportQueryHandler>();
+
+        // Receipt
+        services.AddScoped<PrintCustomerReceiptCommandHandler>();
+        services.AddScoped<PrintKitchenTicketCommandHandler>();
+        services.AddScoped<PrintRefundReceiptCommandHandler>();
+
+        // Receipt services
+        services.AddScoped<IReceiptFormatter, ReceiptFormatter>();
+        services.AddScoped<ReceiptConfiguration>(_ => new ReceiptConfiguration
+        {
+            ShopName = "JLek Shop",
+            ShopAddress = "",
+            ShopPhone = "",
+            TaxId = "",
+            Footer = "Thank you",
+            PaperWidth = 48,
+            DefaultPrinter = "null"
+        });
 
         return services;
     }

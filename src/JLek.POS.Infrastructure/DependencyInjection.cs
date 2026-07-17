@@ -1,7 +1,9 @@
 using JLek.POS.Application.Abstractions;
 using JLek.POS.Application.Abstractions.Repositories;
+using JLek.POS.Application.Features.Receipt.Configuration;
 using JLek.POS.Domain.Common.Abstractions;
 using JLek.POS.Infrastructure.Persistence;
+using JLek.POS.Infrastructure.Printing;
 using JLek.POS.Infrastructure.Repositories;
 using JLek.POS.Infrastructure.Time;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +36,11 @@ public static class DependencyInjection
         services.AddScoped<IClock, SystemClock>();
         services.AddScoped<IReportingDbContext>(
             sp => sp.GetRequiredService<ApplicationDbContext>());
+
+        // Receipt
+        services.AddScoped<IReceiptDataProvider, ReceiptDataProvider>();
+        services.AddScoped<IReceiptPrinter, NullReceiptPrinter>();
+        services.AddScoped<IKitchenPrinter, NullKitchenPrinter>();
 
         return services;
     }
