@@ -50,6 +50,10 @@ using JLek.POS.Application.Features.Kitchen.Queries.GetActiveKitchenTickets;
 using JLek.POS.Application.Features.Kitchen.Queries.GetKitchenTicketById;
 using JLek.POS.Application.Features.Kitchen.Queries.GetKitchenTickets;
 using JLek.POS.Application.Features.Tables.Queries.GetDiningTables;
+using JLek.POS.Application.Features.Payments.Commands.ReceivePayment;
+using JLek.POS.Application.Features.Payments.Commands.RefundPayment;
+using JLek.POS.Application.Features.Payments.Queries.GetPaymentById;
+using JLek.POS.Application.Features.Payments.Queries.GetPaymentsByOrderId;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JLek.POS.Application;
@@ -134,6 +138,14 @@ public static class DependencyInjection
         services.AddScoped<GetKitchenTicketByIdQueryHandler>();
         services.AddScoped<GetKitchenTicketsQueryHandler>();
         services.AddScoped<GetActiveKitchenTicketsQueryHandler>();
+
+        // Payment commands
+        services.AddScoped<ReceivePaymentCommandHandler>();
+        services.AddScoped<RefundPaymentCommandHandler>();
+
+        // Payment queries
+        services.AddScoped<GetPaymentByIdQueryHandler>();
+        services.AddScoped<GetPaymentsByOrderIdQueryHandler>();
 
         return services;
     }
