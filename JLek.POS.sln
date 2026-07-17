@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JLek.POS.Printing.Renderer"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JLek.POS.Printing.Renderer.Tests", "src\JLek.POS.Printing.Renderer.Tests\JLek.POS.Printing.Renderer.Tests.csproj", "{57E64B8A-F26F-4DAC-84F9-F08A0D9632BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JLek.POS.Printing.Infrastructure.Tests", "src\JLek.POS.Printing.Infrastructure.Tests\JLek.POS.Printing.Infrastructure.Tests.csproj", "{1FBCCA3C-744B-4EC0-8B03-15D749ED67E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,10 @@ Global
 		{57E64B8A-F26F-4DAC-84F9-F08A0D9632BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57E64B8A-F26F-4DAC-84F9-F08A0D9632BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57E64B8A-F26F-4DAC-84F9-F08A0D9632BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FBCCA3C-744B-4EC0-8B03-15D749ED67E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FBCCA3C-744B-4EC0-8B03-15D749ED67E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FBCCA3C-744B-4EC0-8B03-15D749ED67E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FBCCA3C-744B-4EC0-8B03-15D749ED67E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A1DED10F-DF8D-4494-B6B1-5640E1E9CA50} = {0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}
@@ -100,5 +106,6 @@ Global
 		{E9AE4017-E56E-43A6-ABEA-BF679F9F995B} = {0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}
 		{D7B660E5-081C-4A3D-B162-202DD827B4AC} = {0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}
 		{57E64B8A-F26F-4DAC-84F9-F08A0D9632BA} = {0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}
+		{1FBCCA3C-744B-4EC0-8B03-15D749ED67E8} = {0B9E9EFD-94CE-4DFD-A39C-A249A4C76061}
 	EndGlobalSection
 EndGlobal
