@@ -234,6 +234,82 @@ Payment is created directly in `Completed` state (no Pending for cash POS). The 
 - **Domain Event Naming**: `PaymentReceivedEvent` (not `PaymentCreatedEvent`) — reflects business meaning ("ลูกค้าจ่ายเงินแล้ว"), not object creation.
 - **Global Exception Handling**: BusinessRuleValidationException returns 409 Conflict with ProblemDetails format.
 
+## Receipt Module
+
+Status: Frozen
+
+### Architecture
+
+Receipt Module is a pure **Output Module**. It has no Aggregate, no Repository, no Data Store, no Business Rules, and no Domain Events.
+
+| Concept | Classification | Justification |
+|---------|---------------|---------------|
+| Output Module | Command-only | Print is a side effect of business operations. No data to protect. |
+| Command Handlers | Application Layer | Inject IReceiptDataProvider, IReceiptFormatter, IReceiptPrinter, IClock. |
+| ReceiptFormatter | Formatting Layer | Pure C# — transforms DTOs to ReceiptDocument. No EF Core, no printer logic. |
+| ReceiptDocument | Model | Line-based document (Title, Lines, ReceiptNumber, ReprintLabel). Printer-agnostic. |
+
+### Purpose
+
+The Receipt Module formats and prints customer receipts, kitchen tickets, and refund receipts. It abstracts printer hardware through interfaces so that application code never depends on specific printer implementations.
+
+### Dependencies
+
+| Module | Dependency Type | Details |
+|--------|----------------|---------|
+| Order | Read (via DataProvider) | CustomerReceipt reads Order + OrderItems |
+| Payment | Read (via DataProvider) | CustomerReceipt reads Payment. RefundReceipt reads Payment. |
+| Kitchen | Read (via DataProvider) | KitchenTicket reads KitchenTicket + KitchenItems |
+| IClock | Interface | Print timestamps |
+
+No module depends on Receipt.
+
+### CQRS Pattern
+
+| Category | Count | Details |
+|----------|-------|---------|
+| Commands | 3 | PrintCustomerReceipt, PrintKitchenTicket, PrintRefundReceipt |
+| Queries | 0 | None |
+| Handlers | 3 | One per command |
+
+### API Pattern
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | /receipts/customer-print | Print/reprint customer receipt (with OrderId, IsReprint, Copies) |
+| POST | /receipts/kitchen-print | Print kitchen ticket (with TicketNumber, Copies) |
+| POST | /receipts/refund-print | Print/reprint refund receipt (with PaymentId, IsReprint, Copies) |
+
+### DTO Flow
+
+```
+HTTP Request → CustomerPrintRequest (flat DTO)
+  ↓
+Command → PrintCustomerReceiptCommand
+  ↓
+IReceiptDataProvider.GetCustomerReceiptDataAsync()
+  ↓  returns CustomerReceiptData (flat DTO — ORDER, no Domain types)
+IReceiptFormatter.FormatCustomerReceipt(data, isReprint)
+  ↓  returns ReceiptDocument (format-specific lines)
+IReceiptPrinter.PrintAsync(document)
+  ↓  returns PrintResult (Success, StartedAt, FinishedAt, Duration, etc.)
+HTTP Response → 200 OK with PrintResult
+```
+
+### Key Patterns
+
+- **Output Module**: No Aggregate, no Repository, no Data Store, no Business Rules. Only Commands.
+- **Flat DTO Isolation**: IReceiptDataProvider returns flat DTOs only (CustomerReceiptData, KitchenTicketReceiptData, RefundReceiptData). Never exposes Order, Payment, or KitchenTicket Domain entities.
+- **Formatter/Printer Separation**: ReceiptFormatter is pure C# formatting logic — no EF Core, no printer hardware knowledge. Printer implementations (IReceiptPrinter, IKitchenPrinter) handle device-specific rendering.
+- **ReceiptDocument Model**: Printer-agnostic document format. Lines have Text, Alignment, Bold, DoubleWidth, DoubleHeight. Any printer adapter can convert this to device-specific format (ESC/POS, PDF, HTML).
+- **Enhanced PrintResult**: Includes Success, ErrorMessage, StartedAt, FinishedAt, Duration, PrinterName, Copies, Status.
+- **Reprint with Label**: Reprint uses the same data + `isReprint: true` flag, not a separate endpoint. Document includes "*** REPRINT ***" label.
+- **NullPrinter**: Default printer for development and CI. Always returns successful PrintResult. No hardware required.
+- **ReceiptConfiguration**: Loaded from appsettings.json (ShopName, Address, Phone, TaxId, Footer, PaperWidth). Not hardcoded.
+- **Explicit Print (v1)**: No auto-print triggered by Domain Events. Cashier clicks "Print" explicitly after successful payment.
+
+---
+
 ## Shared Infrastructure Patterns
 
 ### 4-Method Repository Contract (all modules)

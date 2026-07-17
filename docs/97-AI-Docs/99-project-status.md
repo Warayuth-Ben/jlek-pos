@@ -1,6 +1,6 @@
 ﻿# Project Status
 
-Version: 1.3
+Version: 1.4
 
 Project: JLek POS
 
@@ -24,7 +24,7 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Reporting Module v1
+Receipt Module v1
 
 Status
 
@@ -33,10 +33,14 @@ Frozen
 Completed
 
 ✔ Architecture Design
-✔ Query Handler Implementation
-✔ Report DTOs
-✔ API Implementation
-✔ Integration Testing (24 tests)
+✔ Command Handler Implementation
+✔ Flat DTOs
+✔ ReceiptFormatter
+✔ ReceiptDocument Model
+✔ Printer Abstraction
+✔ NullPrinter
+✔ Minimal API Implementation
+✔ Integration Testing (21 tests)
 ✔ Build Verification (0 errors, 0 warnings)
 ✔ Documentation Update
 ✔ Human Review
@@ -170,6 +174,9 @@ Completed
 ✔ Payment Repository Contracts
 ✔ Report Query Handlers
 ✔ Report DTOs
+✔ Receipt Command Handlers (3)
+✔ Receipt Formatter
+✔ Receipt Configuration
 
 ---
 
@@ -211,6 +218,9 @@ Completed
 ✔ Payment Repository DI Registration
 ✔ IReportingDbContext Registration
 ✔ SystemClock Registration
+✔ IReceiptDataProvider Registration
+✔ NullReceiptPrinter Registration
+✔ NullKitchenPrinter Registration
 
 ---
 
@@ -259,6 +269,8 @@ Completed
 ✔ Payment Endpoints (4 operations)
 ✔ Reporting Minimal API
 ✔ Reporting Endpoints (3 operations)
+✔ Receipt Minimal API
+✔ Receipt Endpoints (3 operations)
 
 ---
 
@@ -313,6 +325,16 @@ Completed
 - Sales By Payment: Cash, QR, Card, Credit grouping, ordering, multi-method
 - Best Sellers: empty, ranking, ordering, limit, aggregation, non-completed exclusion, schema
 - Validation: limit <= 0 → 400, negative limit → 400
+
+✔ Receipt Tests (21 tests)
+
+- Customer Print: success, validation, reprint
+- Kitchen Print: success, validation, not found
+- Refund Print: success, validation
+- ReceiptFormatter: header/items, reprint label, kitchen ticket, refund
+- NullReceiptPrinter: PrintResult verification
+- DI Resolution: all services resolvable
+- DataProvider: flat DTOs, no Domain leakage
 
 ---
 
@@ -410,6 +432,20 @@ Reporting Module
 - API Contracts (GET /reports/daily-sales, /sales-by-payment, /best-sellers)
 - Integration Tests (24 tests)
 
+Receipt Module
+
+- Output Module (no aggregate, no data store)
+- Command-only architecture (3 commands, 0 queries)
+- Flat DTOs (CustomerReceiptData, KitchenTicketReceiptData, RefundReceiptData)
+- ReceiptFormatter (pure formatting, no infrastructure)
+- ReceiptDocument + ReceiptLine model
+- IReceiptPrinter / IKitchenPrinter abstractions
+- NullReceiptPrinter / NullKitchenPrinter
+- IReceiptDataProvider (flat DTOs only — no Domain leakage)
+- ReceiptConfiguration (from appsettings)
+- API Contracts (POST /receipts/customer-print, /kitchen-print, /refund-print)
+- Integration Tests (21 tests)
+
 Infrastructure
 
 - Integration Testing Infrastructure
@@ -433,6 +469,7 @@ Verified
 - TicketNumber generation needs a thread-safe SequenceService for production.
 - Database Migration documentation needs updating (Table, Kitchen, Payment modules)
 - Date filtering in reports depends on timestamp availability in source aggregates (no CreatedAt property in Payment/Order domain)
+- Receipt Module uses NullPrinter only — no ESC/POS, PDF, or network printer support yet
 
 No verified architecture violations have been found.
 
@@ -442,8 +479,17 @@ No verified architecture violations have been found.
 
 Restaurant
 
-- Reporting (additional reports beyond v1 — Hourly, Monthly, Kitchen Performance, Table Usage)
+- Reporting (additional reports — Hourly, Monthly, Kitchen Performance, Table Usage)
 - Dashboard
+
+Printing Infrastructure (New Epic)
+
+- EscPosEncoder
+- UsbPrinter
+- LanPrinter
+- PdfPrinter
+- CloudPrinter
+- Bluetooth Printer
 
 Presentation
 
@@ -539,7 +585,7 @@ UI
 
 Estimated Overall Progress
 
-≈ 91%
+≈ 93%
 
 ---
 
@@ -557,15 +603,17 @@ Payment Module v1 is complete and frozen.
 
 Reporting Module v1 is complete and frozen.
 
-All six modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
+Receipt Module v1 is complete and frozen.
 
-Integration testing is complete with 134 tests (54 Catalog + 17 Table + 21 Kitchen + 18 Payment + 24 Reporting).
+All seven modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
+
+Integration testing is complete with 155 tests (54 Catalog + 17 Table + 21 Kitchen + 18 Payment + 24 Reporting + 21 Receipt).
 
 CI/CD pipeline is operational via GitHub Actions.
 
 Future development should reuse these modules as implementation references.
 
-The next functional milestone is Reporting expansion (Hourly, Monthly, Kitchen Performance, Table Usage) or Web UI.
+The next functional milestone is Printing Infrastructure (ESC/POS, USB, LAN, PDF printers).
 
 ---
 
@@ -580,25 +628,27 @@ Bug Fixes (Order API v1 — Frozen)
 
 Verified by Human Review
 
-- Reporting Module Architecture reviewed.
-- Reporting Query Handlers reviewed.
-- Reporting Report DTOs reviewed.
-- Reporting API endpoints reviewed.
-- Reporting Integration tests reviewed.
+- Receipt Module Architecture reviewed.
+- Receipt Command Handlers reviewed.
+- Receipt DTOs reviewed.
+- ReceiptFormatter reviewed.
+- ReceiptDocument model reviewed.
+- Printer abstractions (IReceiptPrinter, IKitchenPrinter) reviewed.
+- NullReceiptPrinter reviewed.
+- Receipt API endpoints reviewed.
+- Receipt Integration tests reviewed.
 - Build verification completed.
-- IClock interface reviewed.
-- IReportingDbContext reviewed.
+- IReceiptDataProvider reviewed — returns flat DTOs only, no Domain types.
+- ReceiptConfiguration reviewed — loaded from appsettings.json.
 - No architecture drift identified.
-- Reporting Module uses pure Read Model pattern: no Aggregate, no Commands, no Domain Events.
-- EF Core LINQ with AsNoTracking() — database aggregation (GroupBy, Sum, Count in SQL).
-- Dapper deferred to future milestone (not needed at current scale).
+- Receipt Module uses pure Output Module pattern: no Aggregate, no Repository, no Domain Events.
 ----
-Reporting Module v1
+Receipt Module v1
 
-Architecture (Read Model), Application (Query Handlers), API, and Integration Testing are complete.
+Architecture (Output Module), Application (Command Handlers), API, Infrastructure (NullPrinter), and Integration Testing are complete.
 
-Reporting Module v1 is now frozen.
+Receipt Module v1 is now frozen.
 
-Future modules should reuse Reporting Module patterns before introducing new architectural patterns.
+Future modules should reuse Receipt Module patterns before introducing new architectural patterns.
 
-The Reporting Module demonstrates the pure Query Read Model pattern — no Aggregate, no Repository, no Commands, no Domain Events.
+The Receipt Module demonstrates the pure Output Module pattern — no Aggregate, no Repository, no Data Store, no Business Rules.

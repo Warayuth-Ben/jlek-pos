@@ -50,3 +50,37 @@
 - Application DependencyInjection registers 3 report handlers
 - Infrastructure DependencyInjection registers IClock (SystemClock) and IReportingDbContext
 - Program.cs registers MapReportingEndpoints()
+
+## 2026-07-17 — Receipt Module v1
+
+### Added
+- Receipt DTOs (CustomerReceiptData, KitchenTicketReceiptData, RefundReceiptData)
+- ReceiptDocument + ReceiptLine model
+- PrintResult model with timing
+- IReceiptFormatter + ReceiptFormatter (pure formatting, no infrastructure)
+- IReceiptDataProvider + ReceiptDataProvider (returns flat DTOs only)
+- IReceiptPrinter + IKitchenPrinter abstractions
+- NullReceiptPrinter + NullKitchenPrinter (development printers)
+- 3 Commands + Handlers (PrintCustomerReceipt, PrintKitchenTicket, PrintRefundReceipt)
+- ReceiptConfiguration (from appsettings.json)
+- DI Registrations for all Receipt services
+- Minimal API endpoints (3 POST operations)
+- Request DTOs (CustomerPrintRequest, KitchenPrintRequest, RefundPrintRequest)
+- Collection Fixture + Integration Tests (21 tests)
+
+### Architecture
+- Pure Output Module: no Aggregate, no Repository, no Data Store, no Business Rules
+- Command-only CQRS (3 commands, 0 queries)
+- Flat DTO isolation — no Domain types leaked from DataProvider
+- Formatter separated from Printer — ReceiptFormatter is pure C#, Printer is abstracted
+- NullPrinter for development/CI — real printers deferred to next milestone
+
+### Frozen
+- Receipt Module v1
+
+### Changed
+- Updated Project Status to v1.4
+- Updated Reference Modules with Receipt Module patterns
+- Application DependencyInjection registers 3 receipt handlers + ReceiptFormatter + ReceiptConfiguration
+- Infrastructure DependencyInjection registers IReceiptDataProvider, NullReceiptPrinter, NullKitchenPrinter
+- Program.cs registers MapReceiptEndpoints()
