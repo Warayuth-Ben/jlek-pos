@@ -30,6 +30,7 @@ app.MapOrderEndpoints();
 app.MapCatalogEndpoints();
 app.MapTableEndpoints();
 app.MapKitchenEndpoints();
+app.MapPaymentEndpoints();
 app.Run();
 
 public partial class Program { }
