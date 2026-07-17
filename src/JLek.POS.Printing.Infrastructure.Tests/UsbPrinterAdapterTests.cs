@@ -194,6 +194,146 @@ public sealed class UsbPrinterAdapterTests
         // Assert
         status.IsOnline.Should().BeFalse();
     }
+
+    // ── LanPrinterAdapter Tests ──────────────────────────────────
+
+    [Fact]
+    public async Task LanPrintAsync_Should_Connect_SendData_Disconnect()
+    {
+        // Arrange
+        var client = new MockTcpClient();
+        var adapter = new LanPrinterAdapter(client, _config);
+        var payload = new PrintPayload
+        {
+            Data = new byte[] { 0x1B, 0x40, 0x0A },
+            MimeType = "application/vnd.escpos",
+            Format = "escpos"
+        };
+
+        // Act
+        var result = await adapter.PrintAsync(payload);
+
+        // Assert
+        result.Success.Should().BeTrue();
+        result.Status.Should().Be("Completed");
+        client.ConnectCallCount.Should().Be(1);
+        client.SentData.ToArray().Should().BeEquivalentTo(payload.Data.ToArray());
+        client.DisconnectCallCount.Should().Be(1);
+        result.PrinterName.Should().Contain("LAN");
+    }
+
+    [Fact]
+    public async Task LanPrintAsync_WhenConnectionFails_Should_ReturnFailed()
+    {
+        // Arrange
+        var client = new MockTcpClient();
+        client.ThrowOnConnect = true;
+        var adapter = new LanPrinterAdapter(client, _config);
+
+        // Act
+        var result = await adapter.PrintAsync(new PrintPayload
+        {
+            Data = Array.Empty<byte>(),
+            MimeType = "application/vnd.escpos",
+            Format = "escpos"
+        });
+
+        // Assert
+        result.Success.Should().BeFalse();
+        result.Status.Should().Be("Failed");
+    }
+
+    [Fact]
+    public async Task LanPrintAsync_WhenSendFails_Should_ReturnFailed()
+    {
+        // Arrange
+        var client = new MockTcpClient();
+        client.ThrowOnSend = true;
+        var adapter = new LanPrinterAdapter(client, _config);
+
+        // Act
+        var result = await adapter.PrintAsync(new PrintPayload
+        {
+            Data = new byte[] { 0x1B },
+            MimeType = "application/vnd.escpos",
+            Format = "escpos"
+        });
+
+        // Assert
+        result.Success.Should().BeFalse();
+        result.Status.Should().Be("Failed");
+    }
+
+    [Fact]
+    public async Task LanPrintAsync_AfterFailure_Should_StillDisconnect()
+    {
+        // Arrange
+        var client = new MockTcpClient();
+        client.IsConnected = true;
+        client.ThrowOnSend = true;
+        var adapter = new LanPrinterAdapter(client, _config);
+
+        // Act
+        await adapter.PrintAsync(new PrintPayload
+        {
+            Data = new byte[] { 0x1B },
+            MimeType = "application/vnd.escpos",
+            Format = "escpos"
+        });
+
+        // Assert
+        client.DisconnectCallCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task LanGetStatusAsync_WhenConnected_Should_ReturnOnline()
+    {
+        // Arrange
+        var client = new MockTcpClient();
+        var adapter = new LanPrinterAdapter(client, _config);
+
+        // Act
+        var status = await adapter.GetStatusAsync();
+
+        // Assert
+        status.IsOnline.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task LanGetStatusAsync_WhenConnectionFails_Should_ReturnOffline()
+    {
+        // Arrange
+        var client = new MockTcpClient();
+        client.ThrowOnConnect = true;
+        var adapter = new LanPrinterAdapter(client, _config);
+
+        // Act
+        var status = await adapter.GetStatusAsync();
+
+        // Assert
+        status.IsOnline.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task LanPrintAsync_Should_IncludeTimestamps()
+    {
+        // Arrange
+        var client = new MockTcpClient();
+        var adapter = new LanPrinterAdapter(client, _config);
+
+        // Act
+        var result = await adapter.PrintAsync(new PrintPayload
+        {
+            Data = Array.Empty<byte>(),
+            MimeType = "application/vnd.escpos",
+            Format = "escpos"
+        });
+
+        // Assert
+        result.StartedAt.Should().NotBe(default);
+        result.FinishedAt.Should().NotBe(default);
+        result.FinishedAt.Should().BeOnOrAfter(result.StartedAt);
+    }
 }
 
 public sealed class MockSerialPort : ISerialPort
@@ -240,5 +380,48 @@ public sealed class MockSerialPort : ISerialPort
     public void Dispose()
     {
         IsOpen = false;
+    }
+}
+
+public sealed class MockTcpClient : ITcpClient
+{
+    private readonly List<byte> _sent = new();
+
+    public bool IsConnected { get; set; }
+    public int ConnectCallCount { get; private set; }
+    public int DisconnectCallCount { get; private set; }
+    public IReadOnlyList<byte> SentData => _sent;
+    public bool ThrowOnConnect { get; set; }
+    public bool ThrowOnSend { get; set; }
+
+    public Task ConnectAsync(string host, int port, CancellationToken cancellationToken = default)
+    {
+        if (ThrowOnConnect)
+            throw new System.Net.Sockets.SocketException(10061); // Connection refused
+
+        ConnectCallCount++;
+        IsConnected = true;
+        return Task.CompletedTask;
+    }
+
+    public Task SendAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
+    {
+        if (ThrowOnSend)
+            throw new IOException("Send failed");
+
+        _sent.AddRange(data.ToArray());
+        return Task.CompletedTask;
+    }
+
+    public Task DisconnectAsync()
+    {
+        DisconnectCallCount++;
+        IsConnected = false;
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        IsConnected = false;
     }
 }
