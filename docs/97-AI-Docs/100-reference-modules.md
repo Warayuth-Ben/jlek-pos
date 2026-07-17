@@ -274,6 +274,93 @@ builder.Ignore(x => x.DomainEvents);
 
 ---
 
+## Reporting Module
+
+Status: Frozen
+
+### Architecture
+
+Reporting Module is a pure **Read Model**. It has no Aggregate, no Repository, no Commands, and no Domain Events.
+
+| Concept | Classification | Justification |
+|---------|---------------|---------------|
+| Read Model | Query-only | No business invariants to protect. Pure data aggregation for analysis. |
+| Query Handlers | Application Layer | Inject IReportingDbContext (read-only) and IClock. No Repository pattern. |
+| Report DTOs | Response only | Flat DTOs with computed fields (TotalRevenue, NetRevenue, Rank). No FromDomain(). |
+
+### Dependencies
+
+| Module | Dependency Type | Details |
+|--------|----------------|---------|
+| Order | Read-only | DailySales, BestSellers read Order and OrderItem |
+| Payment | Read-only | DailySales, SalesByPayment read Payment |
+| IClock | Interface | Injected into all query handlers for time-based defaults |
+
+No module depends on Reporting.
+
+### CQRS Pattern
+
+| Category | Count | Details |
+|----------|-------|---------|
+| Queries | 3 | GetDailySalesReport, GetSalesByPaymentReport, GetBestSellerReport |
+| Commands | 0 | None (Read Model only) |
+| Handlers | 3 | One per query |
+
+### API Pattern
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | /reports/daily-sales | Daily revenue, orders, items sold, refunds (with optional date) |
+| GET | /reports/sales-by-payment | Sales grouped by Cash/Card/QR/Credit (with optional date range) |
+| GET | /reports/best-sellers | Top menu items ranked by quantity sold (with optional limit, date range) |
+
+### Response DTO Pattern
+
+Report DTOs are flat records with computed fields (not FromDomain mapping):
+
+```csharp
+public sealed record DailySalesReport
+{
+    public DateOnly Date { get; init; }
+    public int TotalOrders { get; init; }
+    public decimal TotalRevenue { get; init; }
+    public decimal TotalRefunds { get; init; }
+    public decimal NetRevenue { get; init; }
+    public decimal AverageOrderValue { get; init; }
+    public int TotalItemsSold { get; init; }
+}
+```
+
+### Key Patterns
+
+- **Pure Read Model**: No Aggregate, no Business Rules, no Domain Events. Only queries.
+- **EF Core + AsNoTracking()**: All queries use `AsNoTracking()` for read-only access. No Dapper, no Raw SQL, no Views.
+- **Database Aggregation**: BestSellers uses `SelectMany + GroupBy + Sum` which EF Core translates to SQL GROUP BY + aggregate functions.
+- **IReportingDbContext**: Read-only interface exposing only `DbSet<Order>`, `DbSet<Payment>`, `DbSet<KitchenTicket>`. Prevents accidental writes.
+- **IClock Interface**: All time-based queries use `IClock` (Today, UtcNow) for testability.
+- **Endpoint Validation**: BestSellers validates `limit > 0` and `dateFrom <= dateTo` → `Results.ValidationProblem()`. No exceptions for client errors.
+- **Integration Testing**: Reuses existing Testcontainers + WebApplicationFactory pattern. Seeds completed orders + payments independently.
+
+### Query Data Flow
+
+```
+HTTP Request
+  ↓
+Minimal API Endpoint (read query params)
+  ↓
+Query Handler (inject IReportingDbContext, IClock)
+  ↓
+EF Core LINQ with AsNoTracking()
+  ↓
+PostgreSQL (GROUP BY, SUM, COUNT, ORDER BY in SQL)
+  ↓
+Report DTO
+  ↓
+Results.Ok(report)
+```
+
+---
+
 ## Implementation Order for Future Modules
 
 1. Business Rules (docs/01-business-rules/)

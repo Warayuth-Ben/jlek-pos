@@ -1,6 +1,6 @@
 ﻿# Project Status
 
-Version: 1.2
+Version: 1.3
 
 Project: JLek POS
 
@@ -24,7 +24,7 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Payment Module v1
+Reporting Module v1
 
 Status
 
@@ -33,11 +33,10 @@ Frozen
 Completed
 
 ✔ Architecture Design
-✔ Domain Implementation
-✔ Infrastructure Implementation
-✔ CQRS Implementation
+✔ Query Handler Implementation
+✔ Report DTOs
 ✔ API Implementation
-✔ Integration Testing (18 tests)
+✔ Integration Testing (24 tests)
 ✔ Build Verification (0 errors, 0 warnings)
 ✔ Documentation Update
 ✔ Human Review
@@ -102,6 +101,8 @@ Completed
 
 ✔ Payment Aggregate (Payment Module)
 
+✔ IClock Interface
+
 ---
 
 ## Application
@@ -148,6 +149,9 @@ Completed
 ✔ GetActiveKitchenTickets
 ✔ GetPaymentById
 ✔ GetPaymentsByOrderId
+✔ GetDailySalesReport
+✔ GetSalesByPaymentReport
+✔ GetBestSellerReport
 
 ✔ CQRS Foundation
 ✔ Product CQRS
@@ -164,6 +168,8 @@ Completed
 ✔ Payment CQRS
 ✔ Payment Response DTOs
 ✔ Payment Repository Contracts
+✔ Report Query Handlers
+✔ Report DTOs
 
 ---
 
@@ -203,6 +209,8 @@ Completed
 ✔ Payment EF Core Configuration
 ✔ Payment DbContext Registration
 ✔ Payment Repository DI Registration
+✔ IReportingDbContext Registration
+✔ SystemClock Registration
 
 ---
 
@@ -249,6 +257,8 @@ Completed
 ✔ Kitchen Endpoints (8 operations)
 ✔ Payment Minimal API
 ✔ Payment Endpoints (4 operations)
+✔ Reporting Minimal API
+✔ Reporting Endpoints (3 operations)
 
 ---
 
@@ -296,6 +306,13 @@ Completed
 - Business Rules: CannotPayCancelledOrder, CannotPayCompletedOrder, CannotAcceptInsufficientPayment, CannotRefundNonCompletedPayment
 - Money persistence: OrderTotal, AmountReceived, Change
 - PaymentMethod persistence: Cash, Card, QR, Credit
+
+✔ Reporting Tests (24 tests)
+
+- Daily Sales: empty, single payment, multiple payments, refunds, schema
+- Sales By Payment: Cash, QR, Card, Credit grouping, ordering, multi-method
+- Best Sellers: empty, ranking, ordering, limit, aggregation, non-completed exclusion, schema
+- Validation: limit <= 0 → 400, negative limit → 400
 
 ---
 
@@ -381,6 +398,18 @@ Payment Module
 - API Contracts
 - Integration Tests (18 tests)
 
+Reporting Module
+
+- Read Model (no aggregate)
+- Query-only architecture
+- IReportingDbContext (read-only abstraction)
+- IClock Interface
+- Query Contracts (GetDailySalesReport, GetSalesByPaymentReport, GetBestSellerReport)
+- Query Handlers (3 handlers — EF Core LINQ, AsNoTracking, database aggregation)
+- Report DTOs (DailySalesReport, SalesByPaymentReport, BestSellerReport)
+- API Contracts (GET /reports/daily-sales, /sales-by-payment, /best-sellers)
+- Integration Tests (24 tests)
+
 Infrastructure
 
 - Integration Testing Infrastructure
@@ -403,6 +432,7 @@ Verified
 
 - TicketNumber generation needs a thread-safe SequenceService for production.
 - Database Migration documentation needs updating (Table, Kitchen, Payment modules)
+- Date filtering in reports depends on timestamp availability in source aggregates (no CreatedAt property in Payment/Order domain)
 
 No verified architecture violations have been found.
 
@@ -412,7 +442,8 @@ No verified architecture violations have been found.
 
 Restaurant
 
-- Reporting
+- Reporting (additional reports beyond v1 — Hourly, Monthly, Kitchen Performance, Table Usage)
+- Dashboard
 
 Presentation
 
@@ -508,7 +539,7 @@ UI
 
 Estimated Overall Progress
 
-≈ 88%
+≈ 91%
 
 ---
 
@@ -524,15 +555,17 @@ Kitchen Module v1 is complete and frozen.
 
 Payment Module v1 is complete and frozen.
 
-All five modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
+Reporting Module v1 is complete and frozen.
 
-Integration testing is complete with 110 tests (54 Catalog + 17 Table + 21 Kitchen + 18 Payment).
+All six modules have passed Architecture Review, DDD Review, CQRS Review and Human Review.
+
+Integration testing is complete with 134 tests (54 Catalog + 17 Table + 21 Kitchen + 18 Payment + 24 Reporting).
 
 CI/CD pipeline is operational via GitHub Actions.
 
 Future development should reuse these modules as implementation references.
 
-The next functional milestone is Reporting.
+The next functional milestone is Reporting expansion (Hourly, Monthly, Kitchen Performance, Table Usage) or Web UI.
 
 ---
 
@@ -547,21 +580,25 @@ Bug Fixes (Order API v1 — Frozen)
 
 Verified by Human Review
 
-- Payment Module Architecture reviewed.
-- Payment Domain implementation reviewed.
-- Payment Infrastructure implementation reviewed.
-- Payment CQRS implementation reviewed.
-- Payment API implementation reviewed.
-- Payment Integration tests reviewed.
+- Reporting Module Architecture reviewed.
+- Reporting Query Handlers reviewed.
+- Reporting Report DTOs reviewed.
+- Reporting API endpoints reviewed.
+- Reporting Integration tests reviewed.
 - Build verification completed.
-- Global Exception Handling implemented and reviewed.
-- ProblemDetails response standardization implemented and reviewed.
+- IClock interface reviewed.
+- IReportingDbContext reviewed.
 - No architecture drift identified.
+- Reporting Module uses pure Read Model pattern: no Aggregate, no Commands, no Domain Events.
+- EF Core LINQ with AsNoTracking() — database aggregation (GroupBy, Sum, Count in SQL).
+- Dapper deferred to future milestone (not needed at current scale).
 ----
-Payment Module v1
+Reporting Module v1
 
-Architecture, Domain, Infrastructure, Application, API, and Integration Testing are complete.
+Architecture (Read Model), Application (Query Handlers), API, and Integration Testing are complete.
 
-The Payment Module v1 is now frozen.
+Reporting Module v1 is now frozen.
 
-Future modules should reuse Payment Module patterns before introducing new architectural patterns.
+Future modules should reuse Reporting Module patterns before introducing new architectural patterns.
+
+The Reporting Module demonstrates the pure Query Read Model pattern — no Aggregate, no Repository, no Commands, no Domain Events.
