@@ -437,6 +437,80 @@ Results.Ok(report)
 
 ---
 
+## Printing Infrastructure
+
+Status: Frozen
+
+### Architecture
+
+```
+ReceiptDocument (from Receipt Module — FROZEN)
+    ↓
+IRenderer.RenderAsync(ReceiptDocument) → PrintPayload
+    ↓
+PrintPayload { byte[] Data, MimeType, Format }
+    ↓
+IPrinterAdapter.PrintAsync(PrintPayload) → PrintResult
+    │
+    ├── UsbPrinterAdapter (depends on ISerialPort)
+    │     └── SerialPortAdapter (wraps System.IO.Ports.SerialPort)
+    │
+    ├── LanPrinterAdapter (depends on ITcpClient)
+    │     └── TcpClientAdapter (wraps System.Net.Sockets.TcpClient)
+    │
+    └── NullPrinterAdapter (development/CI, always online)
+```
+
+### Key Patterns
+
+- **Renderer ≠ Adapter**: Renderer is pure byte formatting (no IO). Adapter is transport only (no formatting). Completely independent.
+- **Connectionless Design**: Adapters manage connect/disconnect internally. `PrintAsync(PrintPayload)` is the only method needed for printing.
+- **Stateless Renderer**: `EscPosRenderer` has no mutable state. Same document → same bytes. Thread-safe. Pure.
+- **No Fluent API**: `EscPosRenderer` has a single `RenderAsync(ReceiptDocument)` method. No `SetAlignment()`, `SetBold()` exposed.
+- **ISerialPort / ITcpClient Abstractions**: Adapters depend on abstractions, not on `System.IO.Ports.SerialPort` or `System.Net.Sockets.TcpClient` directly. All testable with mocks.
+- **Never Throws**: All exceptions (IOException, SocketException, TimeoutException, OperationCanceledException) are caught. Returns `PrintResult { Success = false }`.
+- **Resource Cleanup**: Ports closed and TCP disconnected in `finally` blocks — on both success and failure.
+- **Thai Encoding**: CP874 (Windows-874) via ESC/POS code page command (ESC t 0x11). Fallback to CP437.
+- **PrintPayload**: Generic byte output with MimeType and Format. Not tied to ESC/POS.
+
+### CQRS Pattern
+
+Printing Infrastructure is output-only. No Commands, no Queries. It is a library consumed by Receipt Module's `IReceiptPrinter` implementation.
+
+### Layer Diagram
+
+```
+Printer Adapter  ────  IPrinterAdapter (abstraction)
+    │
+    ├── UsbPrinterAdapter
+    │     └── ISerialPort ──── SerialPortAdapter (System.IO.Ports)
+    │
+    ├── LanPrinterAdapter
+    │     └── ITcpClient ──── TcpClientAdapter (System.Net.Sockets)
+    │
+    └── NullPrinterAdapter (mock)
+```
+
+### Projects
+
+| Project | Responsibility | Files |
+|---------|---------------|-------|
+| `JLek.POS.Printing.Models` | Data types | 4 (PrintPayload, PrinterStatus, PrinterConfiguration, PrinterFormat) |
+| `JLek.POS.Printing.Abstractions` | Interfaces | 2 (IRenderer, IPrinterAdapter) |
+| `JLek.POS.Printing.Infrastructure` | Implementations | 8 (SerialPort, TcpClient, USB, LAN, Null adapters + DI) |
+| `JLek.POS.Printing.Renderer` | ESC/POS formatting | 5 (EscPosRenderer, Commands, Constants, CodePages, Options) |
+| `JLek.POS.Printing.Infrastructure.Tests` | Unit tests | 2 (18 adapter tests + 18 pipeline tests = 36) |
+| `JLek.POS.Printing.Renderer.Tests` | Unit tests | 1 (21 renderer tests) |
+
+### Encoding Support
+
+| Code Page | ESC/POS Command | Used For |
+|-----------|----------------|----------|
+| CP437 (0x00) | ESC t 0x00 | US/Europe default |
+| CP874 (0x11) | ESC t 0x11 | Thai |
+| CP850 (0x02) | ESC t 0x02 | Western Europe |
+| CP932 (0x01) | ESC t 0x01 | Japanese |
+
 ## Implementation Order for Future Modules
 
 1. Business Rules (docs/01-business-rules/)

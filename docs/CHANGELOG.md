@@ -84,3 +84,30 @@
 - Application DependencyInjection registers 3 receipt handlers + ReceiptFormatter + ReceiptConfiguration
 - Infrastructure DependencyInjection registers IReceiptDataProvider, NullReceiptPrinter, NullKitchenPrinter
 - Program.cs registers MapReceiptEndpoints()
+
+## 2026-07-17 — Printing Infrastructure v1
+
+### Added
+- Printing Abstractions: IRenderer, IPrinterAdapter
+- Printing Models: PrintPayload, PrinterStatus, PrinterConfiguration, PrinterFormat
+- EscPosRenderer (single RenderAsync method, immutable, thread-safe)
+- EscPosCommands (static byte helpers: Initialize, Alignment, Bold, CharacterSize, CutPaper, CodePage)
+- EscPosCodePages (CP437/850/874/932/1252 — Thai support via CP874)
+- RenderOptions (CharactersPerLine, Encoding, CutPaper)
+- NullPrinterAdapter (development/CI)
+- UsbPrinterAdapter (ISerialPort abstraction — not System.IO.Ports)
+- SerialPortAdapter (wraps System.IO.Ports.SerialPort)
+- LanPrinterAdapter (ITcpClient abstraction — not System.Net.Sockets.TcpClient)
+- TcpClientAdapter (wraps System.Net.Sockets.TcpClient)
+- End-to-End Pipeline Tests (57 total: 21 renderer + 18 adapter + 18 pipeline)
+
+### Architecture
+- ReceiptDocument → IRenderer → PrintPayload → IPrinterAdapter → USB/LAN
+- Renderer = pure formatting (no IO). Adapter = transport only (no formatting).
+- Connectionless design: adapters manage Connect/Disconnect internally.
+- Error handling: all exceptions caught. Never throws to caller.
+- Resource cleanup: ports closed, TCP disconnected on success and failure.
+- Architectural isolation: USB → ISerialPort only. LAN → ITcpClient only.
+
+### Frozen
+- Printing Infrastructure v1

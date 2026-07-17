@@ -446,6 +446,23 @@ Receipt Module
 - API Contracts (POST /receipts/customer-print, /kitchen-print, /refund-print)
 - Integration Tests (21 tests)
 
+Printing Infrastructure
+
+- IRenderer / EscPosRenderer (single RenderAsync method, stateless, thread-safe)
+- EscPosCommands (static byte commands — Initialize, Alignment, Bold, CharacterSize, CutPaper, CodePage)
+- EscPosCodePages (CP437/850/874/932/1252 — Thai support)
+- IPrinterAdapter (connectionless — PrintAsync(PrintPayload) + GetStatusAsync)
+- PrintPayload (ReadOnlyMemory<byte>, MimeType, Format)
+- NullPrinterAdapter (development/CI, always online)
+- UsbPrinterAdapter (ISerialPort abstraction — NOT System.IO.Ports)
+- SerialPortAdapter (wraps SerialPort)
+- LanPrinterAdapter (ITcpClient abstraction — NOT System.Net.Sockets.TcpClient)
+- TcpClientAdapter (wraps TcpClient)
+- Unit tests: 57 printing tests (21 renderer + 18 adapter + 18 pipeline)
+- All error handling: catches IOException, SocketException, TimeoutException, OperationCanceledException. Never throws.
+- Resource cleanup: ports closed, TCP disconnected on success and failure.
+- Architectural isolation: USB → ISerialPort only. LAN → ITcpClient only.
+
 Infrastructure
 
 - Integration Testing Infrastructure
@@ -579,13 +596,17 @@ CI/CD
 
 ██████████ 100%
 
+Printing Infrastructure
+
+██████████ 100%
+
 UI
 
 ░░░░░░░░░░ 0%
 
 Estimated Overall Progress
 
-≈ 93%
+≈ 95%
 
 ---
 
