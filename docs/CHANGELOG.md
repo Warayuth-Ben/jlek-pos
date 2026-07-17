@@ -111,3 +111,23 @@
 
 ### Frozen
 - Printing Infrastructure v1
+
+## 2026-07-17 — Architecture Baseline v1.0
+
+### Added
+- Discovery Phase (P1–P7): AI Onboarding, Knowledge Flow, Documentation Map, Navigation Design, Capability Catalog, Traceability, Audit
+- Presentation Architecture (P8–P14): Architecture Design, Operational Flow, Persona Workspaces (4 personas), State Machine, Navigation (14 nodes), Interaction (10 patterns), Architecture Review
+- Application Architecture (P15–P16): Use Case Architecture (~65 use cases), Command & Query Standards
+- Infrastructure Architecture (P17–P20): Persistence Architecture, Repository Architecture (7 repositories), External Adapter Architecture, Infrastructure Services
+- Infrastructure Architecture Review and Freeze
+
+### Architecture Principles (Constitutional)
+- Business Owns the State — Presentation must never create Business State
+- Presentation Reflects, Not Invents — UI reflects state, does not interpret
+- Single Source of Truth — Every state has exactly one owner
+- Every Error Has a Recovery Path — No dead-end states
+
+### Frozen
+- Architecture Baseline v1.0
+- All 20 architecture phases complete and frozen
+- Next phase: Implementation Planning

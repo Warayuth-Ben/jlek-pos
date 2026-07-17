@@ -1,112 +1,80 @@
 # AI Handoff
 
-Current State
+Current Phase
 
-Backend Foundation completed.
+Architecture Baseline v1.0
 
-Migration completed successfully.
+Status
 
-Database Provider
+Frozen
 
-PostgreSQL 17
+---
 
-Database
+## Architecture Phases Completed (P1–P21)
 
-JLekPOS
+| Phase | Area | Status |
+|-------|------|--------|
+| P1–P7 | Discovery (Onboarding, Knowledge Flow, Documentation Map, Navigation, Capability Catalog, Traceability, Audit) | 🧊 Frozen |
+| P8–P14 | Presentation (Architecture, Operational Flow, 4 Personas, State Machine, 14 Navigation Nodes, 10 Interaction Patterns, Review) | 🧊 Frozen |
+| P15–P16 | Application (~65 Use Cases, Command & Query Standards) | 🧊 Frozen |
+| P17–P20 | Infrastructure (Persistence, 7 Repositories, External Adapters, Infrastructure Services) | 🧊 Frozen |
+| P21 | Infrastructure Architecture Review | 🧊 Frozen |
 
-Migration
+## Current State
 
-InitialCreate
+Architecture is complete.
 
-Verified
+Architecture documents are frozen.
 
-Orders table created.
+Implementation has NOT started.
 
-OrderItems table created.
+---
 
-Migration history created.
+## Architecture Principles (Constitutional)
 
-POST /orders tested.
+1. Business Owns the State — Presentation must never create Business State
+2. Presentation Reflects, Not Invents — UI reflects state, does not interpret
+3. Single Source of Truth — Every state has exactly one owner
+4. Every Error Has a Recovery Path — No dead-end states
 
-HTTP 201 Created.
+---
 
-Database insert successful.
+## Important Decisions
 
-Architecture
+- Clean Architecture + DDD + CQRS
+- Strongly Typed IDs (GUID, generated in Domain)
+- Repository per Aggregate (4-method contract, no Delete)
+- Separate Read/Write (IReportingDbContext vs IRepository)
+- Handler owns transaction boundary (one SaveChangesAsync per handler)
+- Adapter never throws (returns Result)
+- Null adapters for all external dependencies
+- Composition Root split (Application DI + Infrastructure DI + Api/Program.cs)
+- Infrastructure Architecture (P17–P20): Persistence, Repository, External Adapters, Infrastructure Services
+- External Adapter Architecture: Interface in Application, Implementation in Infrastructure
 
-Presentation
+---
 
-↓
+## Known Open Items
 
-Application (CQRS)
+1. TicketNumber SequenceService — needed for multi-cashier production
+2. Correlation ID — not implemented (deferred)
+3. Health Checks — not implemented (deferred)
+4. Caching — not implemented (deferred)
+5. Background Processing — not implemented (deferred)
+6. Authentication/Authorization — not implemented (deferred)
+7. Offline Mode — not designed (deferred)
+8. UI Implementation — at 0% (next phase)
 
-↓
+---
 
-Domain
+## Next Task
 
-↓
+Implementation Planning
 
-Infrastructure (EF Core)
+Architecture documents are frozen.
 
-↓
+Do NOT redesign architecture.
 
-PostgreSQL
+Any future architectural changes require an ADR (Architecture Decision Record) or formal Architecture Review.
 
-Important decisions
-
-Strongly Typed IDs
-
-Repository Pattern
-
-Value Objects
-
-Aggregate Root
-
-Domain Events
-
-Business Rules
-
-EF Core Fluent Configuration
-
-PostgreSQL chosen instead of SQL Server for long-term deployment.
-
-Known improvements
-
-Replace Entity responses with DTOs.
-
-Remove DomainEvents from serialization.
-
-Add Result Pattern.
-
-Global Exception Middleware.
-
-Integration Tests.
-
-Next Task
-
-Begin Feature Development.
-
-First target
-
-Order API refinement
-
-↓
-
-Menu Module
-
-↓
-
-Table Module
-
-↓
-
-Kitchen Queue
-
-↓
-
-Payment
-
-↓
-
-Reports
-
+Follow existing architecture documents for all implementation work.

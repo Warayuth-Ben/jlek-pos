@@ -24,7 +24,7 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Receipt Module v1
+Architecture Baseline v1.0
 
 Status
 
@@ -32,18 +32,18 @@ Frozen
 
 Completed
 
-✔ Architecture Design
-✔ Command Handler Implementation
-✔ Flat DTOs
-✔ ReceiptFormatter
-✔ ReceiptDocument Model
-✔ Printer Abstraction
-✔ NullPrinter
-✔ Minimal API Implementation
-✔ Integration Testing (21 tests)
-✔ Build Verification (0 errors, 0 warnings)
-✔ Documentation Update
-✔ Human Review
+✔ All 20 Architecture Phases completed and frozen
+✔ Discovery Phase (P1–P7): Onboarding, Knowledge Flow, Documentation Architecture, Navigation, Capability Catalog, Traceability, Audit
+✔ Presentation Architecture (P8–P14): Architecture Design, Operational Flow, 4 Persona Workspaces, State Machine, Navigation (14 nodes), Interaction (10 patterns), Review
+✔ Application Architecture (P15–P16): Application Use Cases (~65 use cases), Command & Query Standards
+✔ Infrastructure Architecture (P17–P20): Persistence, Repository (7 repositories), External Adapters, Infrastructure Services
+✔ Infrastructure Architecture Review (P21)
+✔ 4 Constitutional Principles established
+✔ Architecture Baseline declared and frozen
+
+Next Milestone
+
+Implementation Planning
 
 ---
 
