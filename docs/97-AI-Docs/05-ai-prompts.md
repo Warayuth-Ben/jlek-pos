@@ -260,6 +260,8 @@ Output
 
 - Summary
 - Files Modified
+- Build Verification
+- Runtime Verification
 - Self Review
 
 ---
@@ -374,3 +376,21 @@ repository evidence wins.
 If repository evidence is missing,
 
 respond "Not Verified."
+
+--------------
+Repository Scope
+
+Specify one:
+
+- immediate directory only
+- recursive
+
+Search Type
+
+Specify one:
+
+- filename search
+- content search
+- symbol search
+- exact path access
+---------------

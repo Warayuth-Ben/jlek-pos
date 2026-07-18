@@ -8,9 +8,54 @@ Every AI participating in this project **must complete this onboarding process b
 
 Failure to complete this onboarding process may result in incorrect assumptions, architecture violations, or business rule inconsistencies.
 
----
+#
+File paths and filenames are authoritative.
+
+The AI must never infer filenames from sequence numbers,
+similar names, previous conversations, or memory.
+
+Always verify the filename by enumerating the parent directory first.
+.
+
+When a document specifies a filename,
+
+When a document specifies a path,
+
+the AI must open that exact path.
+
+The AI must not search for the file in other directories.
+
+The AI must not infer alternative locations.
+
+Repository search is allowed only after the exact path has been verified to be unavailable.
+
+the AI must use the filename exactly as written.
+
+The AI must never construct, infer, rename, abbreviate, or normalize filenames.
+
+If the file cannot be found,
+
+re-read the source document and quote the filename exactly before reporting an error.
+
+The AI must not report:
+
+- Task Completed
+- Onboarding Completed
+- Ready
+
+unless every mandatory document has been successfully opened and read.
+
+If any mandatory document has not been read,
+
+## continue onboarding instead of completing the task.
 
 # Mandatory Reading
+
+**Every document listed in this section is mandatory.**
+
+**AI onboarding is not complete until every document listed below has been successfully read.**
+
+**No document in this section is optional.**
 
 The following documents define the engineering standards of this project.
 
@@ -22,7 +67,7 @@ They must be read **in the following order**.
 
 Read
 
-`01-ai-engineering-standard.md`
+docs/97-AI-Docs/01-ai-engineering-standard.md
 
 Purpose
 
@@ -36,7 +81,7 @@ This document is mandatory.
 
 Read
 
-`02-ai-constitution.md`
+docs/97-AI-Docs/02-ai-constitution.md
 
 Purpose
 
@@ -52,7 +97,7 @@ This document is mandatory.
 
 Read
 
-`03-ai-workflow.md`
+docs/97-AI-Docs/03-ai-workflow.md
 
 Purpose
 
@@ -68,15 +113,29 @@ This document is mandatory.
 
 Read
 
-`04-ai-glossary.md`
+docs/97-AI-Docs/04-ai-glossary.md
+
+This document is mandatory.
 
 Purpose
 
 Defines project-specific terminology.
 
-Whenever an unfamiliar business or technical term appears,
+The AI must read this document during onboarding.
 
-consult this document before making assumptions.
+Do not postpone reading until an unfamiliar term appears.
+
+AI onboarding is not complete until this document has been read.
+
+The AI must copy the filename exactly.
+
+The AI must not paraphrase filenames.
+
+The AI must not rewrite filenames.
+
+The AI must not generate a filename from memory.
+
+The filename must be copied character-for-character.
 
 ---
 
@@ -84,7 +143,9 @@ consult this document before making assumptions.
 
 Read
 
-`05-ai-prompts.md`
+docs/97-AI-Docs/05-ai-prompts.md
+
+This document is mandatory.
 
 Purpose
 
@@ -98,7 +159,9 @@ Examples include
 - Implementation Mode
 - Code Review Mode
 
-Always follow these prompt templates whenever applicable.
+The AI must read this document during onboarding.
+
+AI onboarding is not complete until this document has been read.
 
 ---
 
@@ -106,7 +169,9 @@ Always follow these prompt templates whenever applicable.
 
 Read
 
-`98-ai-context.md`
+docs/97-AI-Docs/98-ai-context.md
+
+This document is mandatory.
 
 Purpose
 
@@ -119,7 +184,9 @@ Includes
 - Development Principles
 - Current Technical Constraints
 
-Read this document before inspecting source code.
+The AI must read this document during onboarding before performing any engineering task.
+
+AI onboarding is not complete until this document has been read.
 
 ---
 
@@ -127,7 +194,9 @@ Read this document before inspecting source code.
 
 Read
 
-`99-project-status.md`
+docs/97-AI-Docs/99-project-status.md
+
+This document is mandatory.
 
 Purpose
 
@@ -140,7 +209,9 @@ Includes
 - Current Limitations
 - Next Priorities
 
-Read this document before starting any implementation.
+The AI must read this document during onboarding.
+
+AI onboarding is not complete until this document has been read.
 
 ---
 
@@ -198,6 +269,10 @@ Verification
 
 ↓
 
+Existing Implementation Review
+
+↓
+
 Understanding
 
 ↓
@@ -210,6 +285,10 @@ Design
 
 ↓
 
+Evidence Audit
+
+↓
+
 Human Review
 
 ↓
@@ -219,6 +298,14 @@ Approval
 ↓
 
 Implementation
+
+↓
+
+Build Verification
+
+↓
+
+Runtime Verification
 
 ↓
 
@@ -275,21 +362,21 @@ Ask.
 
 Never Guess.
 
---------
 ---
 
 # Definition of Completion
 
 AI onboarding is considered complete only when
 
-- All mandatory documents have been read.
+- All documents listed under **Mandatory Reading** have been read.
 - Documentation has been verified.
 - Repository structure has been verified.
 - Current project status has been understood.
 - AI confirms that the Engineering Standard, Constitution, and Workflow will be followed.
 
 Only after completing this onboarding process may the AI begin engineering tasks.
-----------
+
+---
 
 # Required Completion Format
 
@@ -308,4 +395,67 @@ the AI must report
 ## Current Status
 
 The AI must wait for further instructions.
+
+---
+
+## Final Readiness Check
+
+Before accepting any implementation request, confirm:
+
+- [ ] AI Engineering Standard loaded
+- [ ] AI Constitution loaded
+- [ ] AI Workflow loaded
+- [ ] AI Glossary loaded
+- [ ] AI Prompt Library loaded
+- [ ] AI Context loaded
+- [ ] Project Status loaded
+- [ ] All Mandatory Reading documents loaded
+- [ ] No missing references
+- [ ] Ready for the next task
+
+When onboarding is complete:
+
+1. Summarize your current understanding.
+2. List all documents loaded.
+3. Report missing references.
+4. Confirm compliance.
+5. Wait for the user's next instruction.
+
+--------------
+The Required Completion Format is mandatory.
+
+The AI must not replace it with a natural language summary.
+
+The AI must use the exact section headings specified below.
+
+Any alternative completion format is considered incomplete onboarding.
+-------------
+Every finding must be classified as one of the following:
+
+Verified Fact
+Repository Gap
+Engineering Suggestion
+
+The AI must never present an Engineering Suggestion
+as if it were a Verified Fact.
+
+If the repository contains no evidence,
+the AI must explicitly state:
+
+"This is an engineering suggestion,
+not repository evidence."
+------------
+Report language
+
+All reports, explanations, summaries,
+and recommendations must be written in Thai.
+
+Keep all technical identifiers
+(class names, method names, namespaces,
+file paths, commands, and code)
+in their original English.
+
+Do not translate code,
+file names,
+or technical identifiers.
 -----------

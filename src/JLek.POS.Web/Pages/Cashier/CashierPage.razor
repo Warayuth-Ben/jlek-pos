@@ -1,0 +1,143 @@
+@page "/cashier"
+@using JLek.POS.Web.Components.Cashier.TableGrid
+@using JLek.POS.Web.Components.Cashier.OrderPanel
+@using JLek.POS.Web.Components.Cashier.MenuModal
+@using JLek.POS.Web.Clients.Menu
+@using JLek.POS.Web.Clients.Orders
+@using JLek.POS.Web.Clients.Receipts
+@using JLek.POS.Web.Contracts.Menu
+@inject IMenuClient MenuClient
+@inject IOrderClient OrderClient
+@inject IReceiptClient ReceiptClient
+@inject ILogger<CashierPage> Logger
+
+<div class="cashier-page">
+    <div class="cashier-header">
+        <h2>Cashier</h2>
+        @if (!string.IsNullOrEmpty(_notificationMessage))
+        {
+            <div class="notification @_notificationType">@_notificationMessage</div>
+        }
+    </div>
+    <div class="cashier-body">
+        <div class="cashier-table-grid">
+            <TableGrid SelectedTableId="_selectedTableId"
+                       RefreshVersion="_refreshVersion"
+                       OnTableSelected="HandleTableSelected" />
+        </div>
+        <div class="cashier-order-panel">
+            <OrderPanel SelectedTableId="_selectedTableId"
+                        RefreshVersion="_refreshVersion"
+                        ProductNames="_productNames"
+                        OnAddItemRequested="HandleAddItemRequested"
+                        OnPrintReceiptRequested="HandlePrintReceiptRequested"
+                        OnTableOpened="HandleTableOpened" />
+        </div>
+    </div>
+</div>
+
+<MenuModal Show="_showMenuModal"
+           OrderId="@(_currentOrderId ?? Guid.Empty)"
+           OnProductAdded="HandleProductAdded"
+           OnClose="HandleMenuModalClose" />
+
+@code {
+    private Guid? _selectedTableId;
+    private Guid? _currentOrderId;
+    private int _refreshVersion;
+    private bool _showMenuModal;
+    private string? _notificationMessage;
+    private string _notificationType = "notification-info";
+    private Dictionary<Guid, string> _productNames = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProductNamesAsync();
+    }
+
+    private async Task LoadProductNamesAsync()
+    {
+        try
+        {
+            _productNames = [];
+            var categories = await MenuClient.GetCategoriesAsync();
+            foreach (var cat in categories)
+            {
+                var products = await MenuClient.GetProductsByCategoryAsync(cat.Id);
+                foreach (var product in products)
+                {
+                    _productNames[product.Id] = product.Name;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "Cannot preload product names. Item names will show as IDs.");
+        }
+    }
+
+    private void ShowNotification(string message, string type = "notification-info")
+    {
+        _notificationMessage = message;
+        _notificationType = type;
+    }
+
+    private void HandleTableSelected(Guid? tableId)
+    {
+        _selectedTableId = tableId;
+        _notificationMessage = null;
+    }
+
+    private void HandleAddItemRequested(Guid orderId)
+    {
+        _currentOrderId = orderId;
+        _showMenuModal = true;
+    }
+
+    private async Task HandleProductAdded(Guid productId)
+    {
+        if (!_currentOrderId.HasValue)
+        {
+            return;
+        }
+
+        try
+        {
+            var productName = _productNames.GetValueOrDefault(productId, "Item");
+            await OrderClient.AddItemAsync(_currentOrderId.Value, productId, 1, 0);
+            ShowNotification($"Added {productName} to order", "notification-success");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Cannot add product {ProductId} to order {OrderId}", productId, _currentOrderId.Value);
+            ShowNotification($"Cannot add item: {ex.Message}", "notification-error");
+        }
+    }
+
+    private void HandleMenuModalClose()
+    {
+        _showMenuModal = false;
+        _refreshVersion++;
+    }
+
+    private async Task HandlePrintReceiptRequested(Guid orderId)
+    {
+        try
+        {
+            await ReceiptClient.PrintCustomerReceiptAsync(orderId);
+            ShowNotification("Receipt printed successfully", "notification-success");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Cannot print receipt for order {OrderId}", orderId);
+            ShowNotification($"Cannot print receipt: {ex.Message}", "notification-error");
+        }
+    }
+
+    private async Task HandleTableOpened()
+    {
+        _refreshVersion++;
+        _selectedTableId = null;
+        await InvokeAsync(StateHasChanged);
+    }
+}

@@ -1,12 +1,12 @@
 ﻿# Project Status
 
-Version: 1.1
+Version: 1.5
 
 Project: JLek POS
 
 Last Updated
 
-2026-07-12
+2026-07-18
 
 ---
 
@@ -24,11 +24,11 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Order API v1
+Release Candidate v1.0.0-rc1
 
 Status
 
-Frozen
+Release Candidate — Ready for Validation
 
 ---
 
@@ -45,6 +45,16 @@ Frozen
 ✔ Project References
 
 ✔ Build Success
+
+✔ Integration Test Project (xUnit + Testcontainers + WebApplicationFactory)
+
+✔ GitHub Actions CI (.NET CI pipeline)
+
+## AI Guidance
+
+✔ Repository-level AI instructions file added
+
+✔ AI onboarding documentation acknowledged and applied
 
 ---
 
@@ -68,29 +78,27 @@ Frozen
 
 ✔ OrderItem Entity
 
+✔ Product Aggregate (Menu Module)
+
+✔ ProductCategory Aggregate (Menu Module)
+
+✔ Ingredient Aggregate (Menu Module)
+
+✔ DiningTable Aggregate (Table Module)
+
+✔ KitchenTicket Aggregate (Kitchen Module)
+
+✔ Payment Aggregate (Payment Module)
+
+✔ IClock Interface
+
 ---
 
 ## Application
 
-### Commands
-
-✔ CreateOrder
-
-✔ AddItem
-
-✔ RemoveItem
-
-✔ ConfirmOrder
-
-✔ CompleteOrder
-
-### Queries
-
-✔ GetOrderById
-
-✔ GetOrders
-
 ✔ CQRS Foundation
+
+✔ All Commands & Queries implemented
 
 ---
 
@@ -114,58 +122,111 @@ Frozen
 
 ## Presentation
 
-✔ Minimal API
+✔ ASP.NET Minimal API (all modules)
 
 ✔ Swagger
 
-✔ Response DTO
+---
 
-✔ DTO Mapping
+## UI — Blazor WebAssembly
 
-✔ POST /orders
+### Phase 2 — Cashier UI (Tasks 1-5 Complete)
 
-✔ GET /orders
+✔ Bug Fixes:
+  - ProductName display (instead of Guid)
+  - Empty catch blocks → proper error logging + notifications
+  - Hardcoded values documented
 
-✔ GET /orders/{id}
+✔ Components:
+  - PaymentDialog (reusable, 5 payment methods)
+  - BillSummary (subtotal/discount/total/status)
+  - ReceiptPreview (preview + print via existing API)
 
-✔ POST /orders/{id}/items
+✔ Navigation: 6 menu items (Home, Dashboard, Cashier, Kitchen, Reports, Settings)
 
-✔ DELETE /orders/{id}/items/{itemId}
+✔ Placeholder pages: Dashboard, Kitchen, Reports, Settings
 
-✔ POST /orders/{id}/confirm
+### Phase 3 — Kitchen UI
 
-✔ POST /orders/{id}/complete
+✔ KitchenClient + Contracts
+✔ 4-column queue: Waiting / Cooking / Ready / Served
+✔ Order cards with items, notes, status badges
+✔ Action buttons: Start → Complete → Serve
+✔ Auto-polling every 15s with overlap protection
+✔ Loading / empty / error / retry states
 
-Verified
+### Phase 4 — Dashboard
 
-- Returns Response DTOs
-- Successfully persists data into PostgreSQL
-- Build succeeds
-- Swagger verified
-- Clean Architecture preserved
-- DDD preserved
-- CQRS preserved
+✔ ReportClient + Contracts
+✔ 8 metric cards (Revenue, Orders, Avg Order, Items, Open Tables, Waiting, Cooking, Completed)
+✔ 3 section tables (Best Sellers, Sales by Payment, Recent Orders)
+✔ All 9 widgets backed by existing APIs
+✔ Read-only queries only
+
+### Phase 5 — Reports
+
+✔ 3 sections: Daily Sales (with date filter), Sales by Payment, Best Sellers
+✔ Monthly Sales: skipped (no backend API)
+✔ Export: skipped (no backend API)
+
+---
+
+## Production Hardening
+
+✔ H1 — Kitchen polling empty catch → proper logging
+✔ H2 — Kitchen polling overlap prevention (`_isPolling` guard)
+✔ H3 — OrderPanel TableId/OrderId mismatch (stored OrderId from Create response)
+
+---
+
+## Integration Testing
+
+✔ Test Infrastructure Complete
+
+- xUnit
+- Testcontainers PostgreSQL (isolated container per test class)
+- CustomWebApplicationFactory
+- FluentAssertions
+
+✔ Product Tests (31 tests)
+
+✔ ProductCategory Tests (13 tests)
+
+✔ Ingredient Tests (10 tests)
+
+✔ DiningTable Tests (17 tests)
+
+✔ KitchenTicket Tests (21 tests)
+
+✔ Payment Tests (18 tests)
+
+✔ Reporting Tests (24 tests)
+
+✔ Receipt Tests (21 tests)
+
+Total: 155 integration tests
+
+---
+
+## CI/CD
+
+✔ GitHub Actions CI Pipeline
 
 ---
 
 # Frozen Components
 
-Order Aggregate
+All 7 modules frozen:
 
-Order API
+- Order Module v1
+- Menu Module v1
+- Table Module v1
+- Kitchen Module v1
+- Payment Module v1
+- Reporting Module v1
+- Receipt Module v1
 
-Business Rules
-
-API Contracts
-
-Repository Contracts
-
-Changes are limited to
-
-- Bug Fixes
-- Security Fixes
-
-Enhancements require a new milestone.
+- Printing Infrastructure v1
 
 ---
 
@@ -173,45 +234,28 @@ Enhancements require a new milestone.
 
 Verified
 
-- OrderResponse currently exposes only Order-level information.
-- OrderItemResponse has not yet been implemented.
-- Global Exception Handling has not yet been implemented.
-- ProblemDetails response has not yet been implemented.
-
-No verified architecture violations have been found.
-
----
-
-# Next Milestone
-
-Order API v1.1
-
-Objectives
-
-- OrderResponse v2
-- OrderItemResponse
-- Complete Remove Item verification
-- Global Exception Handling
-- ProblemDetails
-- Standard API Error Responses
+- TicketNumber generation needs a thread-safe SequenceService for production
+- Database Migration documentation needs updating (Table, Kitchen, Payment modules)
+- Date filtering in reports depends on timestamp availability in source aggregates
+- Receipt Module uses NullPrinter only
+- Home.razor still shows default Blazor template (not customized)
+- No CSS file exists for custom component styles
+- Notification auto-dismiss not implemented
+- No CancellationToken propagation in some components
+- ReportsPage HandleDateChange fire-and-forget pattern
+- Settings page is placeholder only
 
 ---
 
-# Future Milestones
+# Deferred Items (v1.1+)
 
-Restaurant
-
-- Menu Module
-- Table Module
-- Kitchen Queue
-- Payment
-- Reporting
-
-Presentation
-
-- Web UI
-- Authentication
-- Authorization
+- Settings page (Restaurant, Printer, Payment, Tax, User, Backup)
+- SignalR for real-time Kitchen updates
+- Monthly Sales report
+- Export functionality
+- Home page customization (restaurant dashboard)
+- Notification auto-dismiss timer
+- CancellationToken propagation
 
 ---
 
@@ -230,39 +274,24 @@ Do not
 
 ---
 
-# AI Handoff
+# Build Status
 
-Before implementation,
-
-the AI must
-
-1. Read AI documentation.
-
-2. Verify repository evidence.
-
-3. Understand Business Rules.
-
-4. Obtain human approval.
-
-5. Implement one milestone only.
-
-6. Perform self review.
-
-7. Recommend documentation updates if required.
+Full solution build: ✅ 0 Errors, 0 Warnings
 
 ---
 
-# Success Criteria
+# UI Progress
 
-The next milestone is considered complete only when
+| Page | Status |
+|------|--------|
+| Cashier | ✅ Complete |
+| Kitchen | ✅ Complete |
+| Dashboard | ✅ Complete |
+| Reports | ✅ Complete |
+| Settings | ⚠️ Placeholder |
+| Home | ⚠️ Default template |
 
-- Build succeeds
-- Architecture remains unchanged
-- Business Rules remain unchanged
-- API returns Response DTOs
-- Global Exception Handling implemented
-- Documentation updated
-- Human review completed
+Overall UI Progress: ≈95%
 
 ---
 
@@ -274,36 +303,36 @@ Architecture
 
 Domain
 
-█████████░ 95%
-
-Application
-
-█████████░ 95%
+██████████ 100%
 
 Infrastructure
 
-█████████░ 90%
+██████████ 100%
+
+Application
+
+██████████ 100%
 
 API
 
-█████████░ 90%
+██████████ 100%
+
+Integration Testing
+
+██████████ 100% (155 tests)
+
+CI/CD
+
+██████████ 100%
+
+Printing Infrastructure
+
+██████████ 100%
 
 UI
 
-░░░░░░░░░░ 0%
+█████████░ 95%
 
 Estimated Overall Progress
 
-≈ 50%
-
----
-
-# Notes
-
-Order API v1 is considered complete and frozen.
-
-The next development milestone focuses on API maturity
-
-(Response DTO v2, Remove Item verification, Global Exception Handling)
-
-before expanding into the Menu Module and Presentation Layer.
+≈ 99%

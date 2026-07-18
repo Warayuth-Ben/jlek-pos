@@ -1,0 +1,25 @@
+<div class="kitchen-toolbar">
+    <div class="kitchen-toolbar-info">
+        <span class="kitchen-toolbar-counts">
+            Waiting: @WaitingCount | Cooking: @CookingCount | Ready: @ReadyCount
+        </span>
+    </div>
+    <div class="kitchen-toolbar-actions">
+        <button class="btn-refresh" disabled="@IsRefreshing" @onclick="HandleRefresh">
+            @if (IsRefreshing) { <span>Refreshing...</span> } else { <span>Refresh</span> }
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int WaitingCount { get; set; }
+    [Parameter] public int CookingCount { get; set; }
+    [Parameter] public int ReadyCount { get; set; }
+    [Parameter] public EventCallback OnRefresh { get; set; }
+    [Parameter] public bool IsRefreshing { get; set; }
+
+    private async Task HandleRefresh()
+    {
+        await OnRefresh.InvokeAsync();
+    }
+}

@@ -1,0 +1,303 @@
+@using JLek.POS.Web.Components.Cashier.PaymentDialog
+@using JLek.POS.Web.Clients.Orders
+@using JLek.POS.Web.Clients.Tables
+@using JLek.POS.Web.Contracts.Orders
+@using JLek.POS.Web.Contracts.Tables
+@inject IOrderClient OrderClient
+@inject ITableClient TableClient
+@inject ILogger<OrderPanel> Logger
+
+@if (!SelectedTableId.HasValue)
+{
+    <div class="order-panel-empty">Select a table to view order</div>
+}
+else if (_isLoading)
+{
+    <div class="order-panel-loading">Loading...</div>
+}
+else if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="order-panel-error">@_errorMessage</div>
+}
+else if (_tableStatus == "Available")
+{
+    <div class="order-panel-available">
+        <div class="order-table-name">@_tableName</div>
+        <div>Status: Available</div>
+        <button class="btn-open-table" disabled="_isOpening" @onclick="OpenTableAsync">
+            @if (_isOpening) { <span>Opening...</span> } else { <span>Open Table</span> }
+        </button>
+    </div>
+}
+else if (_tableStatus == "Open" && _activeOrderId is null)
+{
+    <div class="order-panel-open">
+        <div class="order-table-name">@_tableName</div>
+        <div>Status: Open (no order yet)</div>
+        <button class="btn-create-order" disabled="_isCreating" @onclick="CreateOrderAsync">
+            @if (_isCreating) { <span>Creating...</span> } else { <span>Create Order</span> }
+        </button>
+    </div>
+}
+else if (_order is null)
+{
+    <div class="order-panel-no-order">No active order for this table</div>
+}
+else
+{
+    <div class="order-panel">
+        <div class="order-header">
+            <div class="order-table-name">@_tableName</div>
+            <div class="order-status">@_order.Status</div>
+        </div>
+        <div class="order-info">
+            <div>Order: @_order.Id</div>
+            @if (_tableResponse?.ActiveSessionId is not null)
+            {
+                <div>Session: @_tableResponse.ActiveSessionId</div>
+            }
+        </div>
+        <div class="order-items">
+            @foreach (var item in _order.Items)
+            {
+                <div class="order-item">
+                    <span class="item-name">@GetProductName(item.MenuItemId)</span>
+                    <span class="item-quantity">x @item.Quantity</span>
+                    <span class="item-price">@item.UnitPrice</span>
+                    @if (_order.Status == "Draft")
+                    {
+                        var isRemoving = _removingItemId == item.Id;
+                        <button class="btn-remove-item"
+                                disabled="isRemoving || _isRemovingAny"
+                                @onclick="() => RemoveItemAsync(item.Id)">
+                            @if (isRemoving) { <span>Removing...</span> } else { <span>X</span> }
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+        <div class="order-total">Total: @_order.Total</div>
+
+        <div class="order-actions">
+            @if (_order.Status == "Draft")
+            {
+                <button class="btn-add-item" @onclick="() => OnAddItemRequested.InvokeAsync(_order.Id)">+ Add Item</button>
+                <button class="btn-confirm" disabled="_isConfirming" @onclick="ConfirmOrderAsync">
+                    @if (_isConfirming) { <span>Confirming...</span> } else { <span>Confirm Order</span> }
+                </button>
+                <button class="btn-cancel-order" disabled="_isCancelling" @onclick="CancelOrderAsync">
+                    @if (_isCancelling) { <span>Cancelling...</span> } else { <span>Cancel Order</span> }
+                </button>
+            }
+            @if (_order.Status == "Confirmed" || _order.Status == "Completed")
+            {
+                @if (!_paymentDone)
+                {
+                    <div class="payment-section">
+                        <div>Total to pay: @_order.Total</div>
+                        <button class="btn-show-payment" disabled="_isPaying" @onclick="ShowPaymentDialog">
+                            @if (_isPaying) { <span>Processing...</span> } else { <span>Pay Now</span> }
+                        </button>
+                    </div>
+                }
+                @if (_paymentDone)
+                {
+                    <div class="payment-done">Payment received</div>
+                    <button class="btn-print-receipt" disabled="_isPrinting" @onclick="PrintReceiptAsync">
+                        @if (_isPrinting) { <span>Printing...</span> } else { <span>Print Receipt</span> }
+                    </button>
+                    <button class="btn-release" disabled="_isReleasing" @onclick="ReleaseTableAsync">
+                        @if (_isReleasing) { <span>Releasing...</span> } else { <span>Release Table</span> }
+                    </button>
+                }
+            }
+        </div>
+    </div>
+}
+
+<PaymentDialog Show="_showPaymentDialog"
+               OrderId="@(_order?.Id ?? Guid.Empty)"
+               TotalAmount="@(_order?.Total ?? 0)"
+               OnPaymentComplete="HandlePaymentComplete"
+               OnCancel="HandlePaymentCancel" />
+
+@code {
+    [Parameter] public Guid? SelectedTableId { get; set; }
+    [Parameter] public int RefreshVersion { get; set; }
+    [Parameter] public EventCallback OnTableOpened { get; set; }
+    [Parameter] public EventCallback<Guid> OnAddItemRequested { get; set; }
+    [Parameter] public EventCallback<Guid> OnPrintReceiptRequested { get; set; }
+    [Parameter] public Dictionary<Guid, string> ProductNames { get; set; } = [];
+
+    private TableResponse? _tableResponse;
+    private string _tableStatus = "";
+    private string _tableName = "";
+    private OrderResponse? _order;
+    private Guid? _activeOrderId;
+    private bool _isLoading = false;
+    private string? _errorMessage;
+    private bool _isOpening = false;
+    private bool _isCreating = false;
+    private bool _isConfirming = false;
+    private bool _isCancelling = false;
+    private bool _isPaying = false;
+    private bool _isPrinting = false;
+    private bool _isReleasing = false;
+    private bool _paymentDone = false;
+    private Guid? _removingItemId;
+    private bool _isRemovingAny = false;
+    private bool _showPaymentDialog = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!SelectedTableId.HasValue)
+        {
+            _order = null;
+            _tableResponse = null;
+            _tableName = "";
+            _tableStatus = "";
+            _paymentDone = false;
+            _activeOrderId = null;
+            return;
+        }
+
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            _tableResponse = await TableClient.GetByIdAsync(SelectedTableId.Value);
+            if (_tableResponse is null) { _errorMessage = "Table not found."; _isLoading = false; return; }
+            _tableName = _tableResponse.Name;
+            _tableStatus = _tableResponse.Status;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Cannot load table {TableId}", SelectedTableId.Value);
+            _errorMessage = $"Cannot load table: {ex.Message}";
+            _isLoading = false;
+            return;
+        }
+
+        // If we have a stored order ID, load by OrderId (correct API contract)
+        if (_activeOrderId.HasValue)
+        {
+            try
+            {
+                _order = await OrderClient.GetByIdAsync(_activeOrderId.Value);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Cannot load order {OrderId}", _activeOrderId.Value);
+                _order = null;
+            }
+        }
+        else
+        {
+            _order = null;
+        }
+
+        _isLoading = false;
+    }
+
+    private void ShowPaymentDialog()
+    {
+        _showPaymentDialog = true;
+    }
+
+    private async Task HandlePaymentComplete()
+    {
+        _showPaymentDialog = false;
+        _paymentDone = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void HandlePaymentCancel()
+    {
+        _showPaymentDialog = false;
+    }
+
+    private async Task CreateOrderAsync()
+    {
+        if (!SelectedTableId.HasValue || _isCreating) return;
+        _isCreating = true;
+        _errorMessage = null;
+
+        try
+        {
+            var createdOrder = await OrderClient.CreateAsync(SelectedTableId.Value);
+            _activeOrderId = createdOrder.Id;  // Store the OrderId returned from API
+            await OnParametersSetAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Cannot create order for table {TableId}", SelectedTableId.Value);
+            _errorMessage = $"Cannot create order: {ex.Message}";
+        }
+        finally
+        {
+            _isCreating = false;
+        }
+    }
+
+    private async Task RemoveItemAsync(Guid itemId)
+    {
+        if (_order is null || _isRemovingAny) return;
+        _isRemovingAny = true; _removingItemId = itemId; _errorMessage = null;
+        try { await OrderClient.RemoveItemAsync(_order.Id, itemId); await OnParametersSetAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot remove item {ItemId} from order {OrderId}", itemId, _order.Id); _errorMessage = $"Cannot remove item: {ex.Message}"; }
+        finally { _isRemovingAny = false; _removingItemId = null; }
+    }
+
+    private async Task ConfirmOrderAsync()
+    {
+        if (_order is null || _isConfirming) return;
+        _isConfirming = true; _errorMessage = null;
+        try { await OrderClient.ConfirmAsync(_order.Id); await OnParametersSetAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot confirm order {OrderId}", _order.Id); _errorMessage = $"Cannot confirm order: {ex.Message}"; }
+        finally { _isConfirming = false; }
+    }
+
+    private async Task CancelOrderAsync()
+    {
+        if (_order is null || _isCancelling) return;
+        _isCancelling = true; _errorMessage = null;
+        try { await OrderClient.CancelAsync(_order.Id); _activeOrderId = null; await OnTableOpened.InvokeAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot cancel order {OrderId}", _order.Id); _errorMessage = $"Cannot cancel order: {ex.Message}"; }
+        finally { _isCancelling = false; }
+    }
+
+    private async Task PrintReceiptAsync()
+    {
+        if (_order is null || _isPrinting) return;
+        _isPrinting = true;
+        try { await OnPrintReceiptRequested.InvokeAsync(_order.Id); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot print receipt for order {OrderId}", _order.Id); }
+        finally { _isPrinting = false; }
+    }
+
+    private async Task ReleaseTableAsync()
+    {
+        if (!SelectedTableId.HasValue || _isReleasing) return;
+        _isReleasing = true; _errorMessage = null;
+        try { await TableClient.ReleaseAsync(SelectedTableId.Value); _activeOrderId = null; await OnTableOpened.InvokeAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot release table {TableId}", SelectedTableId.Value); _errorMessage = $"Cannot release table: {ex.Message}"; }
+        finally { _isReleasing = false; }
+    }
+
+    private async Task OpenTableAsync()
+    {
+        if (!SelectedTableId.HasValue || _isOpening) return;
+        _isOpening = true; _errorMessage = null;
+        try { await TableClient.OpenAsync(SelectedTableId.Value); _activeOrderId = null; await OnTableOpened.InvokeAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot open table {TableId}", SelectedTableId.Value); _errorMessage = $"Cannot open table: {ex.Message}"; }
+        finally { _isOpening = false; }
+    }
+
+    private string GetProductName(Guid menuItemId)
+    {
+        return ProductNames.TryGetValue(menuItemId, out var name)
+            ? name
+            : menuItemId.ToString();
+    }
+}

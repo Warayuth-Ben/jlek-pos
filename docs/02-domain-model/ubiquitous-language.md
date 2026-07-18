@@ -144,6 +144,30 @@ Menu Items are maintained independently from customer orders.
 
 
 
+### Terminology Note
+
+
+
+**Product** is the terminology used in the Catalog documentation (`docs/01-business-rules/catalog/`).
+
+
+
+**Menu Item** is the terminology used in the Ordering context.
+
+
+
+Within the current implementation (v1), these terms refer to the same business concept.
+
+
+
+Future implementations may differentiate them further.
+
+
+
+Not yet verified.
+
+
+
 \---
 
 

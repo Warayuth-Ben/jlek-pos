@@ -1,0 +1,31 @@
+@using JLek.POS.Web.Contracts.Kitchen
+@using JLek.POS.Web.Components.Kitchen.KitchenOrderCard
+
+<h4 class="kitchen-queue-title">@Title</h4>
+
+@if (Tickets.Count == 0)
+{
+    <div class="kitchen-queue-empty">No @Title.ToLowerInvariant() orders</div>
+}
+else
+{
+    <div class="kitchen-queue-list">
+        @foreach (var ticket in Tickets)
+        {
+            <KitchenOrderCard Ticket="ticket"
+                              OnStart="OnStart"
+                              OnComplete="OnComplete"
+                              OnServe="OnServe"
+                              ActionTicketId="ActionTicketId" />
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public List<KitchenTicketResponse> Tickets { get; set; } = [];
+    [Parameter] public EventCallback<Guid> OnStart { get; set; }
+    [Parameter] public EventCallback<Guid> OnComplete { get; set; }
+    [Parameter] public EventCallback<Guid> OnServe { get; set; }
+    [Parameter] public Guid? ActionTicketId { get; set; }
+}

@@ -1,2 +1,189 @@
-###### รอรีวิวไฟล์เสร็จ
+# Changelog
 
+## 2026-07-17 — Payment Module v1
+
+### Added
+- Payment Aggregate (Domain)
+- Payment Business Rules (4 rules)
+- Payment Domain Events (PaymentReceived, PaymentRefunded)
+- Payment CQRS (ReceivePayment, RefundPayment, GetPaymentById, GetPaymentsByOrderId)
+- Payment Infrastructure (EF Core, Repository, DI)
+- Payment API (4 endpoints)
+- Payment Integration Tests (18 tests)
+- Global Exception Handling Middleware
+- ProblemDetails Response Standardization
+
+### Frozen
+- Payment Module v1
+
+### Changed
+- Updated Project Status to v1.2
+- Updated Reference Modules with Payment Module patterns
+
+## 2026-07-17 — Reporting Module v1
+
+### Added
+- IClock interface (Domain)
+- IReportingDbContext (read-only abstraction)
+- Report DTOs (DailySalesReport, SalesByPaymentReport, BestSellerReport)
+- Report Query Handlers (3 handlers — EF Core LINQ, AsNoTracking, database aggregation)
+- Report API endpoints (3 endpoints: GET /reports/daily-sales, /sales-by-payment, /best-sellers)
+- SystemClock implementation (Infrastructure)
+- DI Registrations for IClock and IReportingDbContext
+- Reporting Collection Fixture (Integration Tests)
+- Reporting Integration Tests (24 tests)
+
+### Architecture
+- Pure Read Model: no Aggregate, no Commands, no Domain Events, no Business Rules
+- Query-only CQRS with EF Core + AsNoTracking()
+- Database aggregation (GroupBy, Sum, Count in SQL via EF Core LINQ)
+- Dapper deferred to future milestone
+
+### Frozen
+- Reporting Module v1
+
+### Changed
+- Updated Project Status to v1.3
+- Updated Reference Modules with Reporting Module patterns
+- Application.csproj added Microsoft.EntityFrameworkCore 8.0.11
+- ApplicationDbContext implements IReportingDbContext
+- Application DependencyInjection registers 3 report handlers
+- Infrastructure DependencyInjection registers IClock (SystemClock) and IReportingDbContext
+- Program.cs registers MapReportingEndpoints()
+
+## 2026-07-17 — Receipt Module v1
+
+### Added
+- Receipt DTOs (CustomerReceiptData, KitchenTicketReceiptData, RefundReceiptData)
+- ReceiptDocument + ReceiptLine model
+- PrintResult model with timing
+- IReceiptFormatter + ReceiptFormatter (pure formatting, no infrastructure)
+- IReceiptDataProvider + ReceiptDataProvider (returns flat DTOs only)
+- IReceiptPrinter + IKitchenPrinter abstractions
+- NullReceiptPrinter + NullKitchenPrinter (development printers)
+- 3 Commands + Handlers (PrintCustomerReceipt, PrintKitchenTicket, PrintRefundReceipt)
+- ReceiptConfiguration (from appsettings.json)
+- DI Registrations for all Receipt services
+- Minimal API endpoints (3 POST operations)
+- Request DTOs (CustomerPrintRequest, KitchenPrintRequest, RefundPrintRequest)
+- Collection Fixture + Integration Tests (21 tests)
+
+### Architecture
+- Pure Output Module: no Aggregate, no Repository, no Data Store, no Business Rules
+- Command-only CQRS (3 commands, 0 queries)
+- Flat DTO isolation — no Domain types leaked from DataProvider
+- Formatter separated from Printer — ReceiptFormatter is pure C#, Printer is abstracted
+- NullPrinter for development/CI — real printers deferred to next milestone
+
+### Frozen
+- Receipt Module v1
+
+### Changed
+- Updated Project Status to v1.4
+- Updated Reference Modules with Receipt Module patterns
+- Application DependencyInjection registers 3 receipt handlers + ReceiptFormatter + ReceiptConfiguration
+- Infrastructure DependencyInjection registers IReceiptDataProvider, NullReceiptPrinter, NullKitchenPrinter
+- Program.cs registers MapReceiptEndpoints()
+
+## 2026-07-17 — Printing Infrastructure v1
+
+### Added
+- Printing Abstractions: IRenderer, IPrinterAdapter
+- Printing Models: PrintPayload, PrinterStatus, PrinterConfiguration, PrinterFormat
+- EscPosRenderer (single RenderAsync method, immutable, thread-safe)
+- EscPosCommands (static byte helpers: Initialize, Alignment, Bold, CharacterSize, CutPaper, CodePage)
+- EscPosCodePages (CP437/850/874/932/1252 — Thai support via CP874)
+- RenderOptions (CharactersPerLine, Encoding, CutPaper)
+- NullPrinterAdapter (development/CI)
+- UsbPrinterAdapter (ISerialPort abstraction — not System.IO.Ports)
+- SerialPortAdapter (wraps System.IO.Ports.SerialPort)
+- LanPrinterAdapter (ITcpClient abstraction — not System.Net.Sockets.TcpClient)
+- TcpClientAdapter (wraps System.Net.Sockets.TcpClient)
+- End-to-End Pipeline Tests (57 total: 21 renderer + 18 adapter + 18 pipeline)
+
+### Architecture
+- ReceiptDocument → IRenderer → PrintPayload → IPrinterAdapter → USB/LAN
+- Renderer = pure formatting (no IO). Adapter = transport only (no formatting).
+- Connectionless design: adapters manage Connect/Disconnect internally.
+- Error handling: all exceptions caught. Never throws to caller.
+- Resource cleanup: ports closed, TCP disconnected on success and failure.
+- Architectural isolation: USB → ISerialPort only. LAN → ITcpClient only.
+
+### Frozen
+- Printing Infrastructure v1
+
+## 2026-07-18 — UI Completion & Release Candidate v1.0.0-rc1
+
+### Added
+- Kitchen UI: KitchenClient, 4-column queue, KitchenOrderCard, KitchenStatusBadge, KitchenQueue, KitchenToolbar, auto-polling (15s)
+- Dashboard UI: ReportClient, 8 metric cards, 3 section tables (Best Sellers, Sales by Payment, Recent Orders)
+- Reports UI: Daily Sales (with date filter), Sales by Payment, Best Sellers tables
+- Placeholder pages: Kitchen, Dashboard, Reports, Settings
+- Navigation: All 6 pages linked in NavMenu
+
+### Fixed
+- Bug: OrderPanel passed TableId instead of OrderId to GetByIdAsync — now stores and uses OrderId from CreateAsync response
+- Bug: KitchenPage empty catch block swallowed polling errors — now logs via ILogger
+- Bug: KitchenPage overlapping polling — added `_isPolling` guard
+- Bug: Missing `@implements IDisposable` on KitchenPage — timer now properly disposed
+- Bug: CashierPage empty catch blocks — proper error logging + user notifications
+- Bug: OrderItem displayed MenuItemId (Guid) instead of product name — preloaded via MenuClient API
+
+### Changed
+- Updated docs/97-AI-Docs/99-project-status.md:
+  - UI progress: 80% → 95%
+  - Overall progress: 98% → 99%
+  - Added Release Candidate status
+  - Added Production Hardening section
+  - Documented deferred items and technical debt
+
+### Architecture
+- No architecture changes
+- No backend changes
+- No Domain/Application/Infrastructure modifications
+- All changes confined to Blazor UI layer
+
+### Release Recommendation
+- Version: v1.0.0-rc1
+- Build: ✅ 0 Errors, 0 Warnings (full solution)
+- Tests: 155 integration tests (pre-existing, unchanged)
+
+## 2026-07-18 — Governance & Validation Session
+
+### Added
+- FEATURE-REGISTRY.md — Feature lifecycle tracking for all 46 features across 10 epics
+- TRACEABILITY-MATRIX.md — End-to-end traceability from Business Scenarios to Tests
+- PROJECT-GOVERNANCE.md — Rules, gates, lifecycle, freeze rules, change boundary
+- PROJECT-CONTROL-CENTER.md — AI session entry point with sprint status, risks, deferred features
+
+### Validated
+- Full solution build: ✅ 0 Errors, 0 Warnings
+- Governance consistency: 7.5/10 score
+- No architecture or source code changes required during validation
+- RZ10007 diagnostics confirmed false positives (Razor Language Server)
+
+### Changed
+- Updated docs/97-AI-Docs/99-project-status.md:
+  - UI progress bar: 0% → 80%
+  - Overall progress: 95% → 98%
+  - Added validation results and governance section
+
+## 2026-07-17 — Architecture Baseline v1.0
+
+### Added
+- Discovery Phase (P1–P7): AI Onboarding, Knowledge Flow, Documentation Map, Navigation Design, Capability Catalog, Traceability, Audit
+- Presentation Architecture (P8–P14): Architecture Design, Operational Flow, Persona Workspaces (4 personas), State Machine, Navigation (14 nodes), Interaction (10 patterns), Architecture Review
+- Application Architecture (P15–P16): Use Case Architecture (~65 use cases), Command & Query Standards
+- Infrastructure Architecture (P17–P20): Persistence Architecture, Repository Architecture (7 repositories), External Adapter Architecture, Infrastructure Services
+- Infrastructure Architecture Review and Freeze
+
+### Architecture Principles (Constitutional)
+- Business Owns the State — Presentation must never create Business State
+- Presentation Reflects, Not Invents — UI reflects state, does not interpret
+- Single Source of Truth — Every state has exactly one owner
+- Every Error Has a Recovery Path — No dead-end states
+
+### Frozen
+- Architecture Baseline v1.0
+- All 20 architecture phases complete and frozen
+- Next phase: Implementation Planning
