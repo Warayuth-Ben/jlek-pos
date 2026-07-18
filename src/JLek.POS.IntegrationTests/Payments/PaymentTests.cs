@@ -46,7 +46,7 @@ public sealed class PaymentTests : IAsyncLifetime
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        var order = Order.Create();
+        var order = Order.Create(JLek.POS.Domain.ValueObjects.TableId.From(Guid.NewGuid()), new OrderSessionId(Guid.NewGuid()));
         if (status == OrderStatus.Confirmed)
         {
             order.AddItem(Guid.NewGuid(), Quantity.From(2), Money.From(50m));

@@ -52,7 +52,7 @@ public sealed class ReceiptTests : IAsyncLifetime
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        var order = Order.Create();
+        var order = Order.Create(JLek.POS.Domain.ValueObjects.TableId.From(Guid.NewGuid()), new OrderSessionId(Guid.NewGuid()));
         order.AddItem(Guid.NewGuid(), Quantity.From(1), Money.From(total));
         order.Confirm();
         order.Complete();

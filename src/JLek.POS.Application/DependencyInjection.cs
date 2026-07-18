@@ -58,13 +58,16 @@ using JLek.POS.Application.Features.Payments.Queries.GetPaymentsByOrderId;
 using JLek.POS.Application.Features.Receipt.Commands.PrintCustomerReceipt;
 using JLek.POS.Application.Features.Receipt.Commands.PrintKitchenTicket;
 using JLek.POS.Application.Features.Receipt.Commands.PrintRefundReceipt;
+using JLek.POS.Application.Features.Orders.EventHandlers;
 using JLek.POS.Application.Features.Health.Queries.GetHealth;
 using JLek.POS.Application.Features.Receipt.Configuration;
 using JLek.POS.Application.Features.Receipt.Services;
 using JLek.POS.Application.Abstractions;
+using JLek.POS.Application.Abstractions.EventHandling;
 using JLek.POS.Application.Features.Reports.Queries.BestSellers;
 using JLek.POS.Application.Features.Reports.Queries.DailySales;
 using JLek.POS.Application.Features.Reports.Queries.SalesByPayment;
+using JLek.POS.Domain.Orders.Events;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JLek.POS.Application;
@@ -171,6 +174,11 @@ public static class DependencyInjection
         services.AddScoped<PrintCustomerReceiptCommandHandler>();
         services.AddScoped<PrintKitchenTicketCommandHandler>();
         services.AddScoped<PrintRefundReceiptCommandHandler>();
+
+        // Event Handlers
+        services.AddScoped<
+            IDomainEventHandler<OrderConfirmedEvent>,
+            OrderConfirmedEventHandler>();
 
         // Receipt services
         services.AddScoped<IReceiptFormatter, ReceiptFormatter>();

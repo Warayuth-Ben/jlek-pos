@@ -1,0 +1,75 @@
+@using JLek.POS.Web.Clients.Tables
+@using JLek.POS.Web.Contracts.Tables
+@inject ITableClient TableClient
+
+@if (_isLoading)
+{
+    <div class="table-grid-loading">Loading tables...</div>
+}
+else if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="table-grid-error">@_errorMessage</div>
+}
+else
+{
+    <div class="table-grid">
+        @foreach (var table in _tables)
+        {
+            var isSelected = SelectedTableId == table.Id;
+            <div class="table-card @(isSelected ? "table-card-selected" : "")"
+                 @onclick="() => SelectTable(table.Id)">
+                <div class="table-name">@table.Name</div>
+                <div class="table-status">@table.Status</div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public Guid? SelectedTableId { get; set; }
+
+    [Parameter] public int RefreshVersion { get; set; }
+
+    [Parameter] public EventCallback<Guid?> OnTableSelected { get; set; }
+
+    private List<TableResponse> _tables = [];
+    private bool _isLoading = true;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTablesAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (RefreshVersion > 0)
+        {
+            await LoadTablesAsync();
+        }
+    }
+
+    private async Task LoadTablesAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            _tables = await TableClient.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Cannot load tables: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task SelectTable(Guid tableId)
+    {
+        await OnTableSelected.InvokeAsync(tableId);
+    }
+}

@@ -692,3 +692,119 @@ Instead report
 > Not yet verified.
 
 AI confidence is never considered evidence.
+
+---------
+หาก Business Scenario Q001–Q146
+ไม่มีการเปลี่ยนแปลง
+
+AI ต้องไม่เสนอ
+
+- Feature ใหม่
+- Module ใหม่
+- Bounded Context ใหม่
+- Workflow ใหม่
+
+AI สามารถเสนอได้เฉพาะ
+
+- การทำให้ Scenario เดิมสมบูรณ์
+- การลดความซ้ำซ้อน
+- การเพิ่มคุณภาพ
+- การเพิ่มความครอบคลุมของการทดสอบ
+- การปรับปรุง UX โดยไม่เปลี่ยน Business Workflow
+--------
+
+# AI Restrictions
+
+Never
+
+- redesign approved architecture
+- redesign approved UI
+- rename existing concepts
+- create new abstractions without evidence
+- refactor unrelated code
+- fix unrelated issues
+- optimize outside the current scope
+
+If an issue is found outside the approved scope
+
+Report it as
+
+Out of Scope
+
+Do not implement it.
+
+---
+
+If documentation and implementation differ
+
+Never guess.
+
+Report the discrepancy.
+
+Wait for Human Decision.
+
+---
+
+If repository evidence contradicts previous assumptions
+
+Repository evidence wins.
+
+Update the report.
+
+Do not continue until consistency is restored.
+--------
+
+# Scope Lock
+Current Task Scope is authoritative.
+
+Never expand the implementation scope.
+
+If additional work is discovered,
+
+report it as
+
+Future Work
+
+Do not implement it.
+----------
+# Evidence First
+
+Every implementation decision
+
+must be supported by evidence from
+
+- Business Documentation
+- Approved ADR
+- Repository
+
+Never rely on assumptions.
+----------
+# Stop on Uncertainty
+
+If multiple valid implementations exist
+
+and no approved documentation specifies one,
+
+STOP.
+
+Present the alternatives.
+
+Wait for Human Decision.
+
+----------
+# No Silent Changes
+Never change
+
+- naming
+- folder structure
+- architecture
+- API contract
+- workflow
+
+without explicitly reporting the reason.
+
+Every intentional change must be documented.
+--------
+
+
+

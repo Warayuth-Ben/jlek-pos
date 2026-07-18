@@ -1,0 +1,173 @@
+@using JLek.POS.Web.Clients.Menu
+@using JLek.POS.Web.Contracts.Menu
+@inject IMenuClient MenuClient
+
+@if (_show)
+{
+    <div class="menu-modal-overlay" @onclick="CloseAsync">
+        <div class="menu-modal" @onclick:stopPropagation="true">
+            <div class="menu-modal-header">
+                <h3>Select Menu Item</h3>
+                <button class="btn-close" @onclick="CloseAsync">X</button>
+            </div>
+
+            @if (_isLoadingCategories)
+            {
+                <div>Loading menu...</div>
+            }
+            else if (!string.IsNullOrEmpty(_errorMessage))
+            {
+                <div class="menu-modal-error">@_errorMessage</div>
+            }
+            else
+            {
+                <div class="menu-categories">
+                    @foreach (var cat in _categories)
+                    {
+                        var isActive = _selectedCategoryId == cat.Id;
+                        <button class="category-tab @(isActive ? "active" : "")"
+                                @onclick="() => SelectCategoryAsync(cat.Id)">
+                            @cat.Name
+                        </button>
+                    }
+                </div>
+
+                <div class="menu-products">
+                    @if (_isLoadingProducts)
+                    {
+                        <div>Loading products...</div>
+                    }
+                    else
+                    {
+                        @foreach (var product in _products)
+                        {
+                            var isAdding = _addingProductId == product.Id;
+                            <button class="product-card"
+                                    disabled="isAdding || _isAddingAny"
+                                    @onclick="() => AddProductAsync(product)">
+                                @if (isAdding)
+                                {
+                                    <span>Adding...</span>
+                                }
+                                else
+                                {
+                                    <div class="product-name">@product.Name</div>
+                                    <div class="product-price">@product.Price</div>
+                                }
+                            </button>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Show { get; set; }
+
+    [Parameter] public Guid OrderId { get; set; }
+
+    [Parameter] public EventCallback<Guid> OnProductAdded { get; set; }
+
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private List<ProductCategoryResponse> _categories = [];
+    private List<ProductResponse> _products = [];
+    private Guid? _selectedCategoryId;
+    private bool _isLoadingCategories = true;
+    private bool _isLoadingProducts = false;
+    private string? _errorMessage;
+    private bool _show = false;
+    private Guid? _addingProductId;
+    private bool _isAddingAny = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _show = Show;
+
+        if (_show && _categories.Count == 0)
+        {
+            await LoadCategoriesAsync();
+        }
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        _isLoadingCategories = true;
+        _errorMessage = null;
+
+        try
+        {
+            _categories = await MenuClient.GetCategoriesAsync();
+
+            if (_categories.Count > 0)
+            {
+                await SelectCategoryAsync(_categories[0].Id);
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Cannot load menu: {ex.Message}";
+        }
+        finally
+        {
+            _isLoadingCategories = false;
+        }
+    }
+
+    private async Task SelectCategoryAsync(Guid categoryId)
+    {
+        _selectedCategoryId = categoryId;
+        _isLoadingProducts = true;
+
+        try
+        {
+            _products = await MenuClient.GetProductsByCategoryAsync(categoryId);
+        }
+        catch
+        {
+            _products = [];
+        }
+        finally
+        {
+            _isLoadingProducts = false;
+        }
+    }
+
+    private async Task AddProductAsync(ProductResponse product)
+    {
+        if (_isAddingAny)
+        {
+            return;
+        }
+
+        _isAddingAny = true;
+        _addingProductId = product.Id;
+
+        try
+        {
+            // Inject OrderClient via the parent — use cascading or direct
+            // For now, event callback passes the product info back to parent
+            await OnProductAdded.InvokeAsync(product.Id);
+
+            // If no exception, close modal
+            await CloseAsync();
+        }
+        catch
+        {
+            // Error handled by parent
+        }
+        finally
+        {
+            _isAddingAny = false;
+            _addingProductId = null;
+        }
+    }
+
+    private async Task CloseAsync()
+    {
+        _show = false;
+        await OnClose.InvokeAsync();
+    }
+}
