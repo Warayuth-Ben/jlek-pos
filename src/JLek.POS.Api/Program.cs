@@ -2,6 +2,8 @@ using JLek.POS.Api.Middleware;
 using JLek.POS.Infrastructure;
 using JLek.POS.Api.Endpoints;
 using JLek.POS.Application;
+using JLek.POS.Application.Features.Health.Queries.GetHealth;
+using Microsoft.AspNetCore.Mvc;
 var builder = WebApplication.CreateBuilder(args);
 
 // Services
@@ -26,6 +28,15 @@ app.UseHttpsRedirection();
 
 // Endpoints
 app.MapGet("/", () => Results.Ok("JLek POS API"));
+
+// Health
+app.MapGet("/health", async (
+    [FromServices] GetHealthQueryHandler handler) =>
+{
+    var query = new GetHealthQuery();
+    var result = await handler.Handle(query);
+    return Results.Ok(result);
+});
 app.MapOrderEndpoints();
 app.MapCatalogEndpoints();
 app.MapTableEndpoints();

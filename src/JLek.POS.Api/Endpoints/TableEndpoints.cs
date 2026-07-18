@@ -1,6 +1,7 @@
 using JLek.POS.Application.Features.Tables.Commands.AssignTable;
 using JLek.POS.Application.Features.Tables.Commands.CreateDiningTable;
 using JLek.POS.Application.Features.Tables.Commands.MergeTables;
+using JLek.POS.Application.Features.Tables.Commands.OpenTable;
 using JLek.POS.Application.Features.Tables.Commands.ReleaseTable;
 using JLek.POS.Application.Features.Tables.Commands.SplitTable;
 using JLek.POS.Application.Features.Tables.Commands.TransferTable;
@@ -150,6 +151,20 @@ public static class TableEndpoints
         {
             var response = await handler.Handle(
                 new ReleaseTableCommand(
+                    TableId.From(id)),
+                cancellationToken);
+
+            return Results.Ok(response);
+        });
+
+        // POST /tables/{id}/open
+        group.MapPost("/{id:guid}/open", async (
+            Guid id,
+            [FromServices] OpenTableCommandHandler handler,
+            CancellationToken cancellationToken) =>
+        {
+            var response = await handler.Handle(
+                new OpenTableCommand(
                     TableId.From(id)),
                 cancellationToken);
 

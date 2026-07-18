@@ -10,6 +10,7 @@ using JLek.POS.Application.Features.Orders.Commands.RemoveItem;
 using JLek.POS.Application.Features.Orders.Queries.GetOrderById;
 using JLek.POS.Application.Features.Orders.Queries.GetOrders;
 using JLek.POS.Domain.Orders.ValueObjects;
+using JLek.POS.Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JLek.POS.Api.Endpoints;
@@ -22,12 +23,12 @@ public static class OrderEndpoints
         var group = app.MapGroup("/orders");
 
         group.MapPost("/", async (
-            CreateOrderRequest request,
             [FromServices] CreateOrderCommandHandler handler,
             CancellationToken cancellationToken) =>
         {
+            // Keep existing endpoint for backward compatibility
             var order = await handler.Handle(
-                new CreateOrderCommand(),
+                new CreateOrderCommand(TableId.New()),
                 cancellationToken);
 
             return Results.Created(

@@ -34,6 +34,16 @@ public sealed class DiningTable : AggregateRoot<TableId>
     public IReadOnlyCollection<TableId> MergedTableIds =>
         _mergedTableIds.AsReadOnly();
 
+    public void Open()
+    {
+        CheckRule(new CannotOpenNonAvailableTableRule(Status));
+
+        Status = TableStatus.Open;
+
+        RaiseDomainEvent(
+            new TableOpenedEvent(Id));
+    }
+
     public static DiningTable Create(string name)
     {
         var table = new DiningTable(

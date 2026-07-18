@@ -36,6 +36,7 @@ using JLek.POS.Application.Features.Orders.Queries.GetOrders;
 using JLek.POS.Application.Features.Tables.Commands.AssignTable;
 using JLek.POS.Application.Features.Tables.Commands.CreateDiningTable;
 using JLek.POS.Application.Features.Tables.Commands.MergeTables;
+using JLek.POS.Application.Features.Tables.Commands.OpenTable;
 using JLek.POS.Application.Features.Tables.Commands.ReleaseTable;
 using JLek.POS.Application.Features.Tables.Commands.SplitTable;
 using JLek.POS.Application.Features.Tables.Commands.TransferTable;
@@ -57,6 +58,7 @@ using JLek.POS.Application.Features.Payments.Queries.GetPaymentsByOrderId;
 using JLek.POS.Application.Features.Receipt.Commands.PrintCustomerReceipt;
 using JLek.POS.Application.Features.Receipt.Commands.PrintKitchenTicket;
 using JLek.POS.Application.Features.Receipt.Commands.PrintRefundReceipt;
+using JLek.POS.Application.Features.Health.Queries.GetHealth;
 using JLek.POS.Application.Features.Receipt.Configuration;
 using JLek.POS.Application.Features.Receipt.Services;
 using JLek.POS.Application.Abstractions;
@@ -125,6 +127,7 @@ public static class DependencyInjection
 
         // Table commands
         services.AddScoped<CreateDiningTableCommandHandler>();
+        services.AddScoped<OpenTableCommandHandler>();
         services.AddScoped<AssignTableCommandHandler>();
         services.AddScoped<TransferTableCommandHandler>();
         services.AddScoped<MergeTablesCommandHandler>();
@@ -160,6 +163,9 @@ public static class DependencyInjection
         services.AddScoped<GetDailySalesReportQueryHandler>();
         services.AddScoped<GetSalesByPaymentReportQueryHandler>();
         services.AddScoped<GetBestSellerReportQueryHandler>();
+
+        // Health
+        services.AddScoped<GetHealthQueryHandler>();
 
         // Receipt
         services.AddScoped<PrintCustomerReceiptCommandHandler>();

@@ -1,7 +1,9 @@
 using JLek.POS.Application.Abstractions;
+using JLek.POS.Application.Abstractions.EventHandling;
 using JLek.POS.Application.Abstractions.Repositories;
 using JLek.POS.Application.Features.Receipt.Configuration;
 using JLek.POS.Domain.Common.Abstractions;
+using JLek.POS.Infrastructure.EventHandling;
 using JLek.POS.Infrastructure.Persistence;
 using JLek.POS.Infrastructure.Printing;
 using JLek.POS.Infrastructure.Repositories;
@@ -24,6 +26,7 @@ public static class DependencyInjection
                 configuration.GetConnectionString("DefaultConnection"));
         });
 
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();

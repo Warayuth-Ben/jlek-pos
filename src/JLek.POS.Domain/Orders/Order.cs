@@ -3,6 +3,7 @@ using JLek.POS.Domain.Common.ValueObjects;
 using JLek.POS.Domain.Orders.Events;
 using JLek.POS.Domain.Orders.Rules;
 using JLek.POS.Domain.Orders.ValueObjects;
+using JLek.POS.Domain.ValueObjects;
 
 namespace JLek.POS.Domain.Orders;
 
@@ -17,11 +18,20 @@ public sealed class Order : AggregateRoot<OrderId>
         Status = OrderStatus.Draft;
     }
 
-    private Order(OrderId id)
+    private Order(
+        OrderId id,
+        TableId tableId,
+        OrderSessionId sessionId)
         : base(id)
     {
+        TableId = tableId;
+        SessionId = sessionId;
         Status = OrderStatus.Draft;
     }
+
+    public TableId TableId { get; private set; }
+
+    public OrderSessionId SessionId { get; private set; }
 
     public OrderStatus Status { get; private set; }
 
@@ -33,12 +43,17 @@ public sealed class Order : AggregateRoot<OrderId>
             Money.Zero,
             (total, item) => total + item.TotalPrice);
 
-    public static Order Create()
+    public static Order Create(
+        TableId tableId,
+        OrderSessionId sessionId)
     {
-        var order = new Order(OrderId.New());
+        var order = new Order(
+            OrderId.New(),
+            tableId,
+            sessionId);
 
         order.RaiseDomainEvent(
-            new OrderCreatedEvent(order.Id));
+            new OrderCreatedEvent(order.Id, tableId));
 
         return order;
     }

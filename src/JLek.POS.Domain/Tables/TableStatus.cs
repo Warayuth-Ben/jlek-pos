@@ -4,5 +4,7 @@ public enum TableStatus
 {
     Available = 0,
 
-    Occupied = 1
+    Occupied = 1,
+
+    Open = 2
 }
