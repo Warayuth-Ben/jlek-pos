@@ -38,4 +38,25 @@ public sealed class OrderClient : IOrderClient
         response.EnsureSuccessStatusCode();
         return (await response.Content.ReadFromJsonAsync<OrderResponse>(cancellationToken: ct))!;
     }
+
+    public async Task<OrderResponse> RemoveItemAsync(Guid orderId, Guid itemId, CancellationToken ct = default)
+    {
+        var response = await _http.DeleteAsync($"/orders/{orderId}/items/{itemId}", ct);
+        response.EnsureSuccessStatusCode();
+        return (await response.Content.ReadFromJsonAsync<OrderResponse>(cancellationToken: ct))!;
+    }
+
+    public async Task<OrderResponse> CancelAsync(Guid orderId, CancellationToken ct = default)
+    {
+        var response = await _http.PostAsync($"/orders/{orderId}/cancel", null, ct);
+        response.EnsureSuccessStatusCode();
+        return (await response.Content.ReadFromJsonAsync<OrderResponse>(cancellationToken: ct))!;
+    }
+
+    public async Task<OrderResponse> CompleteAsync(Guid orderId, CancellationToken ct = default)
+    {
+        var response = await _http.PostAsync($"/orders/{orderId}/complete", null, ct);
+        response.EnsureSuccessStatusCode();
+        return (await response.Content.ReadFromJsonAsync<OrderResponse>(cancellationToken: ct))!;
+    }
 }

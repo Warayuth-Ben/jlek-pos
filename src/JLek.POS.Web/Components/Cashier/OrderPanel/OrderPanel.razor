@@ -65,6 +65,15 @@ else
                     <span class="item-name">@item.MenuItemId</span>
                     <span class="item-quantity">x @item.Quantity</span>
                     <span class="item-price">@item.UnitPrice</span>
+                    @if (_order.Status == "Draft")
+                    {
+                        var isRemoving = _removingItemId == item.Id;
+                        <button class="btn-remove-item"
+                                disabled="isRemoving || _isRemovingAny"
+                                @onclick="() => RemoveItemAsync(item.Id)">
+                            @if (isRemoving) { <span>Removing...</span> } else { <span>X</span> }
+                        </button>
+                    }
                 </div>
             }
         </div>
@@ -76,6 +85,9 @@ else
                 <button class="btn-add-item" @onclick="() => OnAddItemRequested.InvokeAsync(_order.Id)">+ Add Item</button>
                 <button class="btn-confirm" disabled="_isConfirming" @onclick="ConfirmOrderAsync">
                     @if (_isConfirming) { <span>Confirming...</span> } else { <span>Confirm Order</span> }
+                </button>
+                <button class="btn-cancel-order" disabled="_isCancelling" @onclick="CancelOrderAsync">
+                    @if (_isCancelling) { <span>Cancelling...</span> } else { <span>Cancel Order</span> }
                 </button>
             }
             @if (_order.Status == "Confirmed" || _order.Status == "Completed")
@@ -120,10 +132,13 @@ else
     private bool _isOpening = false;
     private bool _isCreating = false;
     private bool _isConfirming = false;
+    private bool _isCancelling = false;
     private bool _isPaying = false;
     private bool _isPrinting = false;
     private bool _isReleasing = false;
     private bool _paymentDone = false;
+    private Guid? _removingItemId;
+    private bool _isRemovingAny = false;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -160,6 +175,15 @@ else
         finally { _isCreating = false; }
     }
 
+    private async Task RemoveItemAsync(Guid itemId)
+    {
+        if (_order is null || _isRemovingAny) return;
+        _isRemovingAny = true; _removingItemId = itemId; _errorMessage = null;
+        try { await OrderClient.RemoveItemAsync(_order.Id, itemId); await OnParametersSetAsync(); }
+        catch (Exception ex) { _errorMessage = $"Cannot remove item: {ex.Message}"; }
+        finally { _isRemovingAny = false; _removingItemId = null; }
+    }
+
     private async Task ConfirmOrderAsync()
     {
         if (_order is null || _isConfirming) return;
@@ -167,6 +191,15 @@ else
         try { await OrderClient.ConfirmAsync(_order.Id); await OnParametersSetAsync(); }
         catch (Exception ex) { _errorMessage = $"Cannot confirm order: {ex.Message}"; }
         finally { _isConfirming = false; }
+    }
+
+    private async Task CancelOrderAsync()
+    {
+        if (_order is null || _isCancelling) return;
+        _isCancelling = true; _errorMessage = null;
+        try { await OrderClient.CancelAsync(_order.Id); await OnTableOpened.InvokeAsync(); }
+        catch (Exception ex) { _errorMessage = $"Cannot cancel order: {ex.Message}"; }
+        finally { _isCancelling = false; }
     }
 
     private async Task PayWithCashAsync() => await PayAsync("Cash");
