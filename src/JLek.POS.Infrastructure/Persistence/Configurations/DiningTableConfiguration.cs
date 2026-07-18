@@ -26,14 +26,16 @@ public sealed class DiningTableConfiguration
         builder.Property(x => x.Status)
                .HasConversion<int>();
 
-        builder.Property(x => x.ActiveSessionId);
+        builder.Property(x => x.ActiveSessionId)
+               .HasConversion(new NullableOrderSessionIdConverter());
 
         // MergedTableIds — value object collection (backed by _mergedTableIds field)
         builder.OwnsMany<TableId>("_mergedTableIds", merged =>
         {
             merged.WithOwner().HasForeignKey("DiningTableId");
             merged.ToTable("DiningTableMergedTables");
-            merged.Property<Guid>("DiningTableId");
+            merged.Property<TableId>("DiningTableId")
+                  .HasConversion(new TableIdConverter());
             merged.Property(x => x.Value)
                   .HasColumnName("MergedTableId")
                   .IsRequired();
