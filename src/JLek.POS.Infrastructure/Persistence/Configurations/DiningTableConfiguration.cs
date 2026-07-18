@@ -39,6 +39,7 @@ public sealed class DiningTableConfiguration
                   .IsRequired();
         });
 
+        builder.Ignore(x => x.MergedTableIds);
         builder.Ignore(x => x.DomainEvents);
     }
 }

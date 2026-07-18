@@ -12,8 +12,11 @@ public class Program
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
-        builder.Services.AddApiClients(
-            builder.HostEnvironment.BaseAddress);
+        // API base URL — configured in wwwroot/appsettings.json
+        var apiBaseUrl = builder.Configuration["ApiBaseUrl"]
+            ?? builder.HostEnvironment.BaseAddress;
+
+        builder.Services.AddApiClients(apiBaseUrl);
 
         await builder.Build().RunAsync();
     }

@@ -22,6 +22,12 @@ public sealed class OrderConfiguration
         builder.Property(x => x.Status)
                .HasConversion<int>();
 
+        builder.Property(x => x.TableId)
+               .HasConversion(new TableIdConverter());
+
+        builder.Property(x => x.SessionId)
+               .HasConversion(new OrderSessionIdConverter());
+
         builder.Ignore(x => x.DomainEvents);
         builder.Ignore(x => x.Total);
 

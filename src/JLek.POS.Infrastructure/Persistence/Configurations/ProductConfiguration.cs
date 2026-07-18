@@ -38,6 +38,10 @@ public sealed class ProductConfiguration
 
         builder.Ignore(x => x.DomainEvents);
 
+        // IngredientIds — value object collection; mapped via OwnsMany on backing field
+        builder.Ignore(x => x.SuggestedPrices);
+        builder.Ignore(x => x.IngredientIds);
+
         // OptionGroups — owned entity collection
         builder.HasMany(x => x.OptionGroups)
                .WithOne()

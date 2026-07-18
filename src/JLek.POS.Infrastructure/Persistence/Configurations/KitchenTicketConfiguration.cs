@@ -47,6 +47,7 @@ public sealed class KitchenTicketConfiguration
                 .HasMaxLength(500);
         });
 
+        builder.Ignore(x => x.Items);
         builder.Ignore(x => x.DomainEvents);
     }
 }
