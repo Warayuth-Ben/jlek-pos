@@ -6,19 +6,23 @@ Welcome to the JLek POS documentation.
 
 # Project Status
 
-**Architecture Baseline v1.0 — Complete and Frozen**
+**Release Candidate v1.0.0-rc1 — Tagged and Pushed**
 
 | Area | Status |
 |------|--------|
-| Discovery (P1–P7) | 🧊 Frozen |
-| Presentation Architecture (P8–P14) | 🧊 Frozen |
-| Application Architecture (P15–P16) | 🧊 Frozen |
-| Infrastructure Architecture (P17–P21) | 🧊 Frozen |
-| **Implementation** | ⏸️ Not Started |
-| **Testing** | ⏸️ Not Started |
-| **Deployment** | ⏸️ Not Started |
+| Architecture Baseline | 🧊 Frozen |
+| Domain (7 Aggregates) | 🧊 Frozen |
+| Application (20 Commands + 12 Queries) | 🧊 Frozen |
+| Infrastructure (7 Repositories, PostgreSQL) | 🧊 Frozen |
+| API (47 Endpoints) | 🧊 Frozen |
+| Integration Testing (155 tests) | 🧊 Frozen |
+| Printing Infrastructure (57 unit tests) | 🧊 Frozen |
+| CI/CD (GitHub Actions) | 🧊 Frozen |
+| **Web UI (4 of 6 pages)** | ✅ **95% Complete** |
+| Authentication / Authorization | ⏸️ Deferred |
+| Settings Page | ⏸️ Deferred |
 
-Next Phase: **Implementation Planning**
+Next Phase: **v1.1 Development** (Settings, SignalR, Monthly Reports, Export)
 
 ---
 
@@ -40,7 +44,7 @@ Next Phase: **Implementation Planning**
 14. `09-ui/` — UI architecture
 15. `10-testing/` — Testing strategy
 16. `11-development/` — Development workflow
-17. `97-AI-Docs/` — AI onboarding and project status
+17. `97-AI-Docs/` — AI onboarding and project status (start here)
 18. `20-thai/` — Thai language documentation
 
 ---
@@ -54,6 +58,7 @@ Next Phase: **Implementation Planning**
 | Database | PostgreSQL 17 |
 | ORM | EF Core |
 | API | ASP.NET Core Minimal API |
+| UI | Blazor WebAssembly |
 | Testing | xUnit + Testcontainers + FluentAssertions |
 | IDs | Strongly Typed IDs (GUID, Domain-generated) |
 | Repository | One per aggregate, 4-method contract |

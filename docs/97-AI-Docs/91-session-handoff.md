@@ -1,80 +1,138 @@
 # AI Handoff
 
-Current Phase
+Current Version
 
-Architecture Baseline v1.0
+v1.0.0-rc1
+
+Current Branch
+
+main (tagged: v1.0.0-rc1)
 
 Status
 
-Frozen
+Release Candidate — Awaiting validation
 
 ---
 
-## Architecture Phases Completed (P1–P21)
+## Repository Status
 
-| Phase | Area | Status |
-|-------|------|--------|
-| P1–P7 | Discovery (Onboarding, Knowledge Flow, Documentation Map, Navigation, Capability Catalog, Traceability, Audit) | 🧊 Frozen |
-| P8–P14 | Presentation (Architecture, Operational Flow, 4 Personas, State Machine, 14 Navigation Nodes, 10 Interaction Patterns, Review) | 🧊 Frozen |
-| P15–P16 | Application (~65 Use Cases, Command & Query Standards) | 🧊 Frozen |
-| P17–P20 | Infrastructure (Persistence, 7 Repositories, External Adapters, Infrastructure Services) | 🧊 Frozen |
-| P21 | Infrastructure Architecture Review | 🧊 Frozen |
-
-## Current State
-
-Architecture is complete.
-
-Architecture documents are frozen.
-
-Implementation has NOT started.
+| Item | Value |
+|------|-------|
+| Current branch | `main` |
+| Git tag | `v1.0.0-rc1` |
+| Previous tag | `v1.0.0`, `architecture-baseline-v1.0`, `governance-v1` |
+| Remote | `origin` (https://github.com/Warayuth-Ben/jlek-pos.git) |
+| Working tree | Clean |
+| Build | ✅ 0 Errors, 0 Warnings |
 
 ---
 
-## Architecture Principles (Constitutional)
+## Completed Backend Modules (All Frozen)
 
-1. Business Owns the State — Presentation must never create Business State
-2. Presentation Reflects, Not Invents — UI reflects state, does not interpret
-3. Single Source of Truth — Every state has exactly one owner
-4. Every Error Has a Recovery Path — No dead-end states
+| Module | Commands | Queries | APIs | Tests |
+|--------|----------|---------|------|-------|
+| Order v1 | 6 | 2 | 7 | — |
+| Menu/Catalog v1 | 15 | 3 | 27 | 54 |
+| Table v1 | 7 | 3 | 10 | 17 |
+| Kitchen v1 | 5 | 3 | 8 | 21 |
+| Payment v1 | 2 | 2 | 4 | 18 |
+| Reporting v1 | 0 | 3 | 3 | 24 |
+| Receipt v1 | 3 | 0 | 3 | 21 |
+| Printing Infrastructure v1 | — | — | — | 57 unit tests |
 
----
-
-## Important Decisions
-
-- Clean Architecture + DDD + CQRS
-- Strongly Typed IDs (GUID, generated in Domain)
-- Repository per Aggregate (4-method contract, no Delete)
-- Separate Read/Write (IReportingDbContext vs IRepository)
-- Handler owns transaction boundary (one SaveChangesAsync per handler)
-- Adapter never throws (returns Result)
-- Null adapters for all external dependencies
-- Composition Root split (Application DI + Infrastructure DI + Api/Program.cs)
-- Infrastructure Architecture (P17–P20): Persistence, Repository, External Adapters, Infrastructure Services
-- External Adapter Architecture: Interface in Application, Implementation in Infrastructure
+**Totals: 20 Commands, 12 Queries, 47 API Endpoints, 155 Integration Tests, 57 Unit Tests**
 
 ---
 
-## Known Open Items
+## Completed UI Modules
 
-1. TicketNumber SequenceService — needed for multi-cashier production
-2. Correlation ID — not implemented (deferred)
-3. Health Checks — not implemented (deferred)
-4. Caching — not implemented (deferred)
-5. Background Processing — not implemented (deferred)
-6. Authentication/Authorization — not implemented (deferred)
-7. Offline Mode — not designed (deferred)
-8. UI Implementation — at 0% (next phase)
+| Page | Status | Backend Dependencies |
+|------|--------|---------------------|
+| Cashier | ✅ Complete | Order, Menu, Table, Payment, Receipt |
+| Kitchen | ✅ Complete (polling 15s) | Kitchen |
+| Dashboard | ✅ Complete | Reports, Tables, Kitchen, Orders |
+| Reports | ✅ Complete | Reports |
+| Settings | ⚠️ Placeholder | None |
+| Home | ⚠️ Default template | None |
 
 ---
 
-## Next Task
+## Production Hardening Completed (H1–H3)
 
-Implementation Planning
+- H1: Kitchen polling empty catch → proper logging
+- H2: Kitchen polling overlap prevention (`_isPolling` guard)
+- H3: OrderPanel TableId/OrderId mismatch (stored OrderId from Create response)
 
-Architecture documents are frozen.
+---
 
-Do NOT redesign architecture.
+## Known Limitations
 
-Any future architectural changes require an ADR (Architecture Decision Record) or formal Architecture Review.
+1. **No SignalR** — Kitchen uses 15s polling instead of real-time updates
+2. **No TableName in KitchenTicket** — Domain frozen (Snapshot Aggregate pattern)
+3. **No CreatedAt in KitchenTicket** — Domain frozen (no timestamp property)
+4. **No CancellationToken propagation** in some UI components
+5. **Settings page** is placeholder only
+6. **Home page** shows default Blazor template
 
-Follow existing architecture documents for all implementation work.
+---
+
+## Deferred Items (v1.1+)
+
+- Settings page (Restaurant, Printer, Payment, Tax, User, Backup)
+- SignalR for real-time Kitchen updates
+- Monthly Sales report
+- Export functionality
+- Home page customization (restaurant dashboard)
+- Notification auto-dismiss timer
+- CancellationToken propagation
+
+---
+
+## Architecture Constraints
+
+All decisions in `docs/98-decisions/` are frozen:
+
+| ADR | Decision |
+|-----|----------|
+| ADR-001 | Transaction Strategy (non-atomic for v1) |
+| ADR-002 | Aggregate Communication (by ID only) |
+| ADR-003 | Event Strategy (in-process dispatcher) |
+| ADR-004 | Outbox Strategy (deferred) |
+| ADR-005 | Event Strategy (MediatR pattern) |
+| ADR-006 | Event Handler Rule (one handler per event) |
+| ADR-007 | Kitchen Integration (snapshot pattern) |
+| ADR-008 | Payment Integration (cross-aggregate rules) |
+| ADR-009 | Presentation Architecture (Blazor WebAssembly) |
+
+### Do NOT modify:
+- Domain Layer (7 aggregates all frozen)
+- Application Layer (CQRS pattern frozen)
+- Infrastructure Layer (7 repositories frozen)
+- API Contracts (47 endpoints frozen)
+- Integration Tests (155 tests frozen)
+
+### Allowed changes:
+- UI-only improvements
+- Bug fixes
+- Documentation updates
+
+---
+
+## Next Recommended Task
+
+After RC validation:
+1. Settings page implementation
+2. Home page customization
+3. SignalR for Kitchen real-time updates
+4. v1.1 planning
+
+---
+
+## Development Rules
+
+1. Follow AI Engineering Standard (`docs/97-AI-Docs/01-ai-engineering-standard.md`)
+2. Follow AI Constitution (`docs/97-AI-Docs/02-ai-constitution.md`)
+3. Follow AI Workflow (`docs/97-AI-Docs/03-ai-workflow.md`)
+4. Documentation first. Evidence based. Never guess.
+5. Human approval required before implementation.
+6. Build after every change. Run existing tests.
