@@ -1,0 +1,171 @@
+@page "/kitchen"
+@implements IDisposable
+@using JLek.POS.Web.Clients.Kitchen
+@using JLek.POS.Web.Contracts.Kitchen
+@using JLek.POS.Web.Components.Kitchen.KitchenStatusBadge
+@using JLek.POS.Web.Components.Kitchen.KitchenOrderCard
+@using JLek.POS.Web.Components.Kitchen.KitchenQueue
+@using JLek.POS.Web.Components.Kitchen.KitchenToolbar
+@inject IKitchenClient KitchenClient
+@inject ILogger<KitchenPage> Logger
+
+<div class="kitchen-page">
+    <div class="kitchen-header">
+        <h2>Kitchen Display</h2>
+        <KitchenToolbar WaitingCount="@_waitingTickets.Count"
+                        CookingCount="@_cookingTickets.Count"
+                        ReadyCount="@_readyTickets.Count"
+                        IsRefreshing="_isRefreshing"
+                        OnRefresh="LoadTicketsAsync" />
+    </div>
+
+    @if (_isLoading && !_hasLoaded)
+    {
+        <div class="kitchen-loading">Loading kitchen orders...</div>
+    }
+    else if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="kitchen-error">
+            <p>@_errorMessage</p>
+            <button class="btn-retry" @onclick="LoadTicketsAsync">Retry</button>
+        </div>
+    }
+    else
+    {
+        <div class="kitchen-queues">
+            <div class="kitchen-queue-column kitchen-queue-waiting">
+                <KitchenQueue Title="Waiting"
+                              Tickets="_waitingTickets"
+                              ActionTicketId="_actionTicketId"
+                              OnStart="HandleStartAsync"
+                              OnComplete="HandleCompleteAsync"
+                              OnServe="HandleServeAsync" />
+            </div>
+            <div class="kitchen-queue-column kitchen-queue-cooking">
+                <KitchenQueue Title="Cooking"
+                              Tickets="_cookingTickets"
+                              ActionTicketId="_actionTicketId"
+                              OnStart="HandleStartAsync"
+                              OnComplete="HandleCompleteAsync"
+                              OnServe="HandleServeAsync" />
+            </div>
+            <div class="kitchen-queue-column kitchen-queue-ready">
+                <KitchenQueue Title="Ready"
+                              Tickets="_readyTickets"
+                              ActionTicketId="_actionTicketId"
+                              OnStart="HandleStartAsync"
+                              OnComplete="HandleCompleteAsync"
+                              OnServe="HandleServeAsync" />
+            </div>
+            <div class="kitchen-queue-column kitchen-queue-served">
+                <KitchenQueue Title="Served"
+                              Tickets="_servedTickets"
+                              ActionTicketId="_actionTicketId"
+                              OnStart="HandleStartAsync"
+                              OnComplete="HandleCompleteAsync"
+                              OnServe="HandleServeAsync" />
+            </div>
+        </div>
+    }
+
+    @if (!_isLoading && _hasLoaded && _errorMessage is null)
+    {
+        <div class="kitchen-auto-refresh">
+            <small>Auto-refreshes every 15 seconds</small>
+        </div>
+    }
+</div>
+
+@code {
+    private List<KitchenTicketResponse> _waitingTickets = [];
+    private List<KitchenTicketResponse> _cookingTickets = [];
+    private List<KitchenTicketResponse> _readyTickets = [];
+    private List<KitchenTicketResponse> _servedTickets = [];
+    private bool _isLoading = true;
+    private bool _hasLoaded;
+    private bool _isRefreshing;
+    private string? _errorMessage;
+    private Guid? _actionTicketId;
+    private Timer? _refreshTimer;
+    private bool _isPolling;
+    private const int PollingIntervalMs = 15000;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTicketsAsync();
+        _refreshTimer = new Timer(async _ => await AutoRefreshAsync(), null, PollingIntervalMs, PollingIntervalMs);
+    }
+
+    private async Task AutoRefreshAsync()
+    {
+        if (_isPolling) return;
+        _isPolling = true;
+        try
+        {
+            await InvokeAsync(LoadTicketsAsync);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "Kitchen polling refresh failed");
+        }
+        finally
+        {
+            _isPolling = false;
+        }
+    }
+
+    private async Task LoadTicketsAsync()
+    {
+        if (_hasLoaded) _isRefreshing = true;
+        _errorMessage = null;
+
+        try
+        {
+            var tickets = await KitchenClient.GetActiveAsync();
+            _waitingTickets = tickets.Where(t => t.Status == "Pending").ToList();
+            _cookingTickets = tickets.Where(t => t.Status == "Preparing").ToList();
+            _readyTickets = tickets.Where(t => t.Status == "Ready").ToList();
+            _servedTickets = tickets.Where(t => t.Status == "Served").ToList();
+            _hasLoaded = true;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Cannot load kitchen tickets");
+            _errorMessage = $"Cannot load kitchen orders: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+            _isRefreshing = false;
+        }
+    }
+
+    private async Task HandleStartAsync(Guid id)
+    {
+        _actionTicketId = id;
+        try { await KitchenClient.StartPreparationAsync(id); await LoadTicketsAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot start preparation for ticket {Id}", id); _errorMessage = $"Cannot start: {ex.Message}"; }
+        finally { _actionTicketId = null; }
+    }
+
+    private async Task HandleCompleteAsync(Guid id)
+    {
+        _actionTicketId = id;
+        try { await KitchenClient.CompletePreparationAsync(id); await LoadTicketsAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot complete preparation for ticket {Id}", id); _errorMessage = $"Cannot complete: {ex.Message}"; }
+        finally { _actionTicketId = null; }
+    }
+
+    private async Task HandleServeAsync(Guid id)
+    {
+        _actionTicketId = id;
+        try { await KitchenClient.ServeAsync(id); await LoadTicketsAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot serve ticket {Id}", id); _errorMessage = $"Cannot serve: {ex.Message}"; }
+        finally { _actionTicketId = null; }
+    }
+
+    public void Dispose()
+    {
+        _refreshTimer?.Dispose();
+    }
+}

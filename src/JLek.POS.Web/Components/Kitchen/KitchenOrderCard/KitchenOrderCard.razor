@@ -1,0 +1,63 @@
+@using JLek.POS.Web.Contracts.Kitchen
+@using JLek.POS.Web.Components.Kitchen.KitchenStatusBadge
+
+<div class="kitchen-order-card">
+    <div class="kitchen-order-card-header">
+        <span class="kitchen-ticket-number">#@Ticket.TicketNumber</span>
+        <KitchenStatusBadge Status="@Ticket.Status" />
+    </div>
+    <div class="kitchen-order-card-items">
+        @foreach (var item in Ticket.Items)
+        {
+            <div class="kitchen-order-item">
+                <span class="kitchen-item-name">@item.ItemName</span>
+                <span class="kitchen-item-qty">x @item.Quantity</span>
+                @if (!string.IsNullOrWhiteSpace(item.Notes))
+                {
+                    <div class="kitchen-item-notes">@item.Notes</div>
+                }
+            </div>
+        }
+    </div>
+    <div class="kitchen-order-card-actions">
+        @if (Ticket.Status == "Pending" && !IsActionRunning)
+        {
+            <button class="btn-kitchen-action btn-start"
+                    disabled="IsThisActionRunning"
+                    @onclick="() => OnStart.InvokeAsync(Ticket.Id)">
+                Start
+            </button>
+        }
+        @if (Ticket.Status == "Preparing" && !IsActionRunning)
+        {
+            <button class="btn-kitchen-action btn-complete"
+                    disabled="IsThisActionRunning"
+                    @onclick="() => OnComplete.InvokeAsync(Ticket.Id)">
+                Complete
+            </button>
+        }
+        @if (Ticket.Status == "Ready" && !IsActionRunning)
+        {
+            <button class="btn-kitchen-action btn-serve"
+                    disabled="IsThisActionRunning"
+                    @onclick="() => OnServe.InvokeAsync(Ticket.Id)">
+                Serve
+            </button>
+        }
+        @if (IsThisActionRunning)
+        {
+            <span class="kitchen-action-progress">Processing...</span>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public KitchenTicketResponse Ticket { get; set; } = null!;
+    [Parameter] public EventCallback<Guid> OnStart { get; set; }
+    [Parameter] public EventCallback<Guid> OnComplete { get; set; }
+    [Parameter] public EventCallback<Guid> OnServe { get; set; }
+    [Parameter] public Guid? ActionTicketId { get; set; }
+
+    private bool IsActionRunning => ActionTicketId is not null;
+    private bool IsThisActionRunning => ActionTicketId == Ticket.Id;
+}

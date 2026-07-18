@@ -53,6 +53,11 @@ public sealed class OrderClient : IOrderClient
         return (await response.Content.ReadFromJsonAsync<OrderResponse>(cancellationToken: ct))!;
     }
 
+    public async Task<List<OrderResponse>> GetAllAsync(CancellationToken ct = default)
+    {
+        return await _http.GetFromJsonAsync<List<OrderResponse>>("/orders", ct) ?? [];
+    }
+
     public async Task<OrderResponse> CompleteAsync(Guid orderId, CancellationToken ct = default)
     {
         var response = await _http.PostAsync($"/orders/{orderId}/complete", null, ct);

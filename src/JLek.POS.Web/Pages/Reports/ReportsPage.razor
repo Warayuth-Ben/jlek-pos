@@ -1,0 +1,207 @@
+@page "/reports"
+@using System.Globalization
+@using JLek.POS.Web.Clients.Reports
+@using JLek.POS.Web.Contracts.Reports
+@inject IReportClient ReportClient
+@inject ILogger<ReportsPage> Logger
+
+<div class="reports-page">
+    <div class="reports-header">
+        <h2>Reports</h2>
+        <button class="btn-refresh" disabled="@_isRefreshing" @onclick="LoadReportsAsync">
+            @if (_isRefreshing) { <span>Refreshing...</span> } else { <span>Refresh</span> }
+        </button>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="reports-loading">Loading reports...</div>
+    }
+    else if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="reports-error">
+            <p>@_errorMessage</p>
+            <button class="btn-retry" @onclick="LoadReportsAsync">Retry</button>
+        </div>
+    }
+    else
+    {
+        <div class="reports-grid">
+
+            @* --- Daily Sales Report --- *@
+            <div class="report-section">
+                <div class="report-section-header">
+                    <h3>Daily Sales</h3>
+                    <div class="report-filter">
+                        <input type="date" value="@_dailyDate" @onchange="HandleDateChange" class="report-date-input" />
+                    </div>
+                </div>
+                @if (_dailySales is not null)
+                {
+                    <div class="report-metrics">
+                        <div class="report-metric">
+                            <span class="report-metric-label">Revenue</span>
+                            <span class="report-metric-value">@FormatCurrency(_dailySales.NetRevenue)</span>
+                        </div>
+                        <div class="report-metric">
+                            <span class="report-metric-label">Orders</span>
+                            <span class="report-metric-value">@_dailySales.TotalOrders</span>
+                        </div>
+                        <div class="report-metric">
+                            <span class="report-metric-label">Avg Order</span>
+                            <span class="report-metric-value">@FormatCurrency(_dailySales.AverageOrderValue)</span>
+                        </div>
+                        <div class="report-metric">
+                            <span class="report-metric-label">Items Sold</span>
+                            <span class="report-metric-value">@_dailySales.TotalItemsSold</span>
+                        </div>
+                        <div class="report-metric">
+                            <span class="report-metric-label">Refunds</span>
+                            <span class="report-metric-value report-negative">@FormatCurrency(_dailySales.TotalRefunds)</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="report-empty">No data for this date</div>
+                }
+            </div>
+
+            @* --- Sales by Payment --- *@
+            <div class="report-section">
+                <h3>Sales by Payment</h3>
+                @if (_salesByPayment?.PaymentMethods.Count > 0)
+                {
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Transactions</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var pm in _salesByPayment.PaymentMethods)
+                            {
+                                <tr>
+                                    <td>@pm.Method</td>
+                                    <td>@pm.TransactionCount</td>
+                                    <td>@FormatCurrency(pm.TotalAmount)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="report-empty">No payment data</div>
+                }
+            </div>
+
+            @* --- Best Sellers --- *@
+            <div class="report-section report-section-full">
+                <h3>Best Sellers</h3>
+                @if (_bestSellers?.Items.Count > 0)
+                {
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Item ID</th>
+                                <th>Quantity</th>
+                                <th>Revenue</th>
+                                <th>Orders</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in _bestSellers.Items)
+                            {
+                                <tr>
+                                    <td>@item.Rank</td>
+                                    <td>@item.MenuItemId.ToString()[..8]</td>
+                                    <td>@item.TotalQuantity</td>
+                                    <td>@FormatCurrency(item.TotalRevenue)</td>
+                                    <td>@item.OrderCount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="report-empty">No best seller data</div>
+                }
+            </div>
+
+        </div>
+    }
+</div>
+
+@code {
+    private DailySalesReport? _dailySales;
+    private SalesByPaymentReport? _salesByPayment;
+    private BestSellerReport? _bestSellers;
+    private string _dailyDate = DateTime.Now.ToString("yyyy-MM-dd");
+    private bool _isLoading = true;
+    private bool _isRefreshing;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync() => await LoadReportsAsync();
+
+    private async Task LoadReportsAsync()
+    {
+        if (_hasLoaded) _isRefreshing = true;
+        _errorMessage = null;
+
+        var today = DateOnly.FromDateTime(DateTime.Now);
+
+        try
+        {
+            if (DateOnly.TryParse(_dailyDate, out var parsedDate))
+            {
+                _dailySales = await ReportClient.GetDailySalesAsync(parsedDate);
+            }
+            else
+            {
+                _dailySales = await ReportClient.GetDailySalesAsync(today);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Cannot load daily sales report");
+            _errorMessage = $"Cannot load reports: {ex.Message}";
+        }
+
+        try
+        {
+            _salesByPayment = await ReportClient.GetSalesByPaymentAsync(today.AddDays(-7), today);
+        }
+        catch
+        {
+            _salesByPayment = null;
+        }
+
+        try
+        {
+            _bestSellers = await ReportClient.GetBestSellersAsync(today.AddDays(-30), today, 10);
+        }
+        catch
+        {
+            _bestSellers = null;
+        }
+
+        _isLoading = false;
+        _isRefreshing = false;
+    }
+
+    private void HandleDateChange(ChangeEventArgs e)
+    {
+        _dailyDate = e.Value?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd");
+        _ = LoadReportsAsync();
+    }
+
+    private bool _hasLoaded => !_isLoading || _dailySales is not null;
+
+    private static string FormatCurrency(decimal value) =>
+        value.ToString("N2", CultureInfo.InvariantCulture);
+}

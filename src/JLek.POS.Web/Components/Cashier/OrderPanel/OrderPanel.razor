@@ -1,12 +1,11 @@
+@using JLek.POS.Web.Components.Cashier.PaymentDialog
 @using JLek.POS.Web.Clients.Orders
-@using JLek.POS.Web.Clients.Payments
 @using JLek.POS.Web.Clients.Tables
 @using JLek.POS.Web.Contracts.Orders
-@using JLek.POS.Web.Contracts.Payments
 @using JLek.POS.Web.Contracts.Tables
 @inject IOrderClient OrderClient
-@inject IPaymentClient PaymentClient
 @inject ITableClient TableClient
+@inject ILogger<OrderPanel> Logger
 
 @if (!SelectedTableId.HasValue)
 {
@@ -30,7 +29,7 @@ else if (_tableStatus == "Available")
         </button>
     </div>
 }
-else if (_tableStatus == "Open" && _order is null)
+else if (_tableStatus == "Open" && _activeOrderId is null)
 {
     <div class="order-panel-open">
         <div class="order-table-name">@_tableName</div>
@@ -62,7 +61,7 @@ else
             @foreach (var item in _order.Items)
             {
                 <div class="order-item">
-                    <span class="item-name">@item.MenuItemId</span>
+                    <span class="item-name">@GetProductName(item.MenuItemId)</span>
                     <span class="item-quantity">x @item.Quantity</span>
                     <span class="item-price">@item.UnitPrice</span>
                     @if (_order.Status == "Draft")
@@ -96,9 +95,9 @@ else
                 {
                     <div class="payment-section">
                         <div>Total to pay: @_order.Total</div>
-                        <button class="btn-pay-cash" disabled="_isPaying" @onclick="PayWithCashAsync">Pay Cash</button>
-                        <button class="btn-pay-card" disabled="_isPaying" @onclick="PayWithCardAsync">Pay Card</button>
-                        <button class="btn-pay-promptpay" disabled="_isPaying" @onclick="PayWithPromptPayAsync">PromptPay</button>
+                        <button class="btn-show-payment" disabled="_isPaying" @onclick="ShowPaymentDialog">
+                            @if (_isPaying) { <span>Processing...</span> } else { <span>Pay Now</span> }
+                        </button>
                     </div>
                 }
                 @if (_paymentDone)
@@ -116,17 +115,25 @@ else
     </div>
 }
 
+<PaymentDialog Show="_showPaymentDialog"
+               OrderId="@(_order?.Id ?? Guid.Empty)"
+               TotalAmount="@(_order?.Total ?? 0)"
+               OnPaymentComplete="HandlePaymentComplete"
+               OnCancel="HandlePaymentCancel" />
+
 @code {
     [Parameter] public Guid? SelectedTableId { get; set; }
     [Parameter] public int RefreshVersion { get; set; }
     [Parameter] public EventCallback OnTableOpened { get; set; }
     [Parameter] public EventCallback<Guid> OnAddItemRequested { get; set; }
     [Parameter] public EventCallback<Guid> OnPrintReceiptRequested { get; set; }
+    [Parameter] public Dictionary<Guid, string> ProductNames { get; set; } = [];
 
     private TableResponse? _tableResponse;
     private string _tableStatus = "";
     private string _tableName = "";
     private OrderResponse? _order;
+    private Guid? _activeOrderId;
     private bool _isLoading = false;
     private string? _errorMessage;
     private bool _isOpening = false;
@@ -139,6 +146,7 @@ else
     private bool _paymentDone = false;
     private Guid? _removingItemId;
     private bool _isRemovingAny = false;
+    private bool _showPaymentDialog = false;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -149,30 +157,87 @@ else
             _tableName = "";
             _tableStatus = "";
             _paymentDone = false;
+            _activeOrderId = null;
             return;
         }
+
         _isLoading = true;
         _errorMessage = null;
+
         try
         {
             _tableResponse = await TableClient.GetByIdAsync(SelectedTableId.Value);
-            if (_tableResponse is null) { _errorMessage = "Table not found."; return; }
+            if (_tableResponse is null) { _errorMessage = "Table not found."; _isLoading = false; return; }
             _tableName = _tableResponse.Name;
             _tableStatus = _tableResponse.Status;
         }
-        catch (Exception ex) { _errorMessage = $"Cannot load table: {ex.Message}"; _isLoading = false; return; }
-        try { _order = await OrderClient.GetByIdAsync(SelectedTableId.Value); }
-        catch { _order = null; }
-        finally { _isLoading = false; }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Cannot load table {TableId}", SelectedTableId.Value);
+            _errorMessage = $"Cannot load table: {ex.Message}";
+            _isLoading = false;
+            return;
+        }
+
+        // If we have a stored order ID, load by OrderId (correct API contract)
+        if (_activeOrderId.HasValue)
+        {
+            try
+            {
+                _order = await OrderClient.GetByIdAsync(_activeOrderId.Value);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Cannot load order {OrderId}", _activeOrderId.Value);
+                _order = null;
+            }
+        }
+        else
+        {
+            _order = null;
+        }
+
+        _isLoading = false;
+    }
+
+    private void ShowPaymentDialog()
+    {
+        _showPaymentDialog = true;
+    }
+
+    private async Task HandlePaymentComplete()
+    {
+        _showPaymentDialog = false;
+        _paymentDone = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void HandlePaymentCancel()
+    {
+        _showPaymentDialog = false;
     }
 
     private async Task CreateOrderAsync()
     {
         if (!SelectedTableId.HasValue || _isCreating) return;
-        _isCreating = true; _errorMessage = null;
-        try { await OrderClient.CreateAsync(SelectedTableId.Value); await OnParametersSetAsync(); }
-        catch (Exception ex) { _errorMessage = $"Cannot create order: {ex.Message}"; }
-        finally { _isCreating = false; }
+        _isCreating = true;
+        _errorMessage = null;
+
+        try
+        {
+            var createdOrder = await OrderClient.CreateAsync(SelectedTableId.Value);
+            _activeOrderId = createdOrder.Id;  // Store the OrderId returned from API
+            await OnParametersSetAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Cannot create order for table {TableId}", SelectedTableId.Value);
+            _errorMessage = $"Cannot create order: {ex.Message}";
+        }
+        finally
+        {
+            _isCreating = false;
+        }
     }
 
     private async Task RemoveItemAsync(Guid itemId)
@@ -180,7 +245,7 @@ else
         if (_order is null || _isRemovingAny) return;
         _isRemovingAny = true; _removingItemId = itemId; _errorMessage = null;
         try { await OrderClient.RemoveItemAsync(_order.Id, itemId); await OnParametersSetAsync(); }
-        catch (Exception ex) { _errorMessage = $"Cannot remove item: {ex.Message}"; }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot remove item {ItemId} from order {OrderId}", itemId, _order.Id); _errorMessage = $"Cannot remove item: {ex.Message}"; }
         finally { _isRemovingAny = false; _removingItemId = null; }
     }
 
@@ -189,7 +254,7 @@ else
         if (_order is null || _isConfirming) return;
         _isConfirming = true; _errorMessage = null;
         try { await OrderClient.ConfirmAsync(_order.Id); await OnParametersSetAsync(); }
-        catch (Exception ex) { _errorMessage = $"Cannot confirm order: {ex.Message}"; }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot confirm order {OrderId}", _order.Id); _errorMessage = $"Cannot confirm order: {ex.Message}"; }
         finally { _isConfirming = false; }
     }
 
@@ -197,22 +262,9 @@ else
     {
         if (_order is null || _isCancelling) return;
         _isCancelling = true; _errorMessage = null;
-        try { await OrderClient.CancelAsync(_order.Id); await OnTableOpened.InvokeAsync(); }
-        catch (Exception ex) { _errorMessage = $"Cannot cancel order: {ex.Message}"; }
+        try { await OrderClient.CancelAsync(_order.Id); _activeOrderId = null; await OnTableOpened.InvokeAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot cancel order {OrderId}", _order.Id); _errorMessage = $"Cannot cancel order: {ex.Message}"; }
         finally { _isCancelling = false; }
-    }
-
-    private async Task PayWithCashAsync() => await PayAsync("Cash");
-    private async Task PayWithCardAsync() => await PayAsync("Card");
-    private async Task PayWithPromptPayAsync() => await PayAsync("PromptPay");
-
-    private async Task PayAsync(string method)
-    {
-        if (_order is null || _isPaying) return;
-        _isPaying = true; _errorMessage = null;
-        try { await PaymentClient.ReceivePaymentAsync(_order.Id, _order.Total, method); _paymentDone = true; }
-        catch (Exception ex) { _errorMessage = $"Cannot process payment: {ex.Message}"; }
-        finally { _isPaying = false; }
     }
 
     private async Task PrintReceiptAsync()
@@ -220,6 +272,7 @@ else
         if (_order is null || _isPrinting) return;
         _isPrinting = true;
         try { await OnPrintReceiptRequested.InvokeAsync(_order.Id); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot print receipt for order {OrderId}", _order.Id); }
         finally { _isPrinting = false; }
     }
 
@@ -227,8 +280,8 @@ else
     {
         if (!SelectedTableId.HasValue || _isReleasing) return;
         _isReleasing = true; _errorMessage = null;
-        try { await TableClient.ReleaseAsync(SelectedTableId.Value); await OnTableOpened.InvokeAsync(); }
-        catch (Exception ex) { _errorMessage = $"Cannot release table: {ex.Message}"; }
+        try { await TableClient.ReleaseAsync(SelectedTableId.Value); _activeOrderId = null; await OnTableOpened.InvokeAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot release table {TableId}", SelectedTableId.Value); _errorMessage = $"Cannot release table: {ex.Message}"; }
         finally { _isReleasing = false; }
     }
 
@@ -236,8 +289,15 @@ else
     {
         if (!SelectedTableId.HasValue || _isOpening) return;
         _isOpening = true; _errorMessage = null;
-        try { await TableClient.OpenAsync(SelectedTableId.Value); await OnTableOpened.InvokeAsync(); }
-        catch (Exception ex) { _errorMessage = $"Cannot open table: {ex.Message}"; }
+        try { await TableClient.OpenAsync(SelectedTableId.Value); _activeOrderId = null; await OnTableOpened.InvokeAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "Cannot open table {TableId}", SelectedTableId.Value); _errorMessage = $"Cannot open table: {ex.Message}"; }
         finally { _isOpening = false; }
+    }
+
+    private string GetProductName(Guid menuItemId)
+    {
+        return ProductNames.TryGetValue(menuItemId, out var name)
+            ? name
+            : menuItemId.ToString();
     }
 }

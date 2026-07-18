@@ -10,5 +10,6 @@ public interface IOrderClient
     Task<OrderResponse> ConfirmAsync(Guid orderId, CancellationToken ct = default);
     Task<OrderResponse> RemoveItemAsync(Guid orderId, Guid itemId, CancellationToken ct = default);
     Task<OrderResponse> CancelAsync(Guid orderId, CancellationToken ct = default);
+    Task<List<OrderResponse>> GetAllAsync(CancellationToken ct = default);
     Task<OrderResponse> CompleteAsync(Guid orderId, CancellationToken ct = default);
 }

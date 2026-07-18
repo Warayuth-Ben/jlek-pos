@@ -1,0 +1,14 @@
+<span class="kitchen-status-badge kitchen-status-@Status.ToLowerInvariant()">@DisplayLabel</span>
+
+@code {
+    [Parameter] public string Status { get; set; } = "";
+
+    private string DisplayLabel => Status switch
+    {
+        "Pending" => "Waiting",
+        "Preparing" => "Cooking",
+        "Ready" => "Ready",
+        "Served" => "Served",
+        _ => Status
+    };
+}

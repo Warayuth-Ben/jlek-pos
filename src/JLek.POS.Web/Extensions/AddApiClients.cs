@@ -1,7 +1,9 @@
+using JLek.POS.Web.Clients.Kitchen;
 using JLek.POS.Web.Clients.Menu;
 using JLek.POS.Web.Clients.Orders;
 using JLek.POS.Web.Clients.Payments;
 using JLek.POS.Web.Clients.Receipts;
+using JLek.POS.Web.Clients.Reports;
 using JLek.POS.Web.Clients.Tables;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -23,6 +25,8 @@ public static class ApiClientExtensions
         services.AddScoped<IMenuClient, MenuClient>();
         services.AddScoped<IPaymentClient, PaymentClient>();
         services.AddScoped<IReceiptClient, ReceiptClient>();
+        services.AddScoped<IKitchenClient, KitchenClient>();
+        services.AddScoped<IReportClient, ReportClient>();
 
         return services;
     }

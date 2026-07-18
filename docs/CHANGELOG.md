@@ -112,6 +112,42 @@
 ### Frozen
 - Printing Infrastructure v1
 
+## 2026-07-18 — UI Completion & Release Candidate v1.0.0-rc1
+
+### Added
+- Kitchen UI: KitchenClient, 4-column queue, KitchenOrderCard, KitchenStatusBadge, KitchenQueue, KitchenToolbar, auto-polling (15s)
+- Dashboard UI: ReportClient, 8 metric cards, 3 section tables (Best Sellers, Sales by Payment, Recent Orders)
+- Reports UI: Daily Sales (with date filter), Sales by Payment, Best Sellers tables
+- Placeholder pages: Kitchen, Dashboard, Reports, Settings
+- Navigation: All 6 pages linked in NavMenu
+
+### Fixed
+- Bug: OrderPanel passed TableId instead of OrderId to GetByIdAsync — now stores and uses OrderId from CreateAsync response
+- Bug: KitchenPage empty catch block swallowed polling errors — now logs via ILogger
+- Bug: KitchenPage overlapping polling — added `_isPolling` guard
+- Bug: Missing `@implements IDisposable` on KitchenPage — timer now properly disposed
+- Bug: CashierPage empty catch blocks — proper error logging + user notifications
+- Bug: OrderItem displayed MenuItemId (Guid) instead of product name — preloaded via MenuClient API
+
+### Changed
+- Updated docs/97-AI-Docs/99-project-status.md:
+  - UI progress: 80% → 95%
+  - Overall progress: 98% → 99%
+  - Added Release Candidate status
+  - Added Production Hardening section
+  - Documented deferred items and technical debt
+
+### Architecture
+- No architecture changes
+- No backend changes
+- No Domain/Application/Infrastructure modifications
+- All changes confined to Blazor UI layer
+
+### Release Recommendation
+- Version: v1.0.0-rc1
+- Build: ✅ 0 Errors, 0 Warnings (full solution)
+- Tests: 155 integration tests (pre-existing, unchanged)
+
 ## 2026-07-18 — Governance & Validation Session
 
 ### Added

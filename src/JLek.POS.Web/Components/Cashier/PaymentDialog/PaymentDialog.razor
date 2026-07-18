@@ -1,0 +1,121 @@
+@using JLek.POS.Web.Clients.Payments
+@using JLek.POS.Web.Contracts.Payments
+@inject IPaymentClient PaymentClient
+@inject ILogger<PaymentDialog> Logger
+
+@if (_show)
+{
+    <div class="payment-dialog-overlay" @onclick="HandleCancel">
+        <div class="payment-dialog" @onclick:stopPropagation="true">
+            <div class="payment-dialog-header">
+                <h3>Payment</h3>
+                <button class="btn-close" @onclick="HandleCancel">X</button>
+            </div>
+
+            <div class="payment-dialog-body">
+                <div class="payment-order-total">
+                    <span>Total Amount:</span>
+                    <span class="payment-amount">@TotalAmount</span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <div class="payment-error">@_errorMessage</div>
+                }
+
+                <div class="payment-methods">
+                    <button class="btn-payment-method btn-pay-cash"
+                            disabled="_isProcessing"
+                            @onclick="() => PayAsync(CashMethod)">
+                        💵 Cash
+                    </button>
+                    <button class="btn-payment-method btn-pay-card"
+                            disabled="_isProcessing"
+                            @onclick="() => PayAsync(CardMethod)">
+                        💳 Card
+                    </button>
+                    <button class="btn-payment-method btn-pay-promptpay"
+                            disabled="_isProcessing"
+                            @onclick="() => PayAsync(PromptPayMethod)">
+                        📱 PromptPay
+                    </button>
+                    <button class="btn-payment-method btn-pay-credit"
+                            disabled="_isProcessing"
+                            @onclick="() => PayAsync(CreditMethod)">
+                        🏦 Credit
+                    </button>
+                    <button class="btn-payment-method btn-pay-qr"
+                            disabled="_isProcessing"
+                            @onclick="() => PayAsync(QrMethod)">
+                        📷 QR
+                    </button>
+                </div>
+            </div>
+
+            <div class="payment-dialog-footer">
+                <button class="btn-cancel" disabled="_isProcessing" @onclick="HandleCancel">Cancel</button>
+                @if (_isProcessing)
+                {
+                    <span class="payment-processing">Processing...</span>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private const string CashMethod = "Cash";
+    private const string CardMethod = "Card";
+    private const string PromptPayMethod = "PromptPay";
+    private const string CreditMethod = "Credit";
+    private const string QrMethod = "QR";
+
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public Guid OrderId { get; set; }
+    [Parameter] public decimal TotalAmount { get; set; }
+    [Parameter] public EventCallback OnPaymentComplete { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private bool _show;
+    private bool _isProcessing;
+    private string? _errorMessage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _show = Show;
+        if (!_show)
+        {
+            _errorMessage = null;
+            _isProcessing = false;
+        }
+        await Task.CompletedTask;
+    }
+
+    private async Task HandleCancel()
+    {
+        if (_isProcessing) return;
+        await OnCancel.InvokeAsync();
+    }
+
+    private async Task PayAsync(string method)
+    {
+        if (_isProcessing) return;
+        _isProcessing = true;
+        _errorMessage = null;
+
+        try
+        {
+            await PaymentClient.ReceivePaymentAsync(OrderId, TotalAmount, method);
+            await OnPaymentComplete.InvokeAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Payment failed for order {OrderId} using {Method}", OrderId, method);
+            _errorMessage = $"Payment failed: {ex.Message}";
+        }
+        finally
+        {
+            _isProcessing = false;
+        }
+    }
+}

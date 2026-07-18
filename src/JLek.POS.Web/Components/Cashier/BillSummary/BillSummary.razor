@@ -1,0 +1,55 @@
+@using JLek.POS.Web.Contracts.Orders
+
+@if (Order is null)
+{
+    <div class="bill-summary-empty">No order selected</div>
+}
+else
+{
+    <div class="bill-summary">
+        <h4>Bill Summary</h4>
+        <div class="bill-items">
+            @foreach (var item in Order.Items)
+            {
+                <div class="bill-item">
+                    <span class="bill-item-name">@GetProductName(item.MenuItemId)</span>
+                    <span class="bill-item-qty">x @item.Quantity</span>
+                    <span class="bill-item-price">@item.UnitPrice</span>
+                    <span class="bill-item-total">@item.TotalPrice</span>
+                </div>
+            }
+        </div>
+        <div class="bill-divider"></div>
+        <div class="bill-totals">
+            <div class="bill-row">
+                <span>Subtotal</span>
+                <span>@Order.Total</span>
+            </div>
+            <div class="bill-row">
+                <span>Discount</span>
+                <span>@Discount</span>
+            </div>
+            <div class="bill-row bill-row-grand">
+                <span>Total</span>
+                <span>@Order.Total</span>
+            </div>
+            <div class="bill-row">
+                <span>Status</span>
+                <span class="bill-status-@Order.Status.ToLowerInvariant()">@Order.Status</span>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public OrderResponse? Order { get; set; }
+    [Parameter] public Dictionary<Guid, string> ProductNames { get; set; } = [];
+    [Parameter] public decimal Discount { get; set; }
+
+    private string GetProductName(Guid menuItemId)
+    {
+        return ProductNames.TryGetValue(menuItemId, out var name)
+            ? name
+            : menuItemId.ToString();
+    }
+}
