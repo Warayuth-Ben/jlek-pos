@@ -1,4 +1,4 @@
-# Session Handoff — Phase 10 Complete
+# Session Handoff — Development Complete
 
 ## Current Project State
 
@@ -9,42 +9,62 @@
 - ✅ **UI Foundation (Codex redesign)** — tablet-first POS UI
 - ✅ **CSS Architecture (Sprints B–M)** — Monolithic CSS split into layered architecture
 - ✅ **Component Extraction (Sprints 1–4)** — 12 reusable components extracted
-- ✅ **Frontend Architecture Review (Phase 10)** — Reviewed 28 components, scored B+ (80/100)
-- ✅ **Documentation** — `101-css-architecture.md`, `102-frontend-component-architecture.md`, `103-component-inventory.md`
+- ✅ **Frontend Architecture Review (Phase 10)** — Reviewed 29 components, scored B+ (80/100)
+- ✅ **Production Hardening (Gate 4.5)** — DB resilience, Health Checks, structured logging
+- ✅ **Release Candidate Audit (Gate 5)** — 7-area verification PASS
+- ✅ **Documentation** — `99-project-status.md`, `101-css-architecture.md`, `102-frontend-component-architecture.md`, `103-component-inventory.md`, `117-release-debt.md`, `118-release-notes-v1.0.0-rc2.md`
 
 ### Current Branch
 `feature/ui-v2`
 
 ### Latest Commit
-`0fe3004` — `feat(component): extract cashier presentation components`
+`10a8bdc` — `chore(api): production hardening`
 
-### Latest Milestone
-Phase 10 — Frontend Architecture Review ✅ Complete
+### Current Milestone
+**Development Complete** ✅
 
-### Next Phase
-**Phase 11 — Production Hardening (Release Candidate)**
+### Current Phase
+**User Acceptance Testing (UAT)**
 
-### Known Issues
-| Issue | Severity | Status |
-|-------|----------|--------|
-| 50 integration test errors (ADR-010 enum→string) | Medium | Pre-existing, deferred |
-| 6 Razor warnings (RZ10012 in CashierWorkspace) | Low | Pre-existing |
-| Media queries in app.css (not yet migrated) | Low | Deferred |
-| CashierPage business logic mixed with UI | Medium | Deferred to Phase 11 |
+### Release Status
+**v1.0.0-rc2** — Ready for stable release after successful UAT
 
-### Architecture Scores
+---
+
+## Build Status
+
+| Project | Errors | Status |
+|---------|--------|--------|
+| Domain | 0 | ✅ |
+| Application | 0 | ✅ |
+| Infrastructure | 0 | ✅ |
+| Api | 0 | ✅ |
+| Shared | 0 | ✅ |
+| Web | 0 | ✅ |
+| Printing.* | 0 | ✅ |
+| Printing.*.Tests | 0 | ✅ |
+| IntegrationTests | 50 (test-side ADR-010) | ❌ |
+
+**Production projects: 0 Errors, 0 new Warnings**
+
+---
+
+## Architecture Scores
+
 | Metric | Score |
 |--------|-------|
 | CSS Architecture | **A** (95/100) |
 | Component Architecture | **B** (75/100) |
 | Frontend Overall | **B+ (80/100)** |
-| Production Readiness | **85%** |
+| Production Readiness | **95%** |
 
-### Current Component Inventory (28 Components)
+---
+
+## Component Inventory (29 Components)
 
 ```
 Shared Primitive (4):     Button, Badge, Card, Divider
-Shared Layout (5):        PageHeader, SegmentedControl, EmptyState, LoadingSpinner, SearchBox
+Shared Layout (6):        PageHeader, PanelHeader, SegmentedControl, EmptyState, LoadingSpinner, SearchBox
 Shared Existing (2):      ToastNotification, ConfirmDialog
 Feature Cashier (7):      TableGrid, OrderPanel, BillSummary, MenuModal, PaymentDialog, ReceiptPreview, OrderLineItem
 Feature Kitchen (4):      KitchenQueue, KitchenOrderCard, KitchenStatusBadge, KitchenToolbar
@@ -53,50 +73,35 @@ Layout (2):               MainLayout, NavMenu
 Presentation (3):         WorkspaceShell, LoadingContainer, CashierStore
 ```
 
-### Current Folder Structure (CSS)
-```
-wwwroot/css/
-  app.css                        → 12 @import + media queries only
-  foundation/                    → variables, reset, typography (3 files)
-  components/                    → button, card, badge (3 files)
-  layout/                        → app-shell (1 file)
-  features/                      → cashier, kitchen, dashboard, reports, settings (5 files)
-```
+---
 
-### Project Structure (Key Paths)
-```
-src/
-  ├── JLek.POS.Domain/           → Domain layer (Aggregates, Rules, Events)
-  ├── JLek.POS.Application/      → CQRS, Handlers, DTOs
-  ├── JLek.POS.Infrastructure/   → EF Core, Repositories
-  ├── JLek.POS.Api/              → Minimal API, Endpoints
-  └── JLek.POS.Web/              → Blazor WebAssembly UI
+## Deferred Release Debt (7 items)
 
-docs/
-  ├── 97-AI-Docs/99-project-status.md              → Current project status
-  ├── 97-AI-Docs/90-roadmap.md                     → Project roadmap
-  ├── 97-AI-Docs/91-session-handoff.md             → This document
-  ├── 97-AI-Docs/100-architecture-health.md        → Architecture health
-  ├── 97-AI-Docs/101-css-architecture.md           → CSS Architecture reference
-  ├── 97-AI-Docs/102-frontend-component-architecture.md → Component Architecture
-  ├── 97-AI-Docs/103-component-inventory.md        → Component inventory
-  └── CHANGELOG.md                                 → Release history
-```
+| ID | Item | Target |
+|----|------|--------|
+| RD-001 | Integration Tests (ADR-010 alignment) | v1.1 |
+| RD-002 | Authentication / Authorization | v1.1 |
+| RD-003 | Production CORS Policy | v1.1 |
+| RD-004 | Accessibility Improvements | v1.2 |
+| RD-005 | Docker Support | v1.1 |
+| RD-006 | Request Rate Limiting | v1.2 |
+| RD-007 | Connection String via Env Var | v1.1 |
 
-### Remaining Priorities — Production Hardening
+See `docs/117-release-debt.md` for details.
 
-1. **CashierPage maintainability** — Extract table tile, menu chip, bill-dock markup; separate business logic from UI
-2. **Component polish** — PanelHeader extraction, KitchenStatusBadge → Shared, ConfirmDialog CSS cleanup
-3. **CSS cleanup** — Media queries migration from app.css, remaining selector cleanup
-4. **Quality** — Accessibility audit, responsive polish, performance review
-5. **Release** — Production QA, integration test fixes (50 pre-existing ADR-010), Release Candidate
+---
+
+## Next Session — UAT
+
+### Objectives
+1. **Collect stakeholder feedback** on all workflows
+2. **Fix only production bugs** discovered during UAT
+3. **Prepare stable v1.0.0 release**
 
 ### Recommended First Prompt for Next AI Session
 ```
-"Run Production Hardening Phase 11.
-Extract remaining CashierPage markup (table tiles, menu chips, bill dock).
-Move KitchenStatusBadge to Shared.
-Extract PanelHeader component.
-Migrate media queries from app.css.
-Fix ConfirmDialog CSS classes.
-No backend changes."
+"Run UAT phase for JLek POS.
+No new features.
+No refactoring.
+Fix only production bugs discovered during UAT testing.
+Prepare v1.0.0 stable release."

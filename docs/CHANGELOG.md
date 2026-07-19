@@ -1,5 +1,23 @@
 # Changelog
 
+## v5.0.0 — 2026-07-19 — Release Candidate Complete
+
+### Added
+- **Production Hardening (Gate 4.5)**: EF Core connection resilience (`EnableRetryOnFailure(3)`), ASP.NET Core Health Checks with DB status, structured logging improvements
+- **Release Candidate Audit (Gate 5)**: Complete release verification across 7 areas (Build, Tests, Workflow, API, Database, Frontend, Documentation)
+- **Documentation**: `docs/117-release-debt.md` (7 deferred items), `docs/118-release-notes-v1.0.0-rc2.md`
+
+### Status
+- Development: 100% Complete
+- Project enters: **User Acceptance Testing (UAT)**
+- Release status: **Ready for v1.0.0 Stable after successful UAT**
+
+### Build
+- Production projects: ✅ 0 Errors, 0 new Warnings
+- Integration Tests: ❌ 50 pre-existing test-side errors (ADR-010 migration)
+
+---
+
 ## v4.2.0 — 2026-07-19 — Frontend Architecture Review Complete
 
 ### Added
