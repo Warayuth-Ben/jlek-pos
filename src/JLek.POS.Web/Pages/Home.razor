@@ -1,7 +1,133 @@
 ﻿@page "/"
+@using JLek.POS.Web.Clients.Tables
+@using JLek.POS.Web.Clients.Orders
+@using JLek.POS.Web.Clients.Kitchen
+@using JLek.POS.Web.Contracts.Tables
+@using JLek.POS.Web.Contracts.Orders
+@using JLek.POS.Web.Contracts.Kitchen
+@inject ITableClient TableClient
+@inject IOrderClient OrderClient
+@inject IKitchenClient KitchenClient
+@inject ILogger<Home> Logger
 
-<PageTitle>Home</PageTitle>
+<PageTitle>JLek POS — Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-page">
+    <div class="home-hero">
+        <h1>JLek POS</h1>
+        <p class="home-subtitle">Restaurant Point of Sale System</p>
+    </div>
 
-Welcome to your new app.
+    @if (_isLoading)
+    {
+        <div class="home-loading">
+            <div class="spinner"></div>
+            <span>Loading summary...</span>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="home-error">
+            <p>@_errorMessage</p>
+            <button class="btn-retry" @onclick="LoadSummaryAsync">Retry</button>
+        </div>
+    }
+    else
+    {
+        <div class="home-summary">
+            <div class="summary-card summary-tables">
+                <div class="summary-icon">🪑</div>
+                <div class="summary-info">
+                    <span class="summary-value">@_openTables</span>
+                    <span class="summary-label">Open Tables</span>
+                </div>
+            </div>
+            <div class="summary-card summary-orders">
+                <div class="summary-icon">📋</div>
+                <div class="summary-info">
+                    <span class="summary-value">@_totalOrders</span>
+                    <span class="summary-label">Total Orders</span>
+                </div>
+            </div>
+            <div class="summary-card summary-waiting">
+                <div class="summary-icon">⏳</div>
+                <div class="summary-info">
+                    <span class="summary-value">@_waitingCount</span>
+                    <span class="summary-label">Waiting</span>
+                </div>
+            </div>
+            <div class="summary-card summary-cooking">
+                <div class="summary-icon">🍳</div>
+                <div class="summary-info">
+                    <span class="summary-value">@_cookingCount</span>
+                    <span class="summary-label">Cooking</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="home-actions">
+            <a class="home-action-btn" href="cashier">
+                <span class="action-icon">🛒</span>
+                <span class="action-label">Cashier</span>
+                <span class="action-desc">Manage orders and payments</span>
+            </a>
+            <a class="home-action-btn" href="kitchen">
+                <span class="action-icon">🍳</span>
+                <span class="action-label">Kitchen</span>
+                <span class="action-desc">View and prepare orders</span>
+            </a>
+            <a class="home-action-btn" href="dashboard">
+                <span class="action-icon">📊</span>
+                <span class="action-label">Dashboard</span>
+                <span class="action-desc">Business overview</span>
+            </a>
+            <a class="home-action-btn" href="reports">
+                <span class="action-icon">📈</span>
+                <span class="action-label">Reports</span>
+                <span class="action-desc">Sales and analytics</span>
+            </a>
+        </div>
+    }
+</div>
+
+@code {
+    private int _openTables;
+    private int _totalOrders;
+    private int _waitingCount;
+    private int _cookingCount;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync() => await LoadSummaryAsync();
+
+    private async Task LoadSummaryAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            var tablesTask = TableClient.GetAllAsync();
+            var ordersTask = OrderClient.GetAllAsync();
+            var kitchenTask = KitchenClient.GetActiveAsync();
+
+            await Task.WhenAll(tablesTask, ordersTask, kitchenTask);
+
+            var tables = tablesTask.Result;
+            var orders = ordersTask.Result;
+            var activeKitchen = kitchenTask.Result;
+
+            _openTables = tables.Count(t => t.Status == "Open" || t.Status == "Occupied" || t.Status == "Assigned");
+            _totalOrders = orders.Count;
+            _waitingCount = activeKitchen.Count(t => t.Status == "Pending");
+            _cookingCount = activeKitchen.Count(t => t.Status == "Preparing");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Cannot load home summary");
+            _errorMessage = "Cannot load data. Is the backend running?";
+        }
+
+        _isLoading = false;
+    }
+}
