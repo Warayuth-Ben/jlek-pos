@@ -53,15 +53,11 @@
                 }
                 @foreach (var item in _order)
                 {
-                    <div class="order-line">
-                        <span>@item.Name</span>
-                        <div>
-                            <button class="mini-button" @onclick="@(() => Decrease(item.Name))">-</button>
-                            <b>@item.Quantity</b>
-                            <button class="mini-button" @onclick="@(() => AddItem(new MenuItem(item.Name, item.Price)))">+</button>
-                        </div>
-                        <strong>@Format(item.Price * item.Quantity)</strong>
-                    </div>
+                    <OrderLineItem Name="@item.Name"
+                                   Quantity="@item.Quantity"
+                                   Total="@Format(item.Price * item.Quantity)"
+                                   OnDecrease="@(() => Decrease(item.Name))"
+                                   OnIncrease="@(() => AddItem(new MenuItem(item.Name, item.Price)))" />
                 }
             </div>
 

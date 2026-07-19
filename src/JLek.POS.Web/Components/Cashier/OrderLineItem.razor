@@ -1,0 +1,19 @@
+@namespace JLek.POS.Web.Components.Cashier
+
+<div class="order-line">
+    <span>@Name</span>
+    <div>
+        <button class="mini-button" @onclick="OnDecrease">-</button>
+        <b>@Quantity</b>
+        <button class="mini-button" @onclick="OnIncrease">+</button>
+    </div>
+    <strong>@Total</strong>
+</div>
+
+@code {
+    [Parameter] public string Name { get; set; } = "";
+    [Parameter] public int Quantity { get; set; }
+    [Parameter] public string Total { get; set; } = "";
+    [Parameter] public EventCallback OnDecrease { get; set; }
+    [Parameter] public EventCallback OnIncrease { get; set; }
+}
