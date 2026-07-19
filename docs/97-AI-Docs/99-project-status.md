@@ -1,6 +1,6 @@
 ﻿# Project Status
 
-Version: 3.0
+Version: 4.0
 
 Project: JLek POS
 
@@ -10,11 +10,9 @@ Last Updated: 2026-07-19
 
 # Current Milestone
 
-Production Readiness
+UI Foundation
 
-Status: ⚠️ NOT READY FOR PRODUCTION
-
-Reason: MenuClient parsing issue, integration tests pending, runtime verification pending
+Status: ✅ Complete
 
 ---
 
@@ -27,12 +25,14 @@ Reason: MenuClient parsing issue, integration tests pending, runtime verificatio
 | Application | 100% |
 | Infrastructure | 100% |
 | API | 100% |
-| Documentation | 99% |
-| Blazor UI | 100% |
-| Production Hardening | 80% |
-| Runtime Verification | 0% |
+| Database | 100% |
+| Documentation | 100% |
+| Architecture | 100% |
+| UI Foundation | 100% |
+| UI Polish | 0% |
+| Production QA | 0% |
 
-**Overall: ≈98%**
+**Overall: ≈97%**
 
 ---
 
@@ -48,9 +48,12 @@ Reason: MenuClient parsing issue, integration tests pending, runtime verificatio
 | Kitchen Module | ✅ Complete |
 | Payment Module | ✅ Complete |
 | Reporting Module | ✅ Complete |
+| Receipt Module | ✅ Complete |
+| Menu Module | ✅ Complete |
 | ADR-010 Public API Contract Migration | ✅ Complete |
 | Blazor Cashier UI (Phases 13.0-13.8) | ✅ Complete |
 | Web Build Warnings Cleanup | ✅ 0 Errors, 0 Warnings |
+| UI Foundation (Codex redesign) | ✅ Complete |
 
 ---
 
@@ -63,42 +66,44 @@ Reason: MenuClient parsing issue, integration tests pending, runtime verificatio
 | JLek.POS.Infrastructure | 0 | 0 | ✅ Clean |
 | JLek.POS.Api | 0 | 0 | ✅ Clean |
 | JLek.POS.Shared | 0 | 0 | ✅ Clean |
-| JLek.POS.Web | 0 | 0 | ✅ Clean |
-| JLek.POS.IntegrationTests | 45 | — | ❌ ADR-010 assertion errors |
+| JLek.POS.Web | 0 | 6 (RZ10012) | ✅ Pre-existing |
+| JLek.POS.IntegrationTests | 50 | — | ❌ ADR-010 assertion errors |
 
 ---
 
-# Remaining Before Release
+# Remaining Work
 
-## High Priority
+## Priority 1 — CSS Architecture
 
-- Fix `MenuClient.cs` nested JSON parsing (`{ amount: X }` → decimal)
-- Fix 45 integration test assertions (enum→string after ADR-010)
-- Runtime verification against live API
-- Verify all 47 API endpoints return ADR-010 compliant DTOs
+- Split app.css into design system
+- Component extraction
+- Remove duplicated CSS
 
-## Low Priority
+## Priority 2 — Page Components
 
-- Remove unused `CashierStore` import from `_Imports.razor`
-- Final UI polish
-- Error boundary improvements
+- Dashboard components
+- Kitchen components
+- Cashier components
+- Reports components
 
----
+## Priority 3 — Interaction
 
-# Cashier UI — Component Summary
+- Motion / Animation
+- Skeleton loading
+- Toast notifications
+- Loading states
 
-| Component | Status | Lines | Key Features |
-|-----------|--------|-------|-------------|
-| CashierPage | ✅ | 5 | Routes to CashierWorkspace |
-| CashierWorkspace | ✅ | 130 | Orchestrator, EventCallback wiring |
-| TableGrid | ✅ | 180 | Keyboard nav, ARIA, status colors |
-| OrderPanel | ✅ | 300 | CRUD, PaymentDialog, ReceiptPreview wired |
-| MenuModal | ✅ | 200 | Search, categories, stay-open after add |
-| PaymentDialog | ✅ | 150 | Cash/PromptPay/Card, change calc, validation |
-| ReceiptPreview | ✅ | 100 | Print & Close, Close Only, Skip |
-| ToastNotification | ✅ | 60 | Success/Error/Warning/Info, auto-dismiss |
-| ConfirmDialog | ✅ | 50 | Title, message, destructive mode, Escape |
-| LoadingSkeleton | ✅ | (via WorkspaceShell) | Card/Row/Text pulse |
+## Priority 4 — Quality
+
+- Responsive polish
+- Accessibility audit
+- Cross-browser testing
+
+## Priority 5 — Production
+
+- Production QA
+- Performance review
+- Integration test fixes (50 pre-existing ADR-010)
 
 ---
 

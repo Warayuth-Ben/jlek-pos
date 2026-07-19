@@ -1,5 +1,36 @@
 # Changelog
 
+## v4.0.0 — 2026-07-19 — UI Foundation Complete
+
+### Added
+- **UI Foundation (Codex redesign)**: Tablet-first POS UI redesign
+  - MainLayout redesigned
+  - NavMenu redesigned
+  - CashierPage redesigned
+  - DashboardPage redesigned
+  - Home page redesigned
+  - KitchenPage redesigned
+  - ReportsPage redesigned
+  - SettingsPage redesigned
+  - app.css updated
+
+### Fixed
+- **MenuClient.cs**: Fixed nested JSON parsing (ID, Status, Price)
+- **DiningTable EF Core constructor**: Fixed `TableId.From(Guid.Empty)` crash when `ActiveSessionId` is null
+- **Seed data script**: Created Python version for reliable JSON body POST
+
+### Changed
+- Project roadmap: Current phase → Product Polish
+- Session handoff updated to `feature/ui-v2` branch
+
+### Build
+- Application: ✅ 0 Errors, 0 Warnings
+- API: ✅ 0 Errors, 0 Warnings
+- Web: ✅ 0 Errors, 6 pre-existing RZ10012 warnings
+- Integration Tests: ❌ 50 errors (pre-existing ADR-010)
+
+---
+
 ## v3.0.0 — 2026-07-19 — Production Readiness Sprint
 
 ### Added

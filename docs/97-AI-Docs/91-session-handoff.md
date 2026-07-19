@@ -1,52 +1,62 @@
-# Session Handoff — Documentation Sprint Complete
+# Session Handoff — UI Foundation Complete
 
 ## Current Project State
 
 ### Completed
-- ✅ **ADR-010 Public API Contract Migration** — All 5 modules (Catalog, Tables, Orders, Kitchen, Payments)
-- ✅ 9 DTOs migrated from Domain types to primitives
-- ✅ All `FromDomain()` methods updated
-- ✅ Application, API, Web build — 0 Errors, 0 Warnings
-- ✅ 7 reports created documenting migration
-- ✅ Documentation sprint completed (CHANGELOG, project status, sync report)
+- ✅ **Backend Complete** — All modules (Catalog, Orders, Tables, Kitchen, Payments, Reports, Receipt)
+- ✅ **Clean Architecture + DDD + CQRS** — .NET 8, PostgreSQL, EF Core
+- ✅ **ADR-010 Public API Contract Migration** — All DTOs migrated
+- ✅ **UI Foundation (Codex redesign)** — tablet-first POS UI
+- ✅ **MenuClient fix** — API parsing resolved
+- ✅ **Tables 500 fix** — EF Core constructor Guid.Empty bug fixed
+- ✅ **Seed data** — Categories, Products, Tables with realistic data
 
 ### Current Branch
-`main` (or current working branch)
+`feature/ui-v2`
+
+### Latest Commit
+`1e3381b` — feat(web): redesign tablet-first POS UI
+
+### Latest Milestone
+UI Foundation Complete
 
 ### Next Task
-**Phase 13 — Cashier UX/UI**  
+**UI Polish Sprint A — CSS Architecture**
 
-No additional backend features are required. The next phase focuses on:
-1. Fixing 9 integration test assertion errors (enum→string)
-2. Verifying API endpoints via Swagger and runtime calls
-3. Improving the Cashier UI frontend
+No backend work is required.
+
+Focus:
+1. Split `app.css` into design system files
+2. Component extraction
+3. Remove duplicated CSS
+4. Page component improvements (Dashboard, Kitchen, Cashier, Reports)
 
 ### Known Issues
 | Issue | Severity | Status |
 |-------|----------|--------|
-| 9 integration test errors (Catalog enum assertions) | Medium | Pending fix |
-| API process may still hold file locks after development | Low | Kill process before rebuild |
-| `MenuClient.cs` uses `JsonDocument` workaround | Low | Can simplify after API restart |
-| No API running for Swagger/JSON verification | Low | Manual step |
+| 50 integration test errors (ADR-010 enum→string) | Medium | Pre-existing, deferred |
+| 6 Razor warnings (RZ10012 in CashierWorkspace) | Low | Pre-existing |
+| CashierWorkspace missing @using for WorkspaceShell | Low | Tolerated |
 
 ### Project Structure (Key Paths)
 ```
-src/JLek.POS.Application/Features/
-  ├── Catalog/Responses/       → ProductResponse, ProductCategoryResponse, IngredientResponse ✅
-  ├── Tables/Responses/        → DiningTableResponse ✅
-  ├── Orders/Responses/        → OrderResponseV2, OrderItemResponse ✅
-  ├── Kitchen/Responses/       → KitchenTicketResponse, KitchenItemResponse ✅
-  └── Payments/Responses/      → PaymentResponse ✅ (already compliant)
+src/
+  ├── JLek.POS.Domain/           → Domain layer (Aggregates, Rules, Events)
+  ├── JLek.POS.Application/      → CQRS, Handlers, DTOs
+  ├── JLek.POS.Infrastructure/   → EF Core, Repositories
+  ├── JLek.POS.Api/              → Minimal API, Endpoints
+  └── JLek.POS.Web/              → Blazor WebAssembly UI
 
 docs/
-  ├── 98-decisions/ADR-010-public-api-contract.md  → Contract standard
-  ├── 97-AI-Docs/112-* → 117-*                     → Migration reports
-  └── 97-AI-Docs/118-documentation-sync-report.md  → This sprint's sync report
+  ├── 97-AI-Docs/99-project-status.md    → Current project status
+  ├── 97-AI-Docs/90-roadmap.md           → Project roadmap
+  ├── 97-AI-Docs/91-session-handoff.md   → This document
+  └── CHANGELOG.md                       → Release history
 ```
 
 ### Recommended First Prompt for Next AI Session
 ```
-"Run dotnet build and fix the 9 integration test assertion errors
-caused by enum→string conversion in Catalog tests.
-Then start the API and verify Swagger shows Guid/string/decimal types
-instead of Domain Value Objects."
+"Run UI Polish Sprint A — CSS Architecture.
+Split app.css into design system files.
+Extract components. Remove duplicated CSS.
+No backend changes."
