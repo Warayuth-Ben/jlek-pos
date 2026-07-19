@@ -2,8 +2,7 @@ using JLek.POS.Api.Middleware;
 using JLek.POS.Infrastructure;
 using JLek.POS.Api.Endpoints;
 using JLek.POS.Application;
-using JLek.POS.Application.Features.Health.Queries.GetHealth;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 var builder = WebApplication.CreateBuilder(args);
 
 // Services
@@ -22,6 +21,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -40,12 +40,21 @@ app.UseCors();
 app.MapGet("/", () => Results.Ok("JLek POS API"));
 
 // Health
-app.MapGet("/health", async (
-    [FromServices] GetHealthQueryHandler handler) =>
+app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 {
-    var query = new GetHealthQuery();
-    var result = await handler.Handle(query);
-    return Results.Ok(result);
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        var result = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            status = report.Status.ToString(),
+            database = report.Entries.ContainsKey("ApplicationDbContext")
+                ? report.Entries["ApplicationDbContext"].Status.ToString()
+                : "Unhealthy",
+            timestamp = DateTime.UtcNow
+        });
+        await context.Response.WriteAsync(result);
+    }
 });
 app.MapOrderEndpoints();
 app.MapCatalogEndpoints();
