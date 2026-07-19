@@ -1,5 +1,27 @@
 # Changelog
 
+## v4.2.0 — 2026-07-19 — Frontend Architecture Review Complete
+
+### Added
+- **Component Extraction Sprint 4**: `OrderLineItem.razor` extracted from `CashierPage.razor`
+- **Frontend Architecture Review**: Comprehensive review of all 28 Blazor components
+  - Architecture Score: **B+ (80/100)**
+  - Production Readiness: **85%**
+  - CSS Architecture: A (95/100)
+  - Component Quality: B (75/100)
+- **Component Inventory Document**: `docs/97-AI-Docs/103-component-inventory.md`
+  - 20 candidate components identified
+  - 5 migration phases defined
+  - Dependency graph documented
+- **Session Handoff**: Milestone updated to Production Hardening
+
+### Build
+- Application: ✅ 0 Errors, 0 Warnings
+- Web: ✅ 0 Errors, 6 pre-existing RZ10012 warnings
+- **Zero build errors across all 16 CSS files + 28 Components**
+
+---
+
 ## v4.1.0 — 2026-07-19 — CSS Architecture Refactored
 
 ### Added

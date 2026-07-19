@@ -1,4 +1,4 @@
-# Session Handoff — CSS Architecture Complete
+# Session Handoff — Phase 10 Complete
 
 ## Current Project State
 
@@ -8,31 +8,21 @@
 - ✅ **ADR-010 Public API Contract Migration** — All DTOs migrated
 - ✅ **UI Foundation (Codex redesign)** — tablet-first POS UI
 - ✅ **CSS Architecture (Sprints B–M)** — Monolithic CSS split into layered architecture
-- ✅ **Foundation Layer** — variables, reset, typography (3 files)
-- ✅ **Components Layer** — button, card, badge (3 files)
-- ✅ **Layout Layer** — app-shell (1 file)
-- ✅ **Features Layer** — cashier, kitchen, dashboard, reports, settings (5 files)
-- ✅ **Documentation** — `docs/97-AI-Docs/101-css-architecture.md`
+- ✅ **Component Extraction (Sprints 1–4)** — 12 reusable components extracted
+- ✅ **Frontend Architecture Review (Phase 10)** — Reviewed 28 components, scored B+ (80/100)
+- ✅ **Documentation** — `101-css-architecture.md`, `102-frontend-component-architecture.md`, `103-component-inventory.md`
 
 ### Current Branch
 `feature/ui-v2`
 
 ### Latest Commit
-(Will be updated after Git checkpoint)
+`0fe3004` — `feat(component): extract cashier presentation components`
 
 ### Latest Milestone
-CSS Architecture Refactoring ✅ Complete
+Phase 10 — Frontend Architecture Review ✅ Complete
 
-### Next Task
-**Frontend Component Architecture**
-
-No backend work is required.
-
-Focus:
-1. Component extraction (segmented-control, toast, navigation)
-2. Media queries ownership
-3. Stylelint integration
-4. Remaining selector migration
+### Next Phase
+**Phase 11 — Production Hardening (Release Candidate)**
 
 ### Known Issues
 | Issue | Severity | Status |
@@ -40,27 +30,37 @@ Focus:
 | 50 integration test errors (ADR-010 enum→string) | Medium | Pre-existing, deferred |
 | 6 Razor warnings (RZ10012 in CashierWorkspace) | Low | Pre-existing |
 | Media queries in app.css (not yet migrated) | Low | Deferred |
+| CashierPage business logic mixed with UI | Medium | Deferred to Phase 11 |
+
+### Architecture Scores
+| Metric | Score |
+|--------|-------|
+| CSS Architecture | **A** (95/100) |
+| Component Architecture | **B** (75/100) |
+| Frontend Overall | **B+ (80/100)** |
+| Production Readiness | **85%** |
+
+### Current Component Inventory (28 Components)
+
+```
+Shared Primitive (4):     Button, Badge, Card, Divider
+Shared Layout (5):        PageHeader, SegmentedControl, EmptyState, LoadingSpinner, SearchBox
+Shared Existing (2):      ToastNotification, ConfirmDialog
+Feature Cashier (7):      TableGrid, OrderPanel, BillSummary, MenuModal, PaymentDialog, ReceiptPreview, OrderLineItem
+Feature Kitchen (4):      KitchenQueue, KitchenOrderCard, KitchenStatusBadge, KitchenToolbar
+Feature Dashboard (1):    MetricCard
+Layout (2):               MainLayout, NavMenu
+Presentation (3):         WorkspaceShell, LoadingContainer, CashierStore
+```
 
 ### Current Folder Structure (CSS)
 ```
 wwwroot/css/
   app.css                        → 12 @import + media queries only
-  foundation/
-    variables.css                → 19 design tokens
-    reset.css                    → 5 reset selectors
-    typography.css               → 4 typography selectors
-  components/
-    button.css                   → 8 reusable button selectors
-    card.css                     → 10 reusable card selectors
-    badge.css                    → 4 reusable badge selectors
-  layout/
-    app-shell.css                → 8 layout selectors
-  features/
-    cashier/cashier.css          → 14 cashier selectors
-    kitchen/kitchen.css          → 5 kitchen selectors
-    dashboard/dashboard.css      → 2 dashboard selectors
-    reports/reports.css          → 2 reports selectors
-    settings/settings.css        → 7 settings selectors
+  foundation/                    → variables, reset, typography (3 files)
+  components/                    → button, card, badge (3 files)
+  layout/                        → app-shell (1 file)
+  features/                      → cashier, kitchen, dashboard, reports, settings (5 files)
 ```
 
 ### Project Structure (Key Paths)
@@ -73,18 +73,30 @@ src/
   └── JLek.POS.Web/              → Blazor WebAssembly UI
 
 docs/
-  ├── 97-AI-Docs/99-project-status.md      → Current project status
-  ├── 97-AI-Docs/90-roadmap.md             → Project roadmap
-  ├── 97-AI-Docs/91-session-handoff.md     → This document
-  ├── 97-AI-Docs/101-css-architecture.md   → CSS Architecture reference
-  └── CHANGELOG.md                         → Release history
+  ├── 97-AI-Docs/99-project-status.md              → Current project status
+  ├── 97-AI-Docs/90-roadmap.md                     → Project roadmap
+  ├── 97-AI-Docs/91-session-handoff.md             → This document
+  ├── 97-AI-Docs/100-architecture-health.md        → Architecture health
+  ├── 97-AI-Docs/101-css-architecture.md           → CSS Architecture reference
+  ├── 97-AI-Docs/102-frontend-component-architecture.md → Component Architecture
+  ├── 97-AI-Docs/103-component-inventory.md        → Component inventory
+  └── CHANGELOG.md                                 → Release history
 ```
+
+### Remaining Priorities — Production Hardening
+
+1. **CashierPage maintainability** — Extract table tile, menu chip, bill-dock markup; separate business logic from UI
+2. **Component polish** — PanelHeader extraction, KitchenStatusBadge → Shared, ConfirmDialog CSS cleanup
+3. **CSS cleanup** — Media queries migration from app.css, remaining selector cleanup
+4. **Quality** — Accessibility audit, responsive polish, performance review
+5. **Release** — Production QA, integration test fixes (50 pre-existing ADR-010), Release Candidate
 
 ### Recommended First Prompt for Next AI Session
 ```
-"Run Frontend Component Architecture.
-Extract remaining components (segmented-control, toast, navigation).
-Migrate media queries to owner files.
-Add Stylelint integration.
+"Run Production Hardening Phase 11.
+Extract remaining CashierPage markup (table tiles, menu chips, bill dock).
+Move KitchenStatusBadge to Shared.
+Extract PanelHeader component.
+Migrate media queries from app.css.
+Fix ConfirmDialog CSS classes.
 No backend changes."
-```
