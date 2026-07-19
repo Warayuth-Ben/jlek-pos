@@ -1,0 +1,17 @@
+@namespace JLek.POS.Web.Components.Shared
+
+<span class="@($"state-pill {VariantClass}")">
+    @ChildContent
+</span>
+
+@code {
+    [Parameter] public string Variant { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private string VariantClass => Variant switch
+    {
+        "occupied" => "occupied",
+        "available" => "",
+        _ => ""
+    };
+}

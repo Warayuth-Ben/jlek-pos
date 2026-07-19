@@ -1,0 +1,10 @@
+@namespace JLek.POS.Web.Components.Shared
+
+<div class="@Class">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public string Class { get; set; } = "surface-panel";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}
