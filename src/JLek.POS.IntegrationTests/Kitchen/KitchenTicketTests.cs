@@ -85,7 +85,7 @@ public sealed class KitchenTicketTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<KitchenTicketResponse>();
         result.Should().NotBeNull();
         result!.TicketNumber.Should().Be(1);
-        result.Status.Should().Be(KitchenTicketStatus.Pending);
+        result.Status.Should().Be("Pending");
         result.Items.Should().ContainSingle();
         result.Items.First().ItemName.Should().Be("Pad Thai");
         result.Items.First().Quantity.Should().Be(2);
@@ -94,14 +94,14 @@ public sealed class KitchenTicketTests : IAsyncLifetime
         // Assert — Database
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var persisted = await context.KitchenTickets.FindAsync(KitchenTicketId.From(result.Id.Value));
+        var persisted = await context.KitchenTickets.FindAsync(KitchenTicketId.From(result.Id));
         persisted.Should().NotBeNull();
         persisted!.TicketNumber.Should().Be(1);
         persisted.Status.Should().Be(KitchenTicketStatus.Pending);
 
         // Assert — Location header
         response.Headers.Location.Should().NotBeNull();
-        response.Headers.Location!.ToString().Should().Contain(result.Id.Value.ToString());
+        response.Headers.Location!.ToString().Should().Contain(result.Id.ToString());
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public sealed class KitchenTicketTests : IAsyncLifetime
 
         // Act — add second item
         var response2 = await _client.PostAsync(
-            $"/kitchen/{ticket1!.Id.Value}/items?itemName=Item+B&quantity=2&notes=", null);
+            $"/kitchen/{ticket1!.Id}/items?itemName=Item+B&quantity=2&notes=", null);
 
         // Assert
         response2.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -207,9 +207,9 @@ public sealed class KitchenTicketTests : IAsyncLifetime
         var active = await response.Content.ReadFromJsonAsync<List<KitchenTicketResponse>>();
         active.Should().NotBeNull();
         active.Should().HaveCount(2); // Pending + Preparing, NOT Served
-        active!.Any(t => t.Id.Value == pendingId).Should().BeTrue();
-        active!.Any(t => t.Id.Value == preparingId).Should().BeTrue();
-        active!.Any(t => t.Id.Value == servedId).Should().BeFalse();
+        active!.Any(t => t.Id == pendingId).Should().BeTrue();
+        active!.Any(t => t.Id == preparingId).Should().BeTrue();
+        active!.Any(t => t.Id == servedId).Should().BeFalse();
     }
 
     [Fact]
@@ -239,7 +239,7 @@ public sealed class KitchenTicketTests : IAsyncLifetime
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var result = await response.Content.ReadFromJsonAsync<KitchenTicketResponse>();
-        result!.Status.Should().Be(KitchenTicketStatus.Preparing);
+        result!.Status.Should().Be("Preparing");
 
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -257,7 +257,7 @@ public sealed class KitchenTicketTests : IAsyncLifetime
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var result = await response.Content.ReadFromJsonAsync<KitchenTicketResponse>();
-        result!.Status.Should().Be(KitchenTicketStatus.Ready);
+        result!.Status.Should().Be("Ready");
 
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -275,7 +275,7 @@ public sealed class KitchenTicketTests : IAsyncLifetime
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var result = await response.Content.ReadFromJsonAsync<KitchenTicketResponse>();
-        result!.Status.Should().Be(KitchenTicketStatus.Served);
+        result!.Status.Should().Be("Served");
 
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -344,7 +344,7 @@ public sealed class KitchenTicketTests : IAsyncLifetime
         var created = await response.Content.ReadFromJsonAsync<KitchenTicketResponse>();
 
         // Act — reload
-        var reloadResponse = await _client.GetAsync($"/kitchen/{created!.Id.Value}");
+        var reloadResponse = await _client.GetAsync($"/kitchen/{created!.Id}");
         var reloaded = await reloadResponse.Content.ReadFromJsonAsync<KitchenTicketResponse>();
 
         // Assert — snapshot identical
@@ -379,10 +379,10 @@ public sealed class KitchenTicketTests : IAsyncLifetime
 
         // Add a second item
         await _client.PostAsync(
-            $"/kitchen/{ticket!.Id.Value}/items?itemName=Second+Item&quantity=1&notes=Note+B", null);
+            $"/kitchen/{ticket!.Id}/items?itemName=Second+Item&quantity=1&notes=Note+B", null);
 
         // Act — reload
-        var reloadResponse = await _client.GetAsync($"/kitchen/{ticket.Id.Value}");
+        var reloadResponse = await _client.GetAsync($"/kitchen/{ticket.Id}");
         var reloaded = await reloadResponse.Content.ReadFromJsonAsync<KitchenTicketResponse>();
 
         // Assert — both items present

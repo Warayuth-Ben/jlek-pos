@@ -60,18 +60,18 @@ public sealed class IngredientTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<IngredientResponse>();
         result.Should().NotBeNull();
         result!.Name.Should().Be("Chicken");
-        result.Status.Should().Be(IngredientStatus.Available);
+        result.Status.Should().Be("Available");
 
         // Assert — Database
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var persisted = await context.Ingredients.FindAsync(IngredientId.From(result.Id.Value));
+        var persisted = await context.Ingredients.FindAsync(IngredientId.From(result.Id));
         persisted.Should().NotBeNull();
         persisted!.Name.Should().Be("Chicken");
 
         // Assert — Location header
         response.Headers.Location.Should().NotBeNull();
-        response.Headers.Location!.ToString().Should().Contain(result.Id.Value.ToString());
+        response.Headers.Location!.ToString().Should().Contain(result.Id.ToString());
     }
 
     // ── Get By Id ───────────────────────────────────────────────
@@ -91,7 +91,7 @@ public sealed class IngredientTests : IAsyncLifetime
         // Assert — Response DTO
         var result = await response.Content.ReadFromJsonAsync<IngredientResponse>();
         result.Should().NotBeNull();
-        result!.Id.Value.Should().Be(ingredientId);
+        result!.Id.Should().Be(ingredientId);
         result.Name.Should().Be("Pork");
     }
 
@@ -198,7 +198,7 @@ public sealed class IngredientTests : IAsyncLifetime
         // Assert — Response DTO
         var result = await response.Content.ReadFromJsonAsync<IngredientResponse>();
         result.Should().NotBeNull();
-        result!.Status.Should().Be(IngredientStatus.Available);
+        result!.Status.Should().Be("Available");
 
         // Assert — Database
         using var scope = _factory.Services.CreateScope();
@@ -222,7 +222,7 @@ public sealed class IngredientTests : IAsyncLifetime
         // Assert — Response DTO
         var result = await response.Content.ReadFromJsonAsync<IngredientResponse>();
         result.Should().NotBeNull();
-        result!.Status.Should().Be(IngredientStatus.Unavailable);
+        result!.Status.Should().Be("Unavailable");
 
         // Assert — Database
         using var scope = _factory.Services.CreateScope();

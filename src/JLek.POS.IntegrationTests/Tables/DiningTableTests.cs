@@ -73,21 +73,21 @@ public sealed class DiningTableTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<DiningTableResponse>();
         result.Should().NotBeNull();
         result!.Name.Should().Be("Table A");
-        result.Status.Should().Be(TableStatus.Available);
+        result.Status.Should().Be("Available");
         result.ActiveSessionId.Should().BeNull();
         result.MergedTableIds.Should().BeEmpty();
 
         // Assert — Database
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var persisted = await context.DiningTables.FindAsync(TableId.From(result.Id.Value));
+        var persisted = await context.DiningTables.FindAsync(TableId.From(result.Id));
         persisted.Should().NotBeNull();
         persisted!.Name.Should().Be("Table A");
         persisted.Status.Should().Be(TableStatus.Available);
 
         // Assert — Location header
         response.Headers.Location.Should().NotBeNull();
-        response.Headers.Location!.ToString().Should().Contain(result.Id.Value.ToString());
+        response.Headers.Location!.ToString().Should().Contain(result.Id.ToString());
     }
 
     // ── Get By Id ───────────────────────────────────────────────
@@ -107,9 +107,9 @@ public sealed class DiningTableTests : IAsyncLifetime
         // Assert — Response DTO
         var result = await response.Content.ReadFromJsonAsync<DiningTableResponse>();
         result.Should().NotBeNull();
-        result!.Id.Value.Should().Be(tableId);
+        result!.Id.Should().Be(tableId);
         result.Name.Should().Be("Table B");
-        result.Status.Should().Be(TableStatus.Available);
+        result.Status.Should().Be("Available");
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public sealed class DiningTableTests : IAsyncLifetime
         var available = await response.Content.ReadFromJsonAsync<List<DiningTableResponse>>();
         available.Should().NotBeNull();
         available.Should().HaveCount(2);
-        available!.All(t => t.Status == TableStatus.Available).Should().BeTrue();
+        available!.All(t => t.Status == "Available").Should().BeTrue();
     }
 
     [Fact]
@@ -216,7 +216,7 @@ public sealed class DiningTableTests : IAsyncLifetime
         // Assert — Response DTO
         var result = await response.Content.ReadFromJsonAsync<DiningTableResponse>();
         result.Should().NotBeNull();
-        result!.Status.Should().Be(TableStatus.Occupied);
+        result!.Status.Should().Be("Occupied");
         result.ActiveSessionId.Should().NotBeNull();
         result.ActiveSessionId!.Value.Should().Be(sessionId);
 
@@ -261,7 +261,7 @@ public sealed class DiningTableTests : IAsyncLifetime
         // Assert — Response DTO
         var result = await response.Content.ReadFromJsonAsync<DiningTableResponse>();
         result.Should().NotBeNull();
-        result!.Status.Should().Be(TableStatus.Available);
+        result!.Status.Should().Be("Available");
         result.ActiveSessionId.Should().BeNull();
 
         // Assert — Database
@@ -314,7 +314,7 @@ public sealed class DiningTableTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<DiningTableResponse>();
         result.Should().NotBeNull();
         result!.MergedTableIds.Should().ContainSingle();
-        result.MergedTableIds.First().Value.Should().Be(mergeId);
+        result.MergedTableIds.First().Should().Be(mergeId);
 
         // Assert — Database
         using var scope = _factory.Services.CreateScope();
@@ -389,7 +389,7 @@ public sealed class DiningTableTests : IAsyncLifetime
         // Assert — Response DTO
         var result = await response.Content.ReadFromJsonAsync<DiningTableResponse>();
         result.Should().NotBeNull();
-        result!.Status.Should().Be(TableStatus.Available);
+        result!.Status.Should().Be("Available");
         result.ActiveSessionId.Should().BeNull();
 
         // Assert — Database

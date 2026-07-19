@@ -60,18 +60,18 @@ public sealed class ProductCategoryTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<ProductCategoryResponse>();
         result.Should().NotBeNull();
         result!.Name.Should().Be("Drinks");
-        result.Status.Should().Be(ProductCategoryStatus.Available);
+        result.Status.Should().Be("Available");
 
         // Assert — Database
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var persisted = await context.ProductCategories.FindAsync(ProductCategoryId.From(result.Id.Value));
+        var persisted = await context.ProductCategories.FindAsync(ProductCategoryId.From(result.Id));
         persisted.Should().NotBeNull();
         persisted!.Name.Should().Be("Drinks");
 
         // Assert — Location header
         response.Headers.Location.Should().NotBeNull();
-        response.Headers.Location!.ToString().Should().Contain(result.Id.Value.ToString());
+        response.Headers.Location!.ToString().Should().Contain(result.Id.ToString());
     }
 
     // ── Get By Id ───────────────────────────────────────────────
@@ -91,7 +91,7 @@ public sealed class ProductCategoryTests : IAsyncLifetime
         // Assert — Response DTO
         var result = await response.Content.ReadFromJsonAsync<ProductCategoryResponse>();
         result.Should().NotBeNull();
-        result!.Id.Value.Should().Be(categoryId);
+        result!.Id.Should().Be(categoryId);
         result.Name.Should().Be("Rice");
     }
 
@@ -238,7 +238,7 @@ public sealed class ProductCategoryTests : IAsyncLifetime
         // Assert — Response DTO
         var result = await response.Content.ReadFromJsonAsync<ProductCategoryResponse>();
         result.Should().NotBeNull();
-        result!.Status.Should().Be(ProductCategoryStatus.Hidden);
+        result!.Status.Should().Be("Hidden");
 
         // Assert — Database
         using var scope = _factory.Services.CreateScope();
@@ -267,7 +267,7 @@ public sealed class ProductCategoryTests : IAsyncLifetime
         // Assert — Response DTO
         var result = await response.Content.ReadFromJsonAsync<ProductCategoryResponse>();
         result.Should().NotBeNull();
-        result!.Status.Should().Be(ProductCategoryStatus.Available);
+        result!.Status.Should().Be("Available");
 
         // Assert — Database
         using var scope = _factory.Services.CreateScope();
