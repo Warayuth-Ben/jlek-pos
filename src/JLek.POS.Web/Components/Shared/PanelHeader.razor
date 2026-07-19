@@ -1,0 +1,16 @@
+@namespace JLek.POS.Web.Components.Shared
+
+<div class="panel-header">
+    <h2>@Title</h2>
+    @if (!string.IsNullOrEmpty(Badge))
+    {
+        <span>@Badge</span>
+    }
+    @Actions
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string Badge { get; set; } = "";
+    [Parameter] public RenderFragment? Actions { get; set; }
+}
