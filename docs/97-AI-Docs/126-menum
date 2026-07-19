@@ -1,0 +1,74 @@
+# MenuModal Implementation Report — Phase 13.5
+
+## Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/JLek.POS.Web/Components/Cashier/MenuModal/MenuModal.razor` | Complete rewrite with search, "All" category, keyboard handling, skeleton loading, ARIA, stay-open-after-add |
+
+## Components Implemented
+
+### MenuModal
+| Feature | Implementation |
+|---------|---------------|
+| Loading state | Skeleton tabs + 6 skeleton product cards |
+| Error state | Error message + [Retry] button |
+| Empty state (no products) | "No products in this category" |
+| Empty state (search) | "No products matching '{query}'" |
+| Dialog overlay | Click outside to close, `role="dialog"`, `aria-modal="true"` |
+| Auto-focus search | On render, search field gets focus |
+| Stays open after add | User can add multiple items without reopening |
+| **Search** | Real-time filtering by product name, `@bind:event="oninput"` |
+| Keyboard shortcuts | `Escape` clears search then closes, auto-focus on mount |
+| ARIA | `role="tablist"`, `role="tab"`, `aria-selected`, `role="list"`, `role="listitem"`, `aria-label` on products |
+
+### CategoryTabs (inline)
+| Feature | Implementation |
+|---------|---------------|
+| "All" tab | `_selectedCategoryId is null` shows all products |
+| Dynamic categories | Loaded from API on mount |
+| Active state | Highlighted with `active` CSS class |
+| ARIA | `role="tablist"`, `role="tab"`, `aria-selected` |
+
+### ProductGrid & ProductCard (inline)
+| Feature | Implementation |
+|---------|---------------|
+| Product info | Name + formatted price (฿XX.XX) |
+| Adding feedback | "✓" indicator on clicked product |
+| Disabled state | Button disabled while adding |
+| ARIA | `role="listitem"`, `aria-label` includes name + price |
+
+### SearchBox (inline)
+| Feature | Implementation |
+|---------|---------------|
+| Real-time filter | `@bind:event="oninput"` updates list on every keystroke |
+| Auto-focus | On dialog open |
+| Shortcut hint | Placeholder text |
+| Escape to clear | First Escape clears search, second Escape closes |
+
+## API Dependencies
+
+| Endpoint | Method | When |
+|----------|--------|------|
+| `GET /categories` | `MenuClient.GetCategoriesAsync()` | On dialog open |
+| `GET /products` | `MenuClient.GetProductsAsync()` | On dialog open |
+
+## Build Result
+
+| Project | Status |
+|---------|--------|
+| `JLek.POS.Application` | ✅ No changes |
+| `JLek.POS.Api` | ✅ No changes |
+| `JLek.POS.Web` | ✅ **0 Errors, 1 Warning** (CS1998 warn only) |
+
+## Known TODOs
+
+| TODO | Priority |
+|------|----------|
+| Wire MenuModal into CashierWorkspace with `OnProductAdded` triggering `POST /orders/{id}/items` | High (next phase) |
+| Add toast notification on item add success | Medium |
+| Add category filtering via API per-category load (not client-side) | Low |
+| Fix CS1998 warning in `SelectCategoryAsync` | Low |
+
+## Next Phase Recommendation
+**Phase 13.6: CashierWorkspace Integration** — Wire TableGrid, OrderPanel, and MenuModal together. Remove inline cashier implementation in favor of the new components. End-to-end order flow: Select table → Open order → Add menu items → Confirm → Payment → Receipt.

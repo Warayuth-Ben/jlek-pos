@@ -1,63 +1,72 @@
 @using JLek.POS.Web.Contracts.Orders
 
-@if (!Show)
+@if (Show)
 {
-    return;
-}
+    <div class="receipt-preview-overlay" @onclick="HandleCancel">
+        <div class="receipt-preview" @onclick:stopPropagation="true" role="dialog" aria-modal="true" aria-label="Receipt">
+            <div class="receipt-preview-header">
+                <h3>Receipt</h3>
+                <button class="btn-close" @onclick="HandleCancel">&times;</button>
+            </div>
+            <div class="receipt-preview-body">
+                <div class="receipt-store-name">JLek Restaurant</div>
+                <div class="receipt-divider">========================</div>
+                <div class="receipt-order-id">Order: @Order?.Id.ToString()[..8]</div>
+                <div class="receipt-divider">------------------------</div>
 
-<div class="receipt-preview-overlay" @onclick="HandleCancel">
-    <div class="receipt-preview" @onclick:stopPropagation="true">
-        <div class="receipt-preview-header">
-            <h3>Receipt Preview</h3>
-            <button class="btn-close" @onclick="HandleCancel">X</button>
-        </div>
-        <div class="receipt-preview-body">
-            <div class="receipt-store-name">JLek POS</div>
-            <div class="receipt-divider">========================</div>
-            <div class="receipt-order-id">Order: @Order?.Id</div>
-            <div class="receipt-divider">------------------------</div>
-
-            @if (Order is not null)
-            {
-                @foreach (var item in Order.Items)
+                @if (Order is not null)
                 {
-                    <div class="receipt-item">
-                        <div class="receipt-item-name">@GetProductName(item.MenuItemId)</div>
-                        <div class="receipt-item-detail">
-                            <span>@item.Quantity x @item.UnitPrice</span>
-                            <span class="receipt-item-total">@item.TotalPrice</span>
+                    @foreach (var item in Order.Items)
+                    {
+                        <div class="receipt-item">
+                            <div class="receipt-item-name">@GetProductName(item.MenuItemId)</div>
+                            <div class="receipt-item-detail">
+                                <span>@item.Quantity x ฿@item.UnitPrice.ToString("F2")</span>
+                                <span class="receipt-item-total">฿@item.TotalPrice.ToString("F2")</span>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
-            }
 
-            <div class="receipt-divider">------------------------</div>
-            <div class="receipt-total">
-                <span>Total</span>
-                <span class="receipt-total-amount">@Order?.Total</span>
+                <div class="receipt-divider">------------------------</div>
+                <div class="receipt-total">
+                    <span>Total</span>
+                    <span class="receipt-total-amount">฿@Order?.Total.ToString("F2")</span>
+                </div>
+                <div class="receipt-divider">========================</div>
+                <div class="receipt-footer">Thank you!</div>
             </div>
-            <div class="receipt-divider">========================</div>
-            <div class="receipt-footer">
-                <span>Thank you!</span>
+            <div class="receipt-preview-actions">
+                <button class="btn-primary" @onclick="HandlePrintAndClose">🖨️ Print & Close Table</button>
+                <button class="btn-secondary" @onclick="HandleCloseTable">✓ Close Table Only</button>
+                <button class="btn-ghost" @onclick="HandleSkip">✕ Skip</button>
             </div>
-        </div>
-        <div class="receipt-preview-actions">
-            <button class="btn-print" @onclick="HandlePrint">Print</button>
-            <button class="btn-cancel" @onclick="HandleCancel">Close</button>
         </div>
     </div>
-</div>
+}
 
 @code {
     [Parameter] public bool Show { get; set; }
     [Parameter] public OrderResponse? Order { get; set; }
     [Parameter] public Dictionary<Guid, string> ProductNames { get; set; } = [];
     [Parameter] public EventCallback OnPrint { get; set; }
+    [Parameter] public EventCallback OnCloseTable { get; set; }
     [Parameter] public EventCallback OnCancel { get; set; }
 
-    private async Task HandlePrint()
+    private async Task HandlePrintAndClose()
     {
         await OnPrint.InvokeAsync();
+        await OnCloseTable.InvokeAsync();
+    }
+
+    private async Task HandleCloseTable()
+    {
+        await OnCloseTable.InvokeAsync();
+    }
+
+    private async Task HandleSkip()
+    {
+        await OnCancel.InvokeAsync();
     }
 
     private async Task HandleCancel()

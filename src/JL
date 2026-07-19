@@ -1,0 +1,154 @@
+@using JLek.POS.Web.Clients.Payments
+@using JLek.POS.Web.Contracts.Payments
+@inject IPaymentClient PaymentClient
+@inject ILogger<PaymentDialog> Logger
+
+@if (_show)
+{
+    <div class="payment-dialog-overlay" @onclick="HandleCancel" @onkeydown="HandleKeyDown" tabindex="-1">
+        <div class="payment-dialog" @onclick:stopPropagation="true" role="dialog" aria-modal="true" aria-label="Payment">
+            <div class="payment-dialog-header">
+                <h3>Payment</h3>
+                <button class="btn-close" @onclick="HandleCancel" disabled="@_isProcessing">&times;</button>
+            </div>
+
+            <div class="payment-dialog-body">
+                <div class="payment-order-total">
+                    <span>Total Due</span>
+                    <span class="payment-amount">฿@TotalAmount.ToString("F2")</span>
+                </div>
+
+                <div class="payment-methods" role="radiogroup" aria-label="Payment method">
+                    <button class="btn-payment-method @(_selectedMethod == "Cash" ? "active" : "")"
+                            disabled="_isProcessing"
+                            @onclick="() => SelectMethod("Cash")"
+                            aria-pressed="@(_selectedMethod == "Cash")">💵 Cash</button>
+                    <button class="btn-payment-method @(_selectedMethod == "PromptPay" ? "active" : "")"
+                            disabled="_isProcessing"
+                            @onclick="() => SelectMethod("PromptPay")"
+                            aria-pressed="@(_selectedMethod == "PromptPay")">📱 PromptPay</button>
+                    <button class="btn-payment-method @(_selectedMethod == "Card" ? "active" : "")"
+                            disabled="_isProcessing"
+                            @onclick="() => SelectMethod("Card")"
+                            aria-pressed="@(_selectedMethod == "Card")">💳 Card</button>
+                </div>
+
+                @if (_selectedMethod == "Cash")
+                {
+                    <div class="payment-cash-section">
+                        <label for="amount-received">Amount Received</label>
+                        <input id="amount-received"
+                               type="number"
+                               class="payment-input"
+                               step="0.01"
+                               min="@TotalAmount"
+                               @bind="_amountReceived"
+                               @bind:event="oninput"
+                               disabled="@_isProcessing"
+                               aria-label="Amount received from customer" />
+                        <div class="payment-change">
+                            <span>Change Due</span>
+                            <span class="payment-change-amount">฿@(Math.Max(0, _amountReceived - TotalAmount).ToString("F2"))</span>
+                        </div>
+                        @if (_amountReceived > 0 && _amountReceived < TotalAmount)
+                        {
+                            <div class="payment-error" role="alert">Amount must be at least ฿@TotalAmount.ToString("F2")</div>
+                        }
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <div class="payment-error" role="alert">@_errorMessage</div>
+                }
+
+                @if (_isProcessing)
+                {
+                    <div class="payment-processing">Processing payment...</div>
+                }
+            </div>
+
+            <div class="payment-dialog-footer">
+                <button class="btn-secondary" @onclick="HandleCancel" disabled="@_isProcessing">Cancel</button>
+                <button class="btn-primary" @onclick="PayAsync" disabled="@_isProcessing || !CanPay">
+                    @(_isProcessing ? "Paying..." : "Pay Now")
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public Guid OrderId { get; set; }
+    [Parameter] public decimal TotalAmount { get; set; }
+    [Parameter] public EventCallback OnPaymentComplete { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private bool _show;
+    private bool _isProcessing;
+    private string? _errorMessage;
+    private string _selectedMethod = "Cash";
+    private decimal _amountReceived;
+
+    private bool CanPay => _selectedMethod == "Cash"
+        ? _amountReceived >= TotalAmount
+        : true;
+
+    protected override void OnParametersSet()
+    {
+        _show = Show;
+        if (!_show)
+        {
+            _errorMessage = null;
+            _isProcessing = false;
+            _amountReceived = 0;
+        }
+        else if (_show && _amountReceived == 0)
+        {
+            _amountReceived = TotalAmount;
+        }
+    }
+
+    private void SelectMethod(string method)
+    {
+        _selectedMethod = method;
+        if (method != "Cash")
+            _amountReceived = TotalAmount;
+        StateHasChanged();
+    }
+
+    private async Task PayAsync()
+    {
+        if (_isProcessing || !CanPay) return;
+        _isProcessing = true;
+        _errorMessage = null;
+
+        try
+        {
+            await PaymentClient.ReceivePaymentAsync(OrderId, _amountReceived, _selectedMethod);
+            await OnPaymentComplete.InvokeAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Payment failed for order {OrderId}", OrderId);
+            _errorMessage = $"Payment failed: {ex.Message}";
+        }
+        finally
+        {
+            _isProcessing = false;
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape" && !_isProcessing)
+            await HandleCancel();
+    }
+
+    private async Task HandleCancel()
+    {
+        if (_isProcessing) return;
+        await OnCancel.InvokeAsync();
+    }
+}

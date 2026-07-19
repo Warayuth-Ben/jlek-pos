@@ -1,0 +1,94 @@
+# Checkout Integration Report — Phase 13.8
+
+## Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/JLek.POS.Web/Pages/Cashier/CashierWorkspace.razor` | Added `ReceiptPreview` @using, `ITableClient` injection, `HandleTableOperationComplete()` for post-payment refresh |
+
+## Integration Architecture
+
+```text
+CashierWorkspace
+  │
+  ├── TableGrid → OnTableSelected → load order
+  │
+  ├── OrderPanel (manages internal flow):
+  │     ├── [Confirm] → POST /orders/{id}/confirm
+  │     ├── [Payment] → PaymentDialog (inline)
+  │     │     └── POST /payments → OnPaymentComplete
+  │     ├── ReceiptPreview (inline, after payment)
+  │     │     ├── [Print] → POST /receipts/customer
+  │     │     ├── [Close Table] → POST /tables/{id}/release
+  │     │     └── [Skip] → return to grid
+  │     └── OnTableOpened → HandleTableOperationComplete()
+  │         → _tableRefreshVersion++ (grid reloads)
+  │         → _selectedTableId = null (panel clears)
+  │
+  ├── MenuModal → OnProductAdded → POST /orders/{id}/items → refresh
+  │
+  └── ToastNotification → success/error feedback
+```
+
+## Complete End-to-End Flow
+
+```
+1. [TableGrid] Click Available → OrderPanel shows
+2. [OrderPanel] Click [Open Table] → POST /tables/{id}/open → POST /orders → Draft order
+3. [OrderPanel] Click [+ Add Item] → MenuModal opens
+4. [MenuModal] Click product → POST /orders/{id}/items → toast → stays open
+5. [OrderPanel] Click [✓ Confirm Order] → POST /orders/{id}/confirm → Confirmed
+6. [OrderPanel] Click [Pay Now] → PaymentDialog
+7. [PaymentDialog] Select method, enter amount, Pay → POST /payments → ReceiptPreview
+8. [ReceiptPreview] Click [Print & Close Table] → POST /receipts + POST /tables/{id}/release
+9. [TableGrid] Table shows Available, OrderPanel clears
+```
+
+## API Sequence
+
+| Step | Action | Endpoint | Component |
+|------|--------|----------|-----------|
+| 1 | Open table | `POST /tables/{id}/open` | OrderPanel |
+| 2 | Create order | `POST /orders` | OrderPanel |
+| 3 | Add item | `POST /orders/{id}/items` | CashierWorkspace |
+| 4 | Confirm | `POST /orders/{id}/confirm` | OrderPanel |
+| 5 | Payment | `POST /payments` | PaymentDialog |
+| 6 | Print receipt | `POST /receipts/customer` | ReceiptPreview |
+| 7 | Release table | `POST /tables/{id}/release` | ReceiptPreview |
+| 8 | Refresh grid | `GET /tables` | TableGrid |
+
+## Build Result
+
+| Project | Status |
+|---------|--------|
+| `JLek.POS.Application` | ✅ No changes |
+| `JLek.POS.Api` | ✅ No changes |
+| `JLek.POS.Web` | ✅ **0 Errors, 12 Warnings** (pre-existing) |
+
+## All Cashier UI Phases — Implementation Complete
+
+| Phase | Component | Status |
+|-------|-----------|--------|
+| 13.0-1 | Design docs (3 files) | ✅ Design |
+| 13.2 | ToastNotification, ConfirmDialog, ToastType | ✅ Built |
+| 13.3 | TableGrid + TableCard | ✅ Built |
+| 13.4 | OrderPanel + OrderItemRow | ✅ Built |
+| 13.5 | MenuModal + CategoryTabs + ProductGrid | ✅ Built |
+| 13.6 | CashierWorkspace Integration (ordering) | ✅ Built |
+| 13.7 | PaymentDialog + ReceiptDialog + Table Release | ✅ Built |
+| **13.8** | **Full Checkout Integration** | **✅ Built** |
+
+## Reports Created
+
+| # | File | Topic |
+|---|------|-------|
+| 120 | `120-cashier-ui-design.md` | UI Design |
+| 121 | `121-screen-flow.md` | Screen Flow |
+| 122 | `122-component-spec.md` | Component Spec |
+| 123 | `123-layout-implementation-report.md` | Core Layout |
+| 124 | `124-tablegrid-implementation-report.md` | TableGrid |
+| 125 | `125-orderpanel-implementation-report.md` | OrderPanel |
+| 126 | `126-menumodal-implementation-report.md` | MenuModal |
+| 127 | `127-cashier-integration-report.md` | Workspace Integration |
+| 128 | `128-checkout-workflow-report.md` | Checkout |
+| **129** | **`129-checkout-integration-report.md`** | **Final Integration** |

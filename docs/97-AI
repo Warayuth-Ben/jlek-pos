@@ -1,0 +1,92 @@
+# Checkout Workflow Implementation Report — Phase 13.7
+
+## Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/JLek.POS.Web/Components/Cashier/PaymentDialog/PaymentDialog.razor` | Enhanced with Cash amount input, change calculation, method selection (Cash/PromptPay/Card), validation (amount ≥ total), ARIA roles |
+| `src/JLek.POS.Web/Components/Cashier/ReceiptPreview/ReceiptPreview.razor` | Enhanced with 3 action buttons (Print & Close Table, Close Table Only, Skip), formatted prices, ARIA roles |
+
+## PaymentDialog Features
+
+| Feature | Detail |
+|---------|--------|
+| **Method selection** | 3 methods: Cash, PromptPay, Card with `role="radiogroup"` and `aria-pressed` |
+| **Cash amount input** | Auto-filled with total, validation requires amount ≥ total |
+| **Change calculation** | Real-time: `Math.Max(0, amountReceived - total)` |
+| **Validation** | Inline error when amount < total, Pay button disabled |
+| **Processing state** | Spinner + disabled inputs during API call |
+| **Keyboard** | Escape to cancel |
+| **ARIA** | `role="dialog"`, `aria-modal="true"`, `aria-label="Payment"`, `role="alert"` for errors |
+
+## ReceiptDialog Features
+
+| Feature | Detail |
+|---------|--------|
+| **Receipt display** | Store name, order ID, items with qty × price + line total |
+| **Formatted prices** | ฿XX.XX format throughout |
+| **Print & Close Table** | One-click: calls OnPrint then OnCloseTable |
+| **Close Table Only** | Releases table without printing |
+| **Skip** | Keeps table occupied |
+| **ARIA** | `role="dialog"`, `aria-modal="true"`, `aria-label="Receipt"` |
+
+## Complete Cashier Workflow
+
+```text
+TableGrid → OrderPanel → MenuModal → Confirm → PaymentDialog
+                                                        │
+                                                        ├── POST /payments
+                                                        │
+                                                        ▼
+                                                   ReceiptDialog
+                                                        │
+                                                        ├── Print → POST /receipts/customer
+                                                        ├── Close → POST /tables/{id}/release
+                                                        └── Skip → return to grid
+```
+
+## API Sequence for Complete Checkout
+
+| Step | API | Component |
+|------|-----|-----------|
+| 1 | `POST /orders/{id}/confirm` | OrderPanel |
+| 2 | `POST /payments` | PaymentDialog |
+| 3 | `POST /receipts/customer` | ReceiptDialog (optional) |
+| 4 | `POST /tables/{id}/release` | ReceiptDialog / OrderPanel |
+
+## Build Result
+
+| Project | Status |
+|---------|--------|
+| `JLek.POS.Application` | ✅ No changes |
+| `JLek.POS.Api` | ✅ No changes |
+| `JLek.POS.Web` | ✅ **0 Errors, 0 Warnings** |
+
+## Cashier UI — Complete Implementation Summary
+
+| Phase | Component | Status |
+|-------|-----------|--------|
+| 13.0 | UI Design (docs) | ✅ Design |
+| 13.1 | Screen Flow + Component Spec (docs) | ✅ Design |
+| 13.2 | ToastNotification, ConfirmDialog, ToastType | ✅ Build |
+| 13.3 | TableGrid + TableCard | ✅ Build |
+| 13.4 | OrderPanel + OrderItemRow | ✅ Build |
+| 13.5 | MenuModal + CategoryTabs + Search | ✅ Build |
+| 13.6 | CashierWorkspace Integration | ✅ Build |
+| **13.7** | **PaymentDialog + ReceiptDialog + Checkout** | **✅ Build** |
+
+## Remaining Work Before Production
+
+| Task | Priority |
+|------|----------|
+| Wire PaymentDialog + ReceiptDialog into CashierWorkspace event flow | Medium |
+| Add ReceiptDialog after payment completes | Medium |
+| Add table release after receipt | Medium |
+| Fix ToastNotification Timer disposal on Blazor WASM | Low |
+| Remove `CashierStore` dependency (still referenced in _Imports) | Low |
+| Add invoice number to receipt display | Low |
+| Test full end-to-end flow against running API | High |
+
+## Next Phase Recommendation
+
+**Phase 13.8: End-to-End Testing & Polish** — Fix remaining warnings, test the complete cashier workflow against the running API, and address edge cases (network errors, concurrent table operations, empty menu states).

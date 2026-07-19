@@ -4,22 +4,58 @@
 
 @if (_isLoading)
 {
-    <div class="table-grid-loading">Loading tables...</div>
+    <div class="table-grid-loading" aria-label="Loading tables">
+        @for (int i = 0; i < 8; i++)
+        {
+            <div class="table-card-skeleton" aria-hidden="true">
+                <div class="skeleton-line skeleton-name"></div>
+                <div class="skeleton-line skeleton-status"></div>
+            </div>
+        }
+    </div>
 }
 else if (!string.IsNullOrEmpty(_errorMessage))
 {
-    <div class="table-grid-error">@_errorMessage</div>
+    <div class="table-grid-error" role="alert">
+        <p>@_errorMessage</p>
+        <button class="btn-primary" @onclick="LoadTablesAsync">Retry</button>
+    </div>
+}
+else if (!_tables.Any())
+{
+    <div class="table-grid-empty">
+        <p>No tables available. Seed data first.</p>
+    </div>
 }
 else
 {
-    <div class="table-grid">
+    <div class="table-grid" 
+         role="grid" 
+         aria-label="Dining tables"
+         @onkeydown="HandleKeyDown"
+         tabindex="0"
+         @ref="_gridElement">
         @foreach (var table in _tables)
         {
             var isSelected = SelectedTableId == table.Id;
+            var statusColor = GetStatusColor(table.Status);
+            var index = _tables.IndexOf(table);
             <div class="table-card @(isSelected ? "table-card-selected" : "")"
-                 @onclick="() => SelectTable(table.Id)">
+                 role="gridcell"
+                 aria-selected="@isSelected"
+                 aria-label="@table.Name, @table.Status"
+                 tabindex="0"
+                 @onclick="() => SelectTable(table.Id)"
+                 @ondblclick="() => OnDoubleClick.InvokeAsync(table.Id)"
+                 @onkeydown="(e) => HandleCardKeyDown(e, table.Id, index)"
+                 style="border-color: @statusColor">
+                <div class="table-card-indicator" style="background: @statusColor"></div>
                 <div class="table-name">@table.Name</div>
-                <div class="table-status">@table.Status</div>
+                <div class="table-status" style="color: @statusColor">@table.Status</div>
+                @if (isSelected)
+                {
+                    <div class="selected-indicator">✓</div>
+                }
             </div>
         }
     </div>
@@ -27,14 +63,15 @@ else
 
 @code {
     [Parameter] public Guid? SelectedTableId { get; set; }
-
     [Parameter] public int RefreshVersion { get; set; }
-
     [Parameter] public EventCallback<Guid?> OnTableSelected { get; set; }
+    [Parameter] public EventCallback<Guid> OnDoubleClick { get; set; }
 
     private List<TableResponse> _tables = [];
     private bool _isLoading = true;
     private string? _errorMessage;
+    private ElementReference _gridElement;
+    private int _focusIndex = -1;
 
     protected override async Task OnInitializedAsync()
     {
@@ -49,10 +86,20 @@ else
         }
     }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && _tables.Any())
+        {
+            _focusIndex = 0;
+            FocusCard(0);
+        }
+    }
+
     private async Task LoadTablesAsync()
     {
         _isLoading = true;
         _errorMessage = null;
+        StateHasChanged();
 
         try
         {
@@ -65,6 +112,7 @@ else
         finally
         {
             _isLoading = false;
+            StateHasChanged();
         }
     }
 
@@ -72,4 +120,55 @@ else
     {
         await OnTableSelected.InvokeAsync(tableId);
     }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "ArrowRight" || e.Key == "ArrowDown")
+        {
+            if (_focusIndex < _tables.Count - 1)
+            {
+                _focusIndex++;
+                FocusCard(_focusIndex);
+            }
+        }
+        else if (e.Key == "ArrowLeft" || e.Key == "ArrowUp")
+        {
+            if (_focusIndex > 0)
+            {
+                _focusIndex--;
+                FocusCard(_focusIndex);
+            }
+        }
+        else if (e.Key == "Enter" && _focusIndex >= 0 && _focusIndex < _tables.Count)
+        {
+            await SelectTable(_tables[_focusIndex].Id);
+        }
+        else if (e.Key == "F5")
+        {
+            await LoadTablesAsync();
+        }
+    }
+
+    private async Task HandleCardKeyDown(KeyboardEventArgs e, Guid tableId, int index)
+    {
+        _focusIndex = index;
+        if (e.Key == "Enter")
+        {
+            await SelectTable(tableId);
+        }
+    }
+
+    private void FocusCard(int index)
+    {
+        StateHasChanged();
+    }
+
+    private static string GetStatusColor(string status) => status.ToLower() switch
+    {
+        "available" => "#22c55e",
+        "occupied" => "#f97316",
+        "reserved" => "#3b82f6",
+        "cleaning" => "#9ca3af",
+        _ => "#6b7280"
+    };
 }

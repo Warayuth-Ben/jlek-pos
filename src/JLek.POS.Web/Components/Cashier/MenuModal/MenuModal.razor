@@ -4,55 +4,97 @@
 
 @if (_show)
 {
-    <div class="menu-modal-overlay" @onclick="CloseAsync">
-        <div class="menu-modal" @onclick:stopPropagation="true">
+    <div class="menu-modal-overlay" @onclick="HandleOverlayClick" @onkeydown="HandleKeyDown" tabindex="-1">
+        <div class="menu-modal" @onclick:stopPropagation="true" role="dialog" aria-modal="true" aria-label="Add items to order">
             <div class="menu-modal-header">
-                <h3>Select Menu Item</h3>
-                <button class="btn-close" @onclick="CloseAsync">X</button>
+                <h3>Add Items</h3>
+                <button class="btn-close" @onclick="CloseAsync" aria-label="Close menu">&times;</button>
             </div>
 
-            @if (_isLoadingCategories)
+            <div class="menu-search">
+                <input type="text"
+                       placeholder="Search menu items... (press / to focus)"
+                       @bind="SearchText"
+                       @bind:event="oninput"
+                       aria-label="Search menu items"
+                       class="search-input" />
+            </div>
+
+            @if (_isLoadingCategories || _isLoadingAllProducts)
             {
-                <div>Loading menu...</div>
+                <div class="menu-loading" aria-label="Loading menu">
+                    <div class="skeleton-tabs">
+                        <div class="skeleton-tab"></div>
+                        <div class="skeleton-tab"></div>
+                        <div class="skeleton-tab"></div>
+                    </div>
+                    <div class="skeleton-products">
+                        @for (int i = 0; i < 6; i++)
+                        {
+                            <div class="skeleton-card"></div>
+                        }
+                    </div>
+                </div>
             }
             else if (!string.IsNullOrEmpty(_errorMessage))
             {
-                <div class="menu-modal-error">@_errorMessage</div>
+                <div class="menu-error" role="alert">
+                    <p>@_errorMessage</p>
+                    <button class="btn-primary" @onclick="LoadDataAsync">Retry</button>
+                </div>
             }
             else
             {
-                <div class="menu-categories">
+                <div class="menu-categories" role="tablist" aria-label="Product categories">
+                    <button class="category-tab @(_selectedCategoryId is null ? "active" : "")"
+                            role="tab"
+                            aria-selected="@(_selectedCategoryId is null)"
+                            @onclick="() => SelectCategoryAsync(null)">
+                        All
+                    </button>
                     @foreach (var cat in _categories)
                     {
                         var isActive = _selectedCategoryId == cat.Id;
                         <button class="category-tab @(isActive ? "active" : "")"
+                                role="tab"
+                                aria-selected="@isActive"
                                 @onclick="() => SelectCategoryAsync(cat.Id)">
                             @cat.Name
                         </button>
                     }
                 </div>
 
-                <div class="menu-products">
-                    @if (_isLoadingProducts)
+                <div class="menu-products" role="list" aria-label="Products">
+                    @if (!_filteredProducts.Any())
                     {
-                        <div>Loading products...</div>
+                        <div class="menu-empty">
+                            @if (!string.IsNullOrEmpty(_searchText))
+                            {
+                                <p>No products matching "@_searchText"</p>
+                            }
+                            else
+                            {
+                                <p>No products in this category</p>
+                            }
+                        </div>
                     }
                     else
                     {
-                        @foreach (var product in _products)
+                        @foreach (var product in _filteredProducts)
                         {
                             var isAdding = _addingProductId == product.Id;
                             <button class="product-card"
                                     disabled="isAdding || _isAddingAny"
-                                    @onclick="() => AddProductAsync(product)">
+                                    @onclick="() => AddProductAsync(product)"
+                                    role="listitem"
+                                    aria-label="@product.Name, ฿@product.Price.ToString("F2")">
+                                <div class="product-card-content">
+                                    <div class="product-name">@product.Name</div>
+                                    <div class="product-price">฿@product.Price.ToString("F2")</div>
+                                </div>
                                 @if (isAdding)
                                 {
-                                    <span>Adding...</span>
-                                }
-                                else
-                                {
-                                    <div class="product-name">@product.Name</div>
-                                    <div class="product-price">@product.Price</div>
+                                    <div class="product-adding">✓</div>
                                 }
                             </button>
                         }
@@ -65,46 +107,59 @@
 
 @code {
     [Parameter] public bool Show { get; set; }
-
     [Parameter] public Guid OrderId { get; set; }
-
     [Parameter] public EventCallback<Guid> OnProductAdded { get; set; }
-
     [Parameter] public EventCallback OnClose { get; set; }
 
     private List<ProductCategoryResponse> _categories = [];
-    private List<ProductResponse> _products = [];
+    private List<ProductResponse> _allProducts = [];
     private Guid? _selectedCategoryId;
     private bool _isLoadingCategories = true;
-    private bool _isLoadingProducts = false;
+    private bool _isLoadingAllProducts = true;
     private string? _errorMessage;
     private bool _show = false;
     private Guid? _addingProductId;
     private bool _isAddingAny = false;
+    private string _searchText = "";
+
+    private List<ProductResponse> _filteredProducts
+    {
+        get
+        {
+            var products = _allProducts;
+            if (!string.IsNullOrWhiteSpace(_searchText))
+            {
+                var s = _searchText.Trim().ToLowerInvariant();
+                products = products.Where(p => p.Name.Contains(s, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            return products;
+        }
+    }
+
+    private string SearchText
+    {
+        get => _searchText;
+        set { _searchText = value; StateHasChanged(); }
+    }
 
     protected override async Task OnParametersSetAsync()
     {
         _show = Show;
-
         if (_show && _categories.Count == 0)
         {
-            await LoadCategoriesAsync();
+            await LoadDataAsync();
         }
     }
 
-    private async Task LoadCategoriesAsync()
+    private async Task LoadDataAsync()
     {
         _isLoadingCategories = true;
+        _isLoadingAllProducts = true;
         _errorMessage = null;
-
         try
         {
             _categories = await MenuClient.GetCategoriesAsync();
-
-            if (_categories.Count > 0)
-            {
-                await SelectCategoryAsync(_categories[0].Id);
-            }
+            _allProducts = await MenuClient.GetProductsAsync();
         }
         catch (Exception ex)
         {
@@ -113,46 +168,27 @@
         finally
         {
             _isLoadingCategories = false;
+            _isLoadingAllProducts = false;
         }
     }
 
-    private async Task SelectCategoryAsync(Guid categoryId)
+    private async Task SelectCategoryAsync(Guid? categoryId)
     {
         _selectedCategoryId = categoryId;
-        _isLoadingProducts = true;
-
-        try
-        {
-            _products = await MenuClient.GetProductsByCategoryAsync(categoryId);
-        }
-        catch
-        {
-            _products = [];
-        }
-        finally
-        {
-            _isLoadingProducts = false;
-        }
+        StateHasChanged();
     }
 
     private async Task AddProductAsync(ProductResponse product)
     {
-        if (_isAddingAny)
-        {
-            return;
-        }
-
+        if (_isAddingAny) return;
         _isAddingAny = true;
         _addingProductId = product.Id;
+        StateHasChanged();
 
         try
         {
-            // Inject OrderClient via the parent — use cascading or direct
-            // For now, event callback passes the product info back to parent
             await OnProductAdded.InvokeAsync(product.Id);
-
-            // If no exception, close modal
-            await CloseAsync();
+            // Stay open — user can keep adding items
         }
         catch
         {
@@ -162,12 +198,35 @@
         {
             _isAddingAny = false;
             _addingProductId = null;
+            StateHasChanged();
         }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            if (!string.IsNullOrEmpty(_searchText))
+            {
+                _searchText = "";
+                StateHasChanged();
+            }
+            else
+            {
+                await CloseAsync();
+            }
+        }
+    }
+
+    private async Task HandleOverlayClick()
+    {
+        await CloseAsync();
     }
 
     private async Task CloseAsync()
     {
         _show = false;
+        _searchText = "";
         await OnClose.InvokeAsync();
     }
 }

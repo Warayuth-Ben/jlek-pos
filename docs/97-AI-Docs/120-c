@@ -1,0 +1,237 @@
+# Cashier UI & Screen Design — Implementation Guide
+
+## Overview
+
+This document translates the `docs/09-ui/05-cashier.md` UX architecture into detailed screen designs with API endpoints, component hierarchy, and interaction patterns optimized for lunch-rush speed.
+
+**Design Philosophy:** Every click costs time. Minimize clicks. Maximize defaults. The default quantity is 1. The default payment method is Cash. The default action after adding an item is staying in the menu to add more.
+
+---
+
+## Navigation Flow
+
+```text
+[Sidebar: Cashier]
+     │
+     ▼
+┌──────────────────────────────────────────────────────────────┐
+│                   CASHIER WORKSPACE                          │
+│  ┌───────────────┐  ┌──────────────────────────────────┐    │
+│  │  TABLE GRID   │  │          ORDER PANEL              │    │
+│  │  (Left 60%)   │  │          (Right 40%)              │    │
+│  │ [T1][T2][T3]  │  │  Table: T1  |  #1024  | Draft   │    │
+│  │ [T4][T5][T6]  │  │  Chicken Rice ×2        90.00   │    │
+│  │ [T7][T8][T9]  │  │  Water ×2               20.00   │    │
+│  │               │  │  Total                 110.00   │    │
+│  │               │  │  [+ Add Item]  [✓ Confirm]      │    │
+│  └───────────────┘  └──────────────────────────────────┘    │
+└──────────────────────────────────────────────────────────────┘
+     │
+     ├──▶ [+ Add Item]  ──▶ MENU MODAL (overlay)
+     ├──▶ [✓ Confirm]  ──▶ (order sent to kitchen)
+     └──▶ [Payment]    ──▶ PAYMENT DIALOG (overlay)
+```
+
+---
+
+## Screen 1: Table Grid
+
+### Layout
+```text
+┌──────────────────────────────────────────────────┐
+│ [🔍 Search Table...]    [🔄]  [Filter: All ▾]    │
+├──────────────────────────────────────────────────┤
+│ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐                │
+│ │ T1  │ │ T2  │ │ T3  │ │ T4  │                │
+│ │ 🟢   │ │ 🟠   │ │ 🟠   │ │ 🟢   │                │
+│ │ Avail│ │#1024│ │#1025│ │ Avail│                │
+│ └─────┘ └─────┘ └─────┘ └─────┘                │
+└──────────────────────────────────────────────────┘
+```
+
+| Property | Value |
+|----------|-------|
+| **API** | `GET /tables`, `POST /tables/{id}/open`, `POST /orders` |
+| **Shortcuts** | `F2` search, `↑↓←→` navigate, `Enter` select |
+| **States** | Loading (skeleton), Ready, Error ([Retry]) |
+| **Touch** | 120×80px cards, 8px gap |
+
+Sorted by table number — cashier memorizes positions. Color is primary status indicator.
+
+---
+
+## Screen 2: Order Panel
+
+### Layout
+```text
+┌──────────────────────────────────────┐
+│ [✕] Table: T1   #1024  Draft        │
+├──────────────────────────────────────┤
+│ Item              Qty     Price      │
+│ Chicken Rice      2       90.00     │
+│   [-] 2 [+] [×]                     │
+│ Water             2       20.00     │
+│   [-] 2 [+] [×]                     │
+│                          ──────     │
+│ Total                   110.00     │
+├──────────────────────────────────────┤
+│ [+ Add Item]  [✓ Confirm]  [✗ Cancel]│
+│ [Process Payment]  [Print Receipt]   │
+└──────────────────────────────────────┘
+```
+
+| Property | Value |
+|----------|-------|
+| **API** | `GET /orders/{id}`, `POST .../items`, `DELETE .../items/{id}`, `POST .../confirm`, `POST .../cancel` |
+| **Shortcuts** | `Ctrl+N` add, `Ctrl+Enter` confirm, `Ctrl+P` payment, `Escape` close |
+| **States** | Loading, Empty (no items), Draft (editable), Confirmed (view-only), Completed (disabled) |
+| **Touch** | 44×44px qty buttons, full-width action buttons |
+
+Quantity controls inline — no detail dialog needed. Total updates instantly.
+
+---
+
+## Screen 3: Menu Modal
+
+### Layout
+```text
+┌──────────────────────────────────────────────────┐
+│ [×] Add Items                                🔍 │
+├──────────────────────────────────────────────────┤
+│ [All] [Main] [Drinks] [Desserts]                 │
+├──────────────────────────────────────────────────┤
+│ ┌──────────┐ ┌──────────┐ ┌──────────┐         │
+│ │ Chicken  │ │ Fried    │ │ Spicy    │         │
+│ │ Rice     │ │ Rice     │ │ Basil    │         │
+│ │ 45.00    │ │ 50.00    │ │ 40.00    │         │
+│ └──────────┘ └──────────┘ └──────────┘         │
+└──────────────────────────────────────────────────┘
+```
+
+| Property | Value |
+|----------|-------|
+| **API** | `GET /categories`, `GET /products`, `GET /products?categoryId={id}` |
+| **Shortcuts** | `←→` tabs, `↑↓` products, `Enter` add + stay, `Shift+Enter` add + close |
+| **States** | Loading, Ready, Empty search |
+| **Touch** | 140×100px product cards, 12px gap |
+| **Behavior** | Modal stays open after adding — add multiple items fast. Categories as horizontal tabs. |
+
+---
+
+## Screen 4: Payment Dialog
+
+### Layout
+```text
+┌──────────────────────────────────────────┐
+│ [×] Payment                       🔒    │
+├──────────────────────────────────────────┤
+│  Total:             110.00 THB           │
+│  Method:  [💵 Cash] [💳 Card] [📱 QR]   │
+│  Received: [______110.00______]          │
+│  Change: 0.00                            │
+│  [✓ Pay]         [Cancel]               │
+└──────────────────────────────────────────┘
+```
+
+| Property | Value |
+|----------|-------|
+| **API** | `POST /payments` |
+| **Shortcuts** | `1` Cash, `2` Card, `3` QR, `Ctrl+Shift+P` pay, `Enter` pay |
+| **States** | Ready, Cash (amount input), Card (auto), QR (auto), Processing, Success, Error |
+| **Touch** | 100×80px method buttons, 16px gap |
+| **Rationale** | Cash default for Thai restaurants. Amount pre-filled to total. Card/QR skip amount entry. |
+
+---
+
+## Screen 5: Receipt Preview
+
+```text
+┌──────────────────────────────────────────┐
+│ [×] Receipt                       🖨️    │
+├──────────────────────────────────────────┤
+│       JLek Restaurant                    │
+│  Order: #1024  Table: T1                 │
+│  Chicken Rice ×2         90.00         │
+│  Water ×2                20.00         │
+│  Total:                  110.00         │
+│  Method: Cash  Received: 200  Change: 90│
+├──────────────────────────────────────────┤
+│  [🖨️ Print & Close]  [✓ Close]  [✕ Skip]│
+└──────────────────────────────────────────┘
+```
+
+| Property | Value |
+|----------|-------|
+| **API** | `POST /receipts/customer`, `POST /tables/{id}/release` |
+| **Primary path** | Print + Close Table — one click does both |
+| **Skip** | Keeps table occupied (customer wants more) |
+
+---
+
+## Screen 6: Split Bill (Future)
+
+v1.0 limitation: no split bill. Items assigned to splits by checkbox. Each split processed via `POST /payments`.
+
+## Screen 7: Order History
+
+Shows past orders for a table. `GET /orders?tableId={id}`.
+
+---
+
+## Screen Hierarchy
+
+```text
+CashierPage
+├── Header (title, notifications, profile)
+├── Toolbar (search, filter, refresh)
+├── MainContent
+│   ├── TableGrid (default, left 60%)
+│   │   └── TableCard[]
+│   └── OrderPanel (when selected, right 40%)
+│       ├── OrderHeader → ItemList → BillSummary → ActionBar
+├── MenuModal (overlay)
+│   ├── CategoryTabs[] → SearchField → ProductCard[]
+├── PaymentDialog (overlay)
+│   ├── AmountDisplay → MethodSelector[] → AmountInput → ChangeDisplay → PayButton
+├── ReceiptPreview (overlay, after payment)
+│   ├── ReceiptContent → PrintButton → CloseTableButton
+└── StatusBar (counts, connection)
+```
+
+---
+
+## API Endpoints Summary
+
+| Endpoint | Screen |
+|----------|--------|
+| `GET /tables` | Table Grid |
+| `POST /tables/{id}/open` | Table Grid |
+| `POST /tables/{id}/release` | Receipt |
+| `POST /orders` | Table Grid (auto-create) |
+| `GET /orders` | Order History |
+| `GET /orders/{id}` | Order Panel |
+| `POST /orders/{id}/items` | Menu Modal |
+| `DELETE /orders/{id}/items/{itemId}` | Order Panel |
+| `POST /orders/{id}/confirm` | Order Panel |
+| `POST /orders/{id}/cancel` | Order Panel |
+| `GET /categories` | Menu Modal |
+| `GET /products` | Menu Modal |
+| `POST /payments` | Payment Dialog |
+| `POST /receipts/customer` | Receipt |
+
+---
+
+## UX Rationale
+
+| Decision | Why |
+|----------|-----|
+| Order Panel always visible on right | No toggle — instant table selection shows order |
+| Table Grid always visible on left | Quick table switching without losing context |
+| Menu stays open after adding item | Add multiple items fast without reopening |
+| Cash is default payment method | Most common in Thai restaurants |
+| Amount pre-filled to total | Cashier only adjusts for exact change |
+| Close Table + Print Receipt one button | Common end-of-meal workflow |
+| Keyboard shortcuts for everything | Power users don't need mouse |
+| 44px+ touch targets | POS runs on tablets with finger input |
+| Skeleton loading (not spinners) | Shows structure, feels faster |
+| Inline quantity controls | Faster than opening a detail dialog |

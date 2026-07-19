@@ -1,0 +1,59 @@
+@namespace JLek.POS.Web.Components.Shared
+
+@if (IsOpen)
+{
+    <div class="modal-overlay" @onclick="OnOverlayClick" @onkeydown="HandleKeyDown" @attributes="AdditionalAttributes">
+        <div class="modal-dialog confirm-dialog" role="dialog" aria-modal="true" aria-label="@Title" @onclick:stopPropagation>
+            <div class="confirm-header">
+                <h3>@Title</h3>
+            </div>
+            <div class="confirm-body">
+                <p>@Message</p>
+            </div>
+            <div class="confirm-footer">
+                <button class="btn-secondary" @onclick="Cancel" @ref="_cancelButton">@CancelText</button>
+                <button class="@(IsDestructive ? "btn-danger" : "btn-primary")" @onclick="Confirm" @ref="_confirmButton">@ConfirmText</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public string Title { get; set; } = "Confirm";
+    [Parameter] public string Message { get; set; } = "Are you sure?";
+    [Parameter] public string ConfirmText { get; set; } = "Confirm";
+    [Parameter] public string CancelText { get; set; } = "Cancel";
+    [Parameter] public bool IsDestructive { get; set; }
+    [Parameter] public EventCallback OnConfirm { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+    [Parameter] public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private ElementReference _confirmButton;
+    private ElementReference _cancelButton;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (IsOpen)
+        {
+            if (IsDestructive)
+                await _cancelButton.FocusAsync();
+            else
+                await _confirmButton.FocusAsync();
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+            await Cancel();
+    }
+
+    private async Task OnOverlayClick()
+    {
+        await Cancel();
+    }
+
+    private async Task Confirm() => await OnConfirm.InvokeAsync();
+    private async Task Cancel() => await OnCancel.InvokeAsync();
+}

@@ -57,26 +57,33 @@ else
                 <div>Session: @_tableResponse.ActiveSessionId</div>
             }
         </div>
-        <div class="order-items">
+        <div class="order-items" role="list" aria-label="Order items">
             @foreach (var item in _order.Items)
             {
-                <div class="order-item">
-                    <span class="item-name">@GetProductName(item.MenuItemId)</span>
-                    <span class="item-quantity">x @item.Quantity</span>
-                    <span class="item-price">@item.UnitPrice</span>
-                    @if (_order.Status == "Draft")
-                    {
-                        var isRemoving = _removingItemId == item.Id;
-                        <button class="btn-remove-item"
-                                disabled="isRemoving || _isRemovingAny"
-                                @onclick="() => RemoveItemAsync(item.Id)">
-                            @if (isRemoving) { <span>Removing...</span> } else { <span>X</span> }
-                        </button>
-                    }
+                <div class="order-item" role="listitem" aria-label="@GetProductName(item.MenuItemId)">
+                    <div class="order-item-info">
+                        <span class="item-name">@GetProductName(item.MenuItemId)</span>
+                        <span class="item-line-total">฿@item.TotalPrice.ToString("F2")</span>
+                    </div>
+                    <div class="order-item-controls">
+                        <span class="item-meta">@item.UnitPrice.ToString("F2") × @item.Quantity</span>
+                        @if (_order.Status == "Draft")
+                        {
+                            var isRemoving = _removingItemId == item.Id;
+                            <button class="btn-remove-item"
+                                    disabled="isRemoving || _isRemovingAny"
+                                    @onclick="() => RemoveItemAsync(item.Id)"
+                                    aria-label="Remove @GetProductName(item.MenuItemId) from order"
+                                    title="Remove item">✕</button>
+                        }
+                    </div>
                 </div>
             }
         </div>
-        <div class="order-total">Total: @_order.Total</div>
+        <div class="order-summary">
+            <div class="order-items-count">@_order.Items.Count item(s)</div>
+            <div class="order-total">Total: ฿@_order.Total.ToString("F2")</div>
+        </div>
 
         <div class="order-actions">
             @if (_order.Status == "Draft")

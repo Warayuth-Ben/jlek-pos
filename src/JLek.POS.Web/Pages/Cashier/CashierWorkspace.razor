@@ -1,184 +1,153 @@
-@using JLek.POS.Web.Presentation.Cashier
-@using JLek.POS.Web.Presentation.Components
-@inject CashierStore Store
-@implements IDisposable
+@using JLek.POS.Web.Components.Cashier.TableGrid
+@using JLek.POS.Web.Components.Cashier.OrderPanel
+@using JLek.POS.Web.Components.Cashier.MenuModal
+@using JLek.POS.Web.Components.Cashier.ReceiptPreview
+@using JLek.POS.Web.Components.Shared
+@using JLek.POS.Web.Clients.Orders
+@using JLek.POS.Web.Clients.Tables
+@inject IOrderClient OrderClient
+@inject ITableClient TableClient
+@inject ILogger<CashierWorkspace> Logger
 
 <WorkspaceShell>
     <HeaderContent>
         <div class="cashier-header">
             <h2>Cashier Workspace</h2>
-            <span class="connection-status">@(Store.IsLoading ? "Loading..." : "Ready")</span>
+            <span class="connection-status">Ready</span>
         </div>
     </HeaderContent>
 
-    <ContextBarContent>
-        @if (Store.CurrentOrder is not null)
-        {
-            <div class="context-bar">
-                <strong>@(Store.SelectedTable?.Name ?? "Table")</strong>
-                <span class="status-badge" style="color: @Store.CurrentOrder.StatusColor">
-                    @Store.CurrentOrder.Status
-                </span>
-                <span>Order: @Store.CurrentOrder.Id.ToString()[..8]</span>
-                <button @onclick="ClearSelection" class="btn-ghost">✕ Deselect</button>
-            </div>
-        }
-    </ContextBarContent>
-
     <ToolbarContent>
-        <button @onclick="RefreshAsync" class="btn-secondary" disabled="@Store.IsLoading">
-            @(Store.IsLoading ? "⟳ Loading..." : "⟳ Refresh")
+        <button @onclick="RefreshTablesAsync" class="btn-secondary">
+            ⟳ Refresh
         </button>
-        <span class="toolbar-info">@Store.Tables.Count tables</span>
     </ToolbarContent>
 
     <PrimaryContent>
-        <LoadingContainer IsLoading="Store.IsLoading" Message="Loading tables...">
-            @if (Store.HasError)
-            {
-                <div class="error-state">
-                    <p>@Store.ErrorMessage</p>
-                    <button @onclick="RefreshAsync" class="btn-primary">Retry</button>
-                </div>
-            }
-            else if (!Store.Tables.Any())
-            {
-                <div class="empty-state">
-                    <p>No tables available. Seed data first.</p>
-                </div>
-            }
-            else
-            {
-                <div class="table-grid">
-                    @foreach (var table in Store.Tables)
-                    {
-                        <div class="table-card @(table.Status.ToLower())"
-                             @onclick="() => SelectTable(table.Id)">
-                            <div class="table-name">@table.Name</div>
-                            <div class="table-status" style="color: @table.StatusColor">
-                                @table.Status
-                            </div>
-                            @if (table.Id == Store.SelectedTableId)
-                            {
-                                <div class="selected-indicator">✓</div>
-                            }
-                        </div>
-                    }
-                </div>
-            }
-        </LoadingContainer>
+        <TableGrid SelectedTableId="@_selectedTableId"
+                   RefreshVersion="@_tableRefreshVersion"
+                   OnTableSelected="HandleTableSelected"
+                   OnDoubleClick="HandleTableDoubleClick" />
     </PrimaryContent>
 
     <SecondaryContent>
-        @if (Store.CurrentOrder is not null)
-        {
-            <div class="order-panel">
-                <h3>Order Summary</h3>
-                <p><strong>Status:</strong> <span style="color:@Store.CurrentOrder.StatusColor">@Store.CurrentOrder.Status</span></p>
-                <p><strong>Total:</strong> ฿@Store.CurrentOrder.TotalText</p>
-                <p><strong>Items:</strong> @Store.CurrentOrder.Items.Count</p>
-
-                @if (Store.CurrentOrder.Items.Any())
-                {
-                    <table class="order-items">
-                        <thead>
-                            <tr><th>Item</th><th>Qty</th><th>Price</th></tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Store.CurrentOrder.Items)
-                            {
-                                <tr>
-                                    <td>@item.Name</td>
-                                    <td>@item.Quantity</td>
-                                    <td>฿@item.TotalPrice.ToString("F2")</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-
-                <div class="menu-items">
-                    <h4>Menu</h4>
-                    @foreach (var item in Store.MenuItems.Where(m => m.IsAvailable))
-                    {
-                        <button @onclick="() => AddItem(item.Id)"
-                                class="btn-menu-item"
-                                disabled="@(!Store.CurrentOrder.IsEditable)">
-                            @item.Name — ฿@item.Price.ToString("F2")
-                        </button>
-                    }
-                </div>
-
-                @if (Store.CurrentOrder.IsEditable && Store.CurrentOrder.Items.Any())
-                {
-                    <button @onclick="ConfirmOrder" class="btn-primary confirm-btn">
-                        ✓ Confirm Order
-                    </button>
-                }
-            </div>
-        }
-        else if (Store.SelectedTableId is not null && !Store.IsLoading)
-        {
-            <div class="order-panel">
-                <h3>@Store.SelectedTable?.Name</h3>
-                <p>Status: @Store.SelectedTable?.Status</p>
-                @if (Store.SelectedTable?.IsAvailable == true)
-                {
-                    <button @onclick="OpenTable" class="btn-primary">
-                        Open Table & Create Order
-                    </button>
-                }
-            </div>
-        }
+        <OrderPanel SelectedTableId="@_selectedTableId"
+                    RefreshVersion="@_orderRefreshVersion"
+                    OnTableOpened="HandleTableOperationComplete"
+                    OnAddItemRequested="HandleAddItemRequested"
+                    ProductNames="@_productNames" />
     </SecondaryContent>
 
     <StatusBarContent>
-        <span>@Store.Tables.Count(t => t.IsOccupied) occupied</span>
-        <span>|</span>
-        <span>@Store.Tables.Count(t => t.IsAvailable) available</span>
-        <span>|</span>
         <span>Online</span>
     </StatusBarContent>
 </WorkspaceShell>
 
+<MenuModal Show="@_isMenuOpen"
+           OrderId="@(_activeOrderId ?? Guid.Empty)"
+           OnProductAdded="HandleProductAdded"
+           OnClose="HandleMenuClose" />
+
+<ToastNotification Type="@_toastType"
+                   Message="@_toastMessage"
+                   IsVisible="@_showToast"
+                   OnDismiss="HandleToastDismiss" />
+
 @code {
-    protected override async Task OnInitializedAsync()
+    private Guid? _selectedTableId;
+    private Guid? _activeOrderId;
+    private int _tableRefreshVersion;
+    private int _orderRefreshVersion;
+    private bool _isMenuOpen;
+    private bool _isAddingItem;
+
+    // Toast state
+    private bool _showToast;
+    private string _toastMessage = "";
+    private ToastType _toastType = ToastType.Info;
+
+    // Product name cache for OrderPanel
+    private Dictionary<Guid, string> _productNames = [];
+
+    // ─── Table Selection ───
+
+    private async Task HandleTableSelected(Guid? tableId)
     {
-        Store.StateChanged += OnStateChanged;
-        await Store.InitializeAsync();
+        _selectedTableId = tableId;
+        _activeOrderId = null;
+        _orderRefreshVersion++;
     }
 
-    private void OnStateChanged() => InvokeAsync(StateHasChanged);
-
-    private async Task SelectTable(Guid tableId)
+    private async Task HandleTableDoubleClick(Guid tableId)
     {
-        if (Store.SelectedTableId == tableId)
+        _selectedTableId = tableId;
+        _orderRefreshVersion++;
+    }
+
+    // ─── Table Operations (Open, Cancel, Release) ───
+
+    private async Task HandleTableOperationComplete()
+    {
+        // After open/cancel/release: refresh grid and clear selection
+        _tableRefreshVersion++;
+        _selectedTableId = null;
+        _activeOrderId = null;
+        _orderRefreshVersion++;
+    }
+
+    // ─── Menu / Add Item ───
+
+    private async Task HandleAddItemRequested(Guid orderId)
+    {
+        _activeOrderId = orderId;
+        _isMenuOpen = true;
+    }
+
+    private async Task HandleProductAdded(Guid productId)
+    {
+        if (_isAddingItem || !_activeOrderId.HasValue) return;
+        _isAddingItem = true;
+
+        try
         {
-            ClearSelection();
-            return;
+            await OrderClient.AddItemAsync(_activeOrderId.Value, productId, 1, 0);
+            _orderRefreshVersion++;
+            ShowToast(ToastType.Success, "✓ Item added");
         }
-        await Store.SelectTableAsync(tableId);
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Cannot add item to order");
+            ShowToast(ToastType.Error, $"Cannot add item");
+        }
+        finally
+        {
+            _isAddingItem = false;
+        }
     }
 
-    private async Task OpenTable()
+    private void HandleMenuClose()
     {
-        if (Store.SelectedTableId is null) return;
-        await Store.OpenTableAsync(Store.SelectedTableId.Value);
+        _isMenuOpen = false;
     }
 
-    private async Task AddItem(Guid menuItemId)
+    // ─── Toolbar ───
+
+    private async Task RefreshTablesAsync()
     {
-        await Store.AddMenuItemAsync(menuItemId);
+        _tableRefreshVersion++;
     }
 
-    private async Task ConfirmOrder()
+    // ─── Toast ───
+
+    private void ShowToast(ToastType type, string message)
     {
-        await Store.ConfirmOrderAsync();
+        _toastType = type;
+        _toastMessage = message;
+        _showToast = true;
     }
 
-    private void ClearSelection() => Store.ClearSelection();
-
-    private async Task RefreshAsync() => await Store.RefreshAsync();
-
-    public void Dispose() => Store.StateChanged -= OnStateChanged;
+    private void HandleToastDismiss()
+    {
+        _showToast = false;
+    }
 }
