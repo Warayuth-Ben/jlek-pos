@@ -3,15 +3,15 @@ using JLek.POS.Domain.Catalog;
 namespace JLek.POS.Application.Features.Catalog.Responses;
 
 public record IngredientResponse(
-    IngredientId Id,
+    Guid Id,
     string Name,
-    IngredientStatus Status)
+    string Status)
 {
     public static IngredientResponse FromDomain(Ingredient ingredient)
     {
         return new IngredientResponse(
-            ingredient.Id,
+            ingredient.Id.Value,
             ingredient.Name,
-            ingredient.Status);
+            ingredient.Status.ToString());
     }
 }

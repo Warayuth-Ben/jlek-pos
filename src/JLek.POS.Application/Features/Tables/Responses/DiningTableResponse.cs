@@ -1,23 +1,21 @@
-using JLek.POS.Domain.Orders.ValueObjects;
 using JLek.POS.Domain.Tables;
-using JLek.POS.Domain.ValueObjects;
 
 namespace JLek.POS.Application.Features.Tables.Responses;
 
 public record DiningTableResponse(
-    TableId Id,
+    Guid Id,
     string Name,
-    TableStatus Status,
-    OrderSessionId? ActiveSessionId,
-    IReadOnlyCollection<TableId> MergedTableIds)
+    string Status,
+    Guid? ActiveSessionId,
+    List<Guid> MergedTableIds)
 {
     public static DiningTableResponse FromDomain(DiningTable table)
     {
         return new DiningTableResponse(
-            table.Id,
+            table.Id.Value,
             table.Name,
-            table.Status,
-            table.ActiveSessionId,
-            table.MergedTableIds);
+            table.Status.ToString(),
+            table.ActiveSessionId?.Value,
+            table.MergedTableIds.Select(id => id.Value).ToList());
     }
 }

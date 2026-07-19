@@ -1,0 +1,27 @@
+@namespace JLek.POS.Web.Presentation.Components
+
+@if (IsLoading)
+{
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+        @if (!string.IsNullOrEmpty(Message))
+        {
+            <span class="loading-message">@Message</span>
+        }
+    </div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter]
+    public bool IsLoading { get; set; }
+
+    [Parameter]
+    public string? Message { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

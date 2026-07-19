@@ -3,17 +3,17 @@ using JLek.POS.Domain.Kitchen;
 namespace JLek.POS.Application.Features.Kitchen.Responses;
 
 public record KitchenTicketResponse(
-    KitchenTicketId Id,
+    Guid Id,
     int TicketNumber,
-    KitchenTicketStatus Status,
+    string Status,
     IReadOnlyList<KitchenItemResponse> Items)
 {
     public static KitchenTicketResponse FromDomain(KitchenTicket ticket)
     {
         return new KitchenTicketResponse(
-            ticket.Id,
+            ticket.Id.Value,
             ticket.TicketNumber,
-            ticket.Status,
+            ticket.Status.ToString(),
             ticket.Items
                 .Select(KitchenItemResponse.FromDomain)
                 .ToList());

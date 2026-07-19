@@ -23,12 +23,12 @@ public static class OrderEndpoints
         var group = app.MapGroup("/orders");
 
         group.MapPost("/", async (
+            CreateOrderRequest request,
             [FromServices] CreateOrderCommandHandler handler,
             CancellationToken cancellationToken) =>
         {
-            // Keep existing endpoint for backward compatibility
             var order = await handler.Handle(
-                new CreateOrderCommand(TableId.New()),
+                new CreateOrderCommand(TableId.From(request.TableId)),
                 cancellationToken);
 
             return Results.Created(

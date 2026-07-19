@@ -4,31 +4,31 @@ using JLek.POS.Domain.Common.ValueObjects;
 namespace JLek.POS.Application.Features.Catalog.Responses;
 
 public record ProductResponse(
-    ProductId Id,
+    Guid Id,
     string Name,
     string? Description,
-    ProductStatus Status,
-    ProductVisibility Visibility,
+    string Status,
+    string Visibility,
     int? DisplayOrder,
-    ProductCategoryId CategoryId,
-    IReadOnlyCollection<OptionGroup> OptionGroups,
-    IReadOnlyCollection<Modifier> Modifiers,
-    IReadOnlyCollection<Money> SuggestedPrices,
-    IReadOnlyCollection<IngredientId> IngredientIds)
+    Guid CategoryId,
+    List<object> OptionGroups,
+    List<object> Modifiers,
+    List<decimal> SuggestedPrices,
+    List<Guid> IngredientIds)
 {
     public static ProductResponse FromDomain(Product product)
     {
         return new ProductResponse(
-            product.Id,
+            product.Id.Value,
             product.Name,
             product.Description,
-            product.Status,
-            product.Visibility,
+            product.Status.ToString(),
+            product.Visibility.ToString(),
             product.DisplayOrder,
-            product.CategoryId,
-            product.OptionGroups,
-            product.Modifiers,
-            product.SuggestedPrices,
-            product.IngredientIds);
+            product.CategoryId.Value,
+            product.OptionGroups.Cast<object>().ToList(),
+            product.Modifiers.Cast<object>().ToList(),
+            product.SuggestedPrices.Select(m => m.Amount).ToList(),
+            product.IngredientIds.Select(id => id.Value).ToList());
     }
 }

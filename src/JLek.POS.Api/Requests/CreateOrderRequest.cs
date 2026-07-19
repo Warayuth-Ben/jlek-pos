@@ -1,3 +1,3 @@
 namespace JLek.POS.Api.Requests;
 
-public sealed record CreateOrderRequest;
+public sealed record CreateOrderRequest(Guid TableId);

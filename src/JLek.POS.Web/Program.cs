@@ -18,6 +18,11 @@ public class Program
 
         builder.Services.AddApiClients(apiBaseUrl);
 
+        // Presentation services
+        builder.Services.AddSingleton<JLek.POS.Web.Presentation.Context.ContextStore>();
+        builder.Services.AddSingleton<JLek.POS.Web.Presentation.Context.WorkspaceContext>();
+        builder.Services.AddTransient<JLek.POS.Web.Presentation.Cashier.CashierStore>();
+
         await builder.Build().RunAsync();
     }
 }

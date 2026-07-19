@@ -3,7 +3,7 @@ using JLek.POS.Domain.Kitchen;
 namespace JLek.POS.Application.Features.Kitchen.Responses;
 
 public record KitchenItemResponse(
-    KitchenItemId Id,
+    Guid Id,
     string ItemName,
     int Quantity,
     string? Notes)
@@ -11,7 +11,7 @@ public record KitchenItemResponse(
     public static KitchenItemResponse FromDomain(KitchenItem item)
     {
         return new KitchenItemResponse(
-            item.Id,
+            item.Id.Value,
             item.ItemName,
             item.Quantity,
             item.Notes);

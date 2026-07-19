@@ -1,0 +1,53 @@
+@namespace JLek.POS.Web.Presentation.Components
+
+<div class="workspace-shell">
+    <div class="workspace-header">
+        @HeaderContent
+    </div>
+    <div class="workspace-context-bar">
+        @ContextBarContent
+    </div>
+    <div class="workspace-toolbar">
+        @ToolbarContent
+    </div>
+    <div class="workspace-content">
+        <div class="workspace-primary">
+            @PrimaryContent
+        </div>
+        @if (SecondaryContent is not null)
+        {
+            <div class="workspace-secondary">
+                @SecondaryContent
+            </div>
+        }
+    </div>
+    <div class="workspace-action-area">
+        @ActionContent
+    </div>
+    <div class="workspace-status-bar">
+        @StatusBarContent
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? HeaderContent { get; set; }
+
+    [Parameter]
+    public RenderFragment? ContextBarContent { get; set; }
+
+    [Parameter]
+    public RenderFragment? ToolbarContent { get; set; }
+
+    [Parameter]
+    public RenderFragment? PrimaryContent { get; set; }
+
+    [Parameter]
+    public RenderFragment? SecondaryContent { get; set; }
+
+    [Parameter]
+    public RenderFragment? ActionContent { get; set; }
+
+    [Parameter]
+    public RenderFragment? StatusBarContent { get; set; }
+}

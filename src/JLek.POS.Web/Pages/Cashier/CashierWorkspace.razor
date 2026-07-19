@@ -1,0 +1,184 @@
+@using JLek.POS.Web.Presentation.Cashier
+@using JLek.POS.Web.Presentation.Components
+@inject CashierStore Store
+@implements IDisposable
+
+<WorkspaceShell>
+    <HeaderContent>
+        <div class="cashier-header">
+            <h2>Cashier Workspace</h2>
+            <span class="connection-status">@(Store.IsLoading ? "Loading..." : "Ready")</span>
+        </div>
+    </HeaderContent>
+
+    <ContextBarContent>
+        @if (Store.CurrentOrder is not null)
+        {
+            <div class="context-bar">
+                <strong>@(Store.SelectedTable?.Name ?? "Table")</strong>
+                <span class="status-badge" style="color: @Store.CurrentOrder.StatusColor">
+                    @Store.CurrentOrder.Status
+                </span>
+                <span>Order: @Store.CurrentOrder.Id.ToString()[..8]</span>
+                <button @onclick="ClearSelection" class="btn-ghost">✕ Deselect</button>
+            </div>
+        }
+    </ContextBarContent>
+
+    <ToolbarContent>
+        <button @onclick="RefreshAsync" class="btn-secondary" disabled="@Store.IsLoading">
+            @(Store.IsLoading ? "⟳ Loading..." : "⟳ Refresh")
+        </button>
+        <span class="toolbar-info">@Store.Tables.Count tables</span>
+    </ToolbarContent>
+
+    <PrimaryContent>
+        <LoadingContainer IsLoading="Store.IsLoading" Message="Loading tables...">
+            @if (Store.HasError)
+            {
+                <div class="error-state">
+                    <p>@Store.ErrorMessage</p>
+                    <button @onclick="RefreshAsync" class="btn-primary">Retry</button>
+                </div>
+            }
+            else if (!Store.Tables.Any())
+            {
+                <div class="empty-state">
+                    <p>No tables available. Seed data first.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-grid">
+                    @foreach (var table in Store.Tables)
+                    {
+                        <div class="table-card @(table.Status.ToLower())"
+                             @onclick="() => SelectTable(table.Id)">
+                            <div class="table-name">@table.Name</div>
+                            <div class="table-status" style="color: @table.StatusColor">
+                                @table.Status
+                            </div>
+                            @if (table.Id == Store.SelectedTableId)
+                            {
+                                <div class="selected-indicator">✓</div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </LoadingContainer>
+    </PrimaryContent>
+
+    <SecondaryContent>
+        @if (Store.CurrentOrder is not null)
+        {
+            <div class="order-panel">
+                <h3>Order Summary</h3>
+                <p><strong>Status:</strong> <span style="color:@Store.CurrentOrder.StatusColor">@Store.CurrentOrder.Status</span></p>
+                <p><strong>Total:</strong> ฿@Store.CurrentOrder.TotalText</p>
+                <p><strong>Items:</strong> @Store.CurrentOrder.Items.Count</p>
+
+                @if (Store.CurrentOrder.Items.Any())
+                {
+                    <table class="order-items">
+                        <thead>
+                            <tr><th>Item</th><th>Qty</th><th>Price</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Store.CurrentOrder.Items)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>@item.Quantity</td>
+                                    <td>฿@item.TotalPrice.ToString("F2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                <div class="menu-items">
+                    <h4>Menu</h4>
+                    @foreach (var item in Store.MenuItems.Where(m => m.IsAvailable))
+                    {
+                        <button @onclick="() => AddItem(item.Id)"
+                                class="btn-menu-item"
+                                disabled="@(!Store.CurrentOrder.IsEditable)">
+                            @item.Name — ฿@item.Price.ToString("F2")
+                        </button>
+                    }
+                </div>
+
+                @if (Store.CurrentOrder.IsEditable && Store.CurrentOrder.Items.Any())
+                {
+                    <button @onclick="ConfirmOrder" class="btn-primary confirm-btn">
+                        ✓ Confirm Order
+                    </button>
+                }
+            </div>
+        }
+        else if (Store.SelectedTableId is not null && !Store.IsLoading)
+        {
+            <div class="order-panel">
+                <h3>@Store.SelectedTable?.Name</h3>
+                <p>Status: @Store.SelectedTable?.Status</p>
+                @if (Store.SelectedTable?.IsAvailable == true)
+                {
+                    <button @onclick="OpenTable" class="btn-primary">
+                        Open Table & Create Order
+                    </button>
+                }
+            </div>
+        }
+    </SecondaryContent>
+
+    <StatusBarContent>
+        <span>@Store.Tables.Count(t => t.IsOccupied) occupied</span>
+        <span>|</span>
+        <span>@Store.Tables.Count(t => t.IsAvailable) available</span>
+        <span>|</span>
+        <span>Online</span>
+    </StatusBarContent>
+</WorkspaceShell>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        Store.StateChanged += OnStateChanged;
+        await Store.InitializeAsync();
+    }
+
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+
+    private async Task SelectTable(Guid tableId)
+    {
+        if (Store.SelectedTableId == tableId)
+        {
+            ClearSelection();
+            return;
+        }
+        await Store.SelectTableAsync(tableId);
+    }
+
+    private async Task OpenTable()
+    {
+        if (Store.SelectedTableId is null) return;
+        await Store.OpenTableAsync(Store.SelectedTableId.Value);
+    }
+
+    private async Task AddItem(Guid menuItemId)
+    {
+        await Store.AddMenuItemAsync(menuItemId);
+    }
+
+    private async Task ConfirmOrder()
+    {
+        await Store.ConfirmOrderAsync();
+    }
+
+    private void ClearSelection() => Store.ClearSelection();
+
+    private async Task RefreshAsync() => await Store.RefreshAsync();
+
+    public void Dispose() => Store.StateChanged -= OnStateChanged;
+}

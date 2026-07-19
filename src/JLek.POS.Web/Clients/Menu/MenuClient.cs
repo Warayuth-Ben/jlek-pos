@@ -14,11 +14,37 @@ public sealed class MenuClient : IMenuClient
 
     public async Task<List<ProductCategoryResponse>> GetCategoriesAsync(CancellationToken ct = default)
     {
-        return await _http.GetFromJsonAsync<List<ProductCategoryResponse>>("/categories", ct) ?? [];
+        // API returns strongly-typed IDs, deserialize as dynamic
+        var doc = await _http.GetFromJsonAsync<System.Text.Json.JsonDocument>("/categories", ct);
+        if (doc is null) return [];
+        return doc.RootElement.EnumerateArray().Select(e => new ProductCategoryResponse(
+            Guid.Parse(e.GetProperty("id").GetProperty("value").GetString()!),
+            e.GetProperty("name").GetString() ?? "",
+            0
+        )).ToList();
     }
 
     public async Task<List<ProductResponse>> GetProductsByCategoryAsync(Guid categoryId, CancellationToken ct = default)
     {
-        return await _http.GetFromJsonAsync<List<ProductResponse>>($"/products?categoryId={categoryId}", ct) ?? [];
+        var doc = await _http.GetFromJsonAsync<System.Text.Json.JsonDocument>($"/products?categoryId={categoryId}", ct);
+        if (doc is null) return [];
+        return doc.RootElement.EnumerateArray().Select(e => new ProductResponse(
+            Guid.Parse(e.GetProperty("id").GetProperty("value").GetString()!),
+            e.GetProperty("name").GetString() ?? "",
+            0m,
+            e.GetProperty("status").GetInt32() == 0
+        )).ToList();
+    }
+
+    public async Task<List<ProductResponse>> GetProductsAsync(CancellationToken ct = default)
+    {
+        var doc = await _http.GetFromJsonAsync<System.Text.Json.JsonDocument>("/products", ct);
+        if (doc is null) return [];
+        return doc.RootElement.EnumerateArray().Select(e => new ProductResponse(
+            Guid.Parse(e.GetProperty("id").GetProperty("value").GetString()!),
+            e.GetProperty("name").GetString() ?? "",
+            0m,
+            e.GetProperty("status").GetInt32() == 0
+        )).ToList();
     }
 }

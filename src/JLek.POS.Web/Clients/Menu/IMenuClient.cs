@@ -6,4 +6,5 @@ public interface IMenuClient
 {
     Task<List<ProductCategoryResponse>> GetCategoriesAsync(CancellationToken ct = default);
     Task<List<ProductResponse>> GetProductsByCategoryAsync(Guid categoryId, CancellationToken ct = default);
+    Task<List<ProductResponse>> GetProductsAsync(CancellationToken ct = default);
 }

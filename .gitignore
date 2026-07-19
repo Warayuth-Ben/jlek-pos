@@ -482,3 +482,22 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Archives
+*.zip
+*.7z
+*.rar
+
+# Logs
+*.log
+testlog.txt
+
+# Build
+bin/
+obj/
+
+# Visual Studio
+.vs/
+
+# Rider
+.idea/

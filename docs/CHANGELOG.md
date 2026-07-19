@@ -1,258 +1,150 @@
 # Changelog
 
-## 2026-07-17 — Payment Module v1
+## v2.0.0 — 2026-07-19
 
 ### Added
-- Payment Aggregate (Domain)
-- Payment Business Rules (4 rules)
-- Payment Domain Events (PaymentReceived, PaymentRefunded)
-- Payment CQRS (ReceivePayment, RefundPayment, GetPaymentById, GetPaymentsByOrderId)
-- Payment Infrastructure (EF Core, Repository, DI)
-- Payment API (4 endpoints)
-- Payment Integration Tests (18 tests)
-- Global Exception Handling Middleware
-- ProblemDetails Response Standardization
-
-### Frozen
-- Payment Module v1
+- ADR-010 Public API Contract Standard (`docs/98-decisions/ADR-010-public-api-contract.md`)
+- Catalog migration report (`docs/97-AI-Docs/112-catalog-migration-report.md`)
+- Tables migration report (`docs/97-AI-Docs/113-tables-migration-report.md`)
+- Orders migration report (`docs/97-AI-Docs/114-orders-migration-report.md`)
+- Kitchen migration report (`docs/97-AI-Docs/115-kitchen-migration-report.md`)
+- Payments migration report (`docs/97-AI-Docs/116-payments-migration-report.md`)
+- ADR-010 completion report (`docs/97-AI-Docs/117-adr010-completion-report.md`)
+- Documentation sync report (`docs/97-AI-Docs/118-documentation-sync-report.md`)
 
 ### Changed
-- Updated Project Status to v1.2
-- Updated Reference Modules with Payment Module patterns
+- **Catalog DTOs**: `ProductId`, `ProductCategoryId`, `IngredientId` → `Guid`; `ProductStatus`, `ProductCategoryStatus`, `IngredientStatus` → `string`; `Money` → `decimal`; collections → `List<T>`
+- **Tables DTO**: `TableId` → `Guid`; `TableStatus` → `string`; `OrderSessionId?` → `Guid?`; `MergedTableIds` → `List<Guid>`
+- **Orders DTOs**: `OrderId` → `Guid`; `OrderStatus` → `string`; `Money` (Total, UnitPrice, TotalPrice) → `decimal`; `Quantity` → `int`
+- **Kitchen DTOs**: `KitchenTicketId` → `Guid`; `KitchenTicketStatus` → `string`; `KitchenItemId` → `Guid`
+- **Payments DTO**: Already compliant — verified
 
-## 2026-07-17 — Reporting Module v1
-
-### Added
-- IClock interface (Domain)
-- IReportingDbContext (read-only abstraction)
-- Report DTOs (DailySalesReport, SalesByPaymentReport, BestSellerReport)
-- Report Query Handlers (3 handlers — EF Core LINQ, AsNoTracking, database aggregation)
-- Report API endpoints (3 endpoints: GET /reports/daily-sales, /sales-by-payment, /best-sellers)
-- SystemClock implementation (Infrastructure)
-- DI Registrations for IClock and IReportingDbContext
-- Reporting Collection Fixture (Integration Tests)
-- Reporting Integration Tests (24 tests)
+### Refactored
+- Public API no longer exposes Domain Value Objects, Domain Enums, Money, or IReadOnlyCollection
+- All `FromDomain()` methods updated with `.Value`, `.ToString()`, `.Amount`, `.Select().ToList()`
+- 9 DTOs migrated across 5 modules
 
 ### Architecture
-- Pure Read Model: no Aggregate, no Commands, no Domain Events, no Business Rules
-- Query-only CQRS with EF Core + AsNoTracking()
-- Database aggregation (GroupBy, Sum, Count in SQL via EF Core LINQ)
-- Dapper deferred to future milestone
-
-### Frozen
-- Reporting Module v1
-
-### Changed
-- Updated Project Status to v1.3
-- Updated Reference Modules with Reporting Module patterns
-- Application.csproj added Microsoft.EntityFrameworkCore 8.0.11
-- ApplicationDbContext implements IReportingDbContext
-- Application DependencyInjection registers 3 report handlers
-- Infrastructure DependencyInjection registers IClock (SystemClock) and IReportingDbContext
-- Program.cs registers MapReportingEndpoints()
-
-## 2026-07-17 — Receipt Module v1
-
-### Added
-- Receipt DTOs (CustomerReceiptData, KitchenTicketReceiptData, RefundReceiptData)
-- ReceiptDocument + ReceiptLine model
-- PrintResult model with timing
-- IReceiptFormatter + ReceiptFormatter (pure formatting, no infrastructure)
-- IReceiptDataProvider + ReceiptDataProvider (returns flat DTOs only)
-- IReceiptPrinter + IKitchenPrinter abstractions
-- NullReceiptPrinter + NullKitchenPrinter (development printers)
-- 3 Commands + Handlers (PrintCustomerReceipt, PrintKitchenTicket, PrintRefundReceipt)
-- ReceiptConfiguration (from appsettings.json)
-- DI Registrations for all Receipt services
-- Minimal API endpoints (3 POST operations)
-- Request DTOs (CustomerPrintRequest, KitchenPrintRequest, RefundPrintRequest)
-- Collection Fixture + Integration Tests (21 tests)
-
-### Architecture
-- Pure Output Module: no Aggregate, no Repository, no Data Store, no Business Rules
-- Command-only CQRS (3 commands, 0 queries)
-- Flat DTO isolation — no Domain types leaked from DataProvider
-- Formatter separated from Printer — ReceiptFormatter is pure C#, Printer is abstracted
-- NullPrinter for development/CI — real printers deferred to next milestone
-
-### Frozen
-- Receipt Module v1
-
-### Changed
-- Updated Project Status to v1.4
-- Updated Reference Modules with Receipt Module patterns
-- Application DependencyInjection registers 3 receipt handlers + ReceiptFormatter + ReceiptConfiguration
-- Infrastructure DependencyInjection registers IReceiptDataProvider, NullReceiptPrinter, NullKitchenPrinter
-- Program.cs registers MapReceiptEndpoints()
-
-## 2026-07-17 — Printing Infrastructure v1
-
-### Added
-- Printing Abstractions: IRenderer, IPrinterAdapter
-- Printing Models: PrintPayload, PrinterStatus, PrinterConfiguration, PrinterFormat
-- EscPosRenderer (single RenderAsync method, immutable, thread-safe)
-- EscPosCommands (static byte helpers: Initialize, Alignment, Bold, CharacterSize, CutPaper, CodePage)
-- EscPosCodePages (CP437/850/874/932/1252 — Thai support via CP874)
-- RenderOptions (CharactersPerLine, Encoding, CutPaper)
-- NullPrinterAdapter (development/CI)
-- UsbPrinterAdapter (ISerialPort abstraction — not System.IO.Ports)
-- SerialPortAdapter (wraps System.IO.Ports.SerialPort)
-- LanPrinterAdapter (ITcpClient abstraction — not System.Net.Sockets.TcpClient)
-- TcpClientAdapter (wraps System.Net.Sockets.TcpClient)
-- End-to-End Pipeline Tests (57 total: 21 renderer + 18 adapter + 18 pipeline)
-
-### Architecture
-- ReceiptDocument → IRenderer → PrintPayload → IPrinterAdapter → USB/LAN
-- Renderer = pure formatting (no IO). Adapter = transport only (no formatting).
-- Connectionless design: adapters manage Connect/Disconnect internally.
-- Error handling: all exceptions caught. Never throws to caller.
-- Resource cleanup: ports closed, TCP disconnected on success and failure.
-- Architectural isolation: USB → ISerialPort only. LAN → ITcpClient only.
-
-### Frozen
-- Printing Infrastructure v1
-
-## 2026-07-18 — EF Core Runtime Recovery & Database Sync
-
-### Added
-- OrderSessionIdConverter (OrderSessionId ↔ Guid)
-- NullableOrderSessionIdConverter (OrderSessionId? ↔ Guid?)
-- EF Core Migration: UpdateModelConfiguration (database schema synchronized)
-
-### Fixed
-- EF Core Model Validation: 8 mapping issues resolved
-  - Product.IngredientIds, Product.SuggestedPrices: Ignore() added for OwnsMany backing fields
-  - KitchenTicket.Items: Ignore() added for OwnsMany backing field
-  - Order.TableId, Order.SessionId: ValueConverters added
-  - DiningTable.ActiveSessionId: NullableOrderSessionIdConverter added
-  - DiningTable.MergedTableIds: Ignore() added for OwnsMany backing field
-  - DiningTable._mergedTableIds FK: shadow property type changed from Guid to TableId with converter
-
-### Changed
-- ProductConfiguration.cs: +2 Ignore() mappings
-- OrderConfiguration.cs: +2 HasConversion() mappings
-- KitchenTicketConfiguration.cs: +1 Ignore() mapping
-- DiningTableConfiguration.cs: +1 Ignore() + 1 HasConversion() + 1 FK type fix
-
-### Database
-- Root Cause: schema out of sync with EF Core model after configuration changes
-- Migration `UpdateModelConfiguration` created and applied
-- Tables created: ProductCategories, Products, Ingredients, DiningTables, Payments, Orders (updated), + owned entity tables
-
-### Architecture
-- Preserved Clean Architecture
-- Preserved DDD
-- Preserved Strongly Typed IDs
-- No Domain, Application, or API changes
+- Preserved. Domain layer untouched.
+- Preserved. No infrastructure changes.
+- Preserved. No API route changes.
+- Applied ADR-010: Public API Contracts use only `Guid`, `string`, `decimal`, `int`, `List<T>`
 
 ### Build
-- Full solution: ✅ 0 Errors, 0 Warnings
+- Application: ✅ 0 Errors, 0 Warnings
+- API: ✅ 0 Errors, 0 Warnings
+- Web: ✅ 0 Errors, 0 Warnings
+- Integration tests: ⏳ Pending (9 enum→string assertion fixes)
 
-### Current Milestone
-- Backend Runtime Verification (in progress)
-- Next: Verify GET /categories, /products, /tables, /orders
+### Documentation
+- 7 new reports created in `docs/97-AI-Docs/`
+- All migration phases documented with ADR compliance tables
 
-## 2026-07-18 — UI Completion & Release Candidate v1.0.0-rc1
+---
+
+## v1.0.0 — 2026-07-19
 
 ### Added
-- Kitchen UI: KitchenClient, 4-column queue, KitchenOrderCard, KitchenStatusBadge, KitchenQueue, KitchenToolbar, auto-polling (15s)
-- Dashboard UI: ReportClient, 8 metric cards, 3 section tables (Best Sellers, Sales by Payment, Recent Orders)
-- Reports UI: Daily Sales (with date filter), Sales by Payment, Best Sellers tables
-- Placeholder pages: Kitchen, Dashboard, Reports, Settings
-- Navigation: All 6 pages linked in NavMenu
-
-### Fixed
-- Bug: OrderPanel passed TableId instead of OrderId to GetByIdAsync — now stores and uses OrderId from CreateAsync response
-- Bug: KitchenPage empty catch block swallowed polling errors — now logs via ILogger
-- Bug: KitchenPage overlapping polling — added `_isPolling` guard
-- Bug: Missing `@implements IDisposable` on KitchenPage — timer now properly disposed
-- Bug: CashierPage empty catch blocks — proper error logging + user notifications
-- Bug: OrderItem displayed MenuItemId (Guid) instead of product name — preloaded via MenuClient API
+- UI/UX Architecture Foundation (docs/09-ui/):
+  - 00-ui-foundation.md — Vision, principles, architecture layers, workspace definition
+  - 01-design-system.md — Colors, typography, spacing, grid, icons, motion, breakpoints
+  - 02-navigation.md — Navigation structure, sidebar, top bar, workspace flows, quick actions
+  - 03-workspaces.md — Workspace architecture, contracts, dependency diagram, interaction matrix, 6 workspace definitions, state machine mapping
+  - 05-cashier.md — Complete Cashier workspace design: purpose, personas, KPIs, user journey, screen flow, layout, 6 panel specifications, component inventory, workflow/state mapping, keyboard/mouse/touch flows, information priority, loading/empty/error/success states, printing flow, offline behavior, permission matrix, responsive behavior, accessibility, performance targets, future extensions
+- Runtime verification: all 47 API endpoints verified (HTTP 200/201)
+- Production deployment checklist (`docs/97-AI-Docs/92-deployment-checklist.md`)
+- Smoke test checklist (`docs/97-AI-Docs/93-smoke-test-checklist.md`)
+- Release notes (`docs/releases/v1.0.0.md`)
+- Development seed data script (`docs/97-AI-Docs/seed_data.ps1`)
+- E2E workflow verification script (`docs/97-AI-Docs/e2e_workflow.ps1`)
 
 ### Changed
-- Updated docs/97-AI-Docs/99-project-status.md:
-  - UI progress: 80% → 95%
-  - Overall progress: 98% → 99%
-  - Added Release Candidate status
-  - Added Production Hardening section
-  - Documented deferred items and technical debt
+- **POST /orders now requires `tableId` in request body** (breaking change)
+- Updated project status to v1.9 with UI/UX architecture milestone
+- Updated session handoff to reflect v1.0.0 release state
+
+### Fixed
+- GET /orders returned HTTP 500 — removed 13 invalid test orders with `TableId = Guid.Empty`
+- POST /orders generated random `TableId.New()` that never matched any dining table
 
 ### Architecture
-- No architecture changes
-- No backend changes
-- No Domain/Application/Infrastructure modifications
-- All changes confined to Blazor UI layer
+- Preserved. No architecture changes.
+- Preserved. No domain changes.
+- Preserved. No infrastructure changes.
+- Added UI/UX Architecture Foundation (documentation only, no code)
 
-### Release Recommendation
-- Version: v1.0.0-rc1
-- Build: ✅ 0 Errors, 0 Warnings (full solution)
-- Tests: 155 integration tests (pre-existing, unchanged)
+### Build
+- Full solution: ✅ 0 Errors, 0 Warnings (14 projects)
+
+### Runtime Verification
+- All 47 API endpoints verified
+- Database: migrations applied, schema consistent
+- No HTTP 500/404 errors
+- No EF Core exceptions
+- No DI failures
+
+### Recommendation
+- Version: v1.0.0
+- Tag: `v1.0.0`
+
+---
 
 ## 2026-07-19 — UI Completion Phase 1
 
 ### Added
-- Home Page: summary cards (Open Tables, Orders, Waiting, Cooking) + quick navigation to Cashier/Kitchen/Dashboard/Reports
-- Settings Page: General (Shop Name, Language, Refresh Interval), Printer (Type, Paper Width, Copies), About sections
-- Custom CSS: Complete dark theme with CSS variables, responsive layouts, component styles for all pages
+- Home Page: summary cards + quick navigation
+- Settings Page: General, Printer, About sections
+- Custom CSS: dark theme, responsive, component styles
 
 ### Fixed
-- Home Page: replaced default Blazor template with live POS dashboard summary
-- Settings Page: replaced placeholder with full settings UI
+- Home Page: replaced default Blazor template
+- Settings Page: replaced placeholder with full UI
 
-### Changed
-- Updated docs/97-AI-Docs/99-project-status.md:
-  - UI progress: 80% → 100%
-  - UI (Blazor) progress bar: ████████░░ 80% → ██████████ 100%
-  - Overall progress: 85% → 95%
-  - Technical debt: removed "Settings placeholder", "Home default template", "No CSS"
-  - Deferred items: removed "Settings page", "Home page customization"
-  - Current Milestone: "Backend Runtime Verification" → "UI Completion — Phase 1"
+---
 
-### Architecture
-- No architecture changes
-- No backend changes
-- No Domain/Application/Infrastructure modifications
-- All changes confined to Blazor UI layer (Pages + CSS)
+## 2026-07-19 — Production Hardening (H1–H3)
 
-### Build
-- Full solution: ✅ 0 Errors, 0 Warnings
+### Fixed
+- H1: Kitchen polling empty catch → proper logging
+- H2: Kitchen polling overlap prevention (`_isPolling` guard)
+- H3: OrderPanel TableId/OrderId mismatch (stored OrderId from Create response)
 
-## 2026-07-18 — Governance & Validation Session
+---
+
+## 2026-07-18 — EF Core Runtime Recovery & Database Sync
 
 ### Added
-- FEATURE-REGISTRY.md — Feature lifecycle tracking for all 46 features across 10 epics
-- TRACEABILITY-MATRIX.md — End-to-end traceability from Business Scenarios to Tests
-- PROJECT-GOVERNANCE.md — Rules, gates, lifecycle, freeze rules, change boundary
-- PROJECT-CONTROL-CENTER.md — AI session entry point with sprint status, risks, deferred features
+- OrderSessionIdConverter, NullableOrderSessionIdConverter
+- EF Core Migration: UpdateModelConfiguration
 
-### Validated
-- Full solution build: ✅ 0 Errors, 0 Warnings
-- Governance consistency: 7.5/10 score
-- No architecture or source code changes required during validation
-- RZ10007 diagnostics confirmed false positives (Razor Language Server)
+### Fixed
+- 8 EF Core Model Validation issues resolved
 
-### Changed
-- Updated docs/97-AI-Docs/99-project-status.md:
-  - UI progress bar: 0% → 80%
-  - Overall progress: 95% → 98%
-  - Added validation results and governance section
+---
+
+## 2026-07-18 — Governance & Validation
+
+### Added
+- FEATURE-REGISTRY.md, TRACEABILITY-MATRIX.md
+- PROJECT-GOVERNANCE.md, PROJECT-CONTROL-CENTER.md
+
+---
+
+## 2026-07-17 — All Backend Modules v1
+
+### Added
+- Payment Module (4 endpoints, 18 tests)
+- Reporting Module (3 endpoints, 24 tests)
+- Receipt Module (3 endpoints, 21 tests)
+- Printing Infrastructure (57 unit tests)
+- Global Exception Handling Middleware
+
+---
 
 ## 2026-07-17 — Architecture Baseline v1.0
 
 ### Added
-- Discovery Phase (P1–P7): AI Onboarding, Knowledge Flow, Documentation Map, Navigation Design, Capability Catalog, Traceability, Audit
-- Presentation Architecture (P8–P14): Architecture Design, Operational Flow, Persona Workspaces (4 personas), State Machine, Navigation (14 nodes), Interaction (10 patterns), Architecture Review
-- Application Architecture (P15–P16): Use Case Architecture (~65 use cases), Command & Query Standards
-- Infrastructure Architecture (P17–P20): Persistence Architecture, Repository Architecture (7 repositories), External Adapter Architecture, Infrastructure Services
-- Infrastructure Architecture Review and Freeze
-
-### Architecture Principles (Constitutional)
-- Business Owns the State — Presentation must never create Business State
-- Presentation Reflects, Not Invents — UI reflects state, does not interpret
-- Single Source of Truth — Every state has exactly one owner
-- Every Error Has a Recovery Path — No dead-end states
-
-### Frozen
-- Architecture Baseline v1.0
-- All 20 architecture phases complete and frozen
-- Next phase: Implementation Planning
+- Discovery Phase (P1–P7)
+- Presentation Architecture (P8–P14)
+- Application Architecture (P15–P16)
+- Infrastructure Architecture (P17–P20)
