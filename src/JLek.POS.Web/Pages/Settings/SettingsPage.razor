@@ -1,76 +1,57 @@
 @page "/settings"
-@using Microsoft.AspNetCore.Components.Forms
-@inject ILogger<SettingsPage> Logger
 
-<PageTitle>JLek POS — Settings</PageTitle>
+<PageTitle>Settings</PageTitle>
 
-<div class="settings-page">
-    <div class="settings-header">
-        <h2>Settings</h2>
+<section class="workspace-page settings-redesign">
+    <div class="workspace-heading">
+        <div>
+            <p class="eyebrow">Settings workspace</p>
+            <h1>Store configuration</h1>
+        </div>
+        <button class="primary-action" @onclick="Save">Save</button>
     </div>
 
-    <div class="settings-sections">
-        @* --- General --- *@
-        <div class="settings-section">
-            <h3>General</h3>
-            <div class="settings-field">
-                <label>Shop Name</label>
-                <input type="text" @bind="_shopName" class="settings-input" placeholder="JLek POS" />
-            </div>
-            <div class="settings-field">
-                <label>Language</label>
-                <select @bind="_language" class="settings-select">
-                    <option value="th">ไทย</option>
+    <div class="settings-grid">
+        <section class="surface-panel settings-form">
+            <div class="panel-header"><h2>General</h2><span>@_saved</span></div>
+            <label>Shop name<input @bind="_shopName" /></label>
+            <label>Language
+                <select @bind="_language">
+                    <option value="th">Thai</option>
                     <option value="en">English</option>
                 </select>
-            </div>
-            <div class="settings-field">
-                <label>Auto-refresh interval (seconds)</label>
-                <input type="number" @bind="_refreshInterval" class="settings-input" min="5" max="120" />
-            </div>
-        </div>
+            </label>
+            <label>Refresh interval <input type="range" min="5" max="60" step="5" @bind="_refresh" /></label>
+            <div class="range-readout">@_refresh seconds</div>
+        </section>
 
-        @* --- Printer --- *@
-        <div class="settings-section">
-            <h3>Printer</h3>
-            <div class="settings-field">
-                <label>Printer Type</label>
-                <select @bind="_printerType" class="settings-select">
-                    <option value="null">None (Development Mode)</option>
-                    <option value="usb">USB</option>
-                    <option value="lan">LAN / Network</option>
+        <section class="surface-panel settings-form">
+            <div class="panel-header"><h2>Printer</h2><span>Local</span></div>
+            <label>Printer type
+                <select @bind="_printer">
+                    <option>None</option>
+                    <option>USB thermal</option>
+                    <option>Network thermal</option>
                 </select>
-            </div>
-            <div class="settings-field">
-                <label>Paper Width (mm)</label>
-                <input type="number" @bind="_paperWidth" class="settings-input" min="58" max="80" />
-            </div>
-            <div class="settings-field">
-                <label>Print Copies</label>
-                <input type="number" @bind="_printCopies" class="settings-input" min="1" max="5" />
-            </div>
-        </div>
-
-        @* --- About --- *@
-        <div class="settings-section">
-            <h3>About</h3>
-            <div class="settings-about">
-                <p><strong>JLek POS</strong></p>
-                <p>Version: 1.0.0-rc2</p>
-                <p>Restaurant Point of Sale System</p>
-                <p>Architecture: Clean Architecture + DDD + CQRS</p>
-                <p>Backend: .NET 8 + PostgreSQL</p>
-                <p>UI: Blazor WebAssembly</p>
-            </div>
-        </div>
+            </label>
+            <label>Paper width
+                <select @bind="_paper">
+                    <option>58 mm</option>
+                    <option>80 mm</option>
+                </select>
+            </label>
+            <label class="toggle-row"><span>Auto print kitchen ticket</span><input type="checkbox" @bind="_autoPrint" /></label>
+        </section>
     </div>
-</div>
+</section>
 
 @code {
-    private string _shopName = "JLek POS";
+    private string _shopName = "JLek Restaurant";
     private string _language = "th";
-    private int _refreshInterval = 15;
-    private string _printerType = "null";
-    private int _paperWidth = 58;
-    private int _printCopies = 1;
+    private int _refresh = 15;
+    private string _printer = "None";
+    private string _paper = "58 mm";
+    private bool _autoPrint = true;
+    private string _saved = "Unsaved";
+    private void Save() => _saved = "Saved";
 }

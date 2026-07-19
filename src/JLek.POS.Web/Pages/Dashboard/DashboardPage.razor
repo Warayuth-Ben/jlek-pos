@@ -1,211 +1,61 @@
 @page "/dashboard"
 @using System.Globalization
-@using JLek.POS.Web.Clients.Kitchen
-@using JLek.POS.Web.Clients.Orders
-@using JLek.POS.Web.Clients.Reports
-@using JLek.POS.Web.Clients.Tables
-@using JLek.POS.Web.Contracts.Kitchen
-@using JLek.POS.Web.Contracts.Orders
-@using JLek.POS.Web.Contracts.Reports
-@using JLek.POS.Web.Contracts.Tables
-@inject IReportClient ReportClient
-@inject ITableClient TableClient
-@inject IKitchenClient KitchenClient
-@inject IOrderClient OrderClient
-@inject ILogger<DashboardPage> Logger
 
-<div class="dashboard-page">
-    <div class="dashboard-header">
-        <h2>Dashboard</h2>
-        <button class="btn-refresh" disabled="@_isRefreshing" @onclick="LoadDashboardAsync">
-            @if (_isRefreshing) { <span>Refreshing...</span> } else { <span>Refresh</span> }
-        </button>
+<PageTitle>Dashboard</PageTitle>
+
+<section class="workspace-page dashboard-redesign">
+    <div class="workspace-heading">
+        <div>
+            <p class="eyebrow">Manager workspace</p>
+            <h1>Live operations</h1>
+        </div>
+        <button class="secondary-action" @onclick="Refresh">Refresh</button>
     </div>
 
-    @if (_isLoading)
-    {
-        <div class="dashboard-loading">Loading dashboard...</div>
-    }
-    else if (!string.IsNullOrEmpty(_errorMessage))
-    {
-        <div class="dashboard-error">
-            <p>@_errorMessage</p>
-            <button class="btn-retry" @onclick="LoadDashboardAsync">Retry</button>
-        </div>
-    }
-    else
-    {
-        <div class="dashboard-metrics">
-            <div class="dashboard-card metric-revenue">
-                <div class="metric-label">Today's Revenue</div>
-                <div class="metric-value">@FormatCurrency(_dailySales?.NetRevenue)</div>
-            </div>
-            <div class="dashboard-card metric-orders">
-                <div class="metric-label">Today's Orders</div>
-                <div class="metric-value">@(_dailySales?.TotalOrders ?? 0)</div>
-            </div>
-            <div class="dashboard-card metric-avg-order">
-                <div class="metric-label">Avg Order Value</div>
-                <div class="metric-value">@FormatCurrency(_dailySales?.AverageOrderValue)</div>
-            </div>
-            <div class="dashboard-card metric-items-sold">
-                <div class="metric-label">Items Sold</div>
-                <div class="metric-value">@(_dailySales?.TotalItemsSold ?? 0)</div>
-            </div>
-            <div class="dashboard-card metric-open-tables">
-                <div class="metric-label">Open Tables</div>
-                <div class="metric-value">@_openTableCount</div>
-            </div>
-            <div class="dashboard-card metric-waiting">
-                <div class="metric-label">Waiting</div>
-                <div class="metric-value">@_waitingCount</div>
-            </div>
-            <div class="dashboard-card metric-cooking">
-                <div class="metric-label">Cooking</div>
-                <div class="metric-value">@_cookingCount</div>
-            </div>
-            <div class="dashboard-card metric-completed">
-                <div class="metric-label">Completed</div>
-                <div class="metric-value">@_servedCount</div>
-            </div>
-        </div>
+    <div class="metric-strip">
+        <div class="metric-tile"><span>Net sales</span><strong>@Format(_sales)</strong></div>
+        <div class="metric-tile"><span>Orders</span><strong>@_orders</strong></div>
+        <div class="metric-tile"><span>Ready</span><strong>@_ready</strong></div>
+        <div class="metric-tile"><span>Avg order</span><strong>@Format(_sales / Math.Max(_orders, 1))</strong></div>
+    </div>
 
-        <div class="dashboard-sections">
-            <div class="dashboard-section">
-                <h3>Best Sellers</h3>
-                @if (_bestSellers?.Items.Count > 0)
-                {
-                    <table class="dashboard-table">
-                        <thead>
-                            <tr><th>#</th><th>Item ID</th><th>Qty</th><th>Revenue</th></tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in _bestSellers.Items.Take(5))
-                            {
-                                <tr>
-                                    <td>@item.Rank</td>
-                                    <td>@item.MenuItemId.ToString()[..8]</td>
-                                    <td>@item.TotalQuantity</td>
-                                    <td>@FormatCurrency(item.TotalRevenue)</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <div class="dashboard-empty">No best seller data</div>
-                }
-            </div>
-
-            <div class="dashboard-section">
-                <h3>Sales by Payment</h3>
-                @if (_salesByPayment?.PaymentMethods.Count > 0)
-                {
-                    <table class="dashboard-table">
-                        <thead>
-                            <tr><th>Method</th><th>Count</th><th>Amount</th></tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var pm in _salesByPayment.PaymentMethods)
-                            {
-                                <tr>
-                                    <td>@pm.Method</td>
-                                    <td>@pm.TransactionCount</td>
-                                    <td>@FormatCurrency(pm.TotalAmount)</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <div class="dashboard-empty">No payment data</div>
-                }
-            </div>
-
-            <div class="dashboard-section">
-                <h3>Recent Orders</h3>
-                @if (_recentOrders.Count > 0)
-                {
-                    <table class="dashboard-table">
-                        <thead>
-                            <tr><th>Order</th><th>Status</th><th>Total</th></tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var order in _recentOrders.Take(5))
-                            {
-                                <tr>
-                                    <td>@order.Id.ToString()[..8]</td>
-                                    <td>@order.Status</td>
-                                    <td>@FormatCurrency(order.Total)</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <div class="dashboard-empty">No recent orders</div>
-                }
-            </div>
-        </div>
-    }
-</div>
+    <div class="dashboard-panels">
+        <section class="surface-panel">
+            <div class="panel-header"><h2>Best sellers</h2><span>Top 5</span></div>
+            @foreach (var item in _bestSellers)
+            {
+                <div class="rank-row"><span>@item.Name</span><b>@item.Count</b></div>
+            }
+        </section>
+        <section class="surface-panel">
+            <div class="panel-header"><h2>Payment mix</h2><span>Today</span></div>
+            @foreach (var item in _payments)
+            {
+                <div class="rank-row"><span>@item.Name</span><b>@Format(item.Amount)</b></div>
+            }
+        </section>
+        <section class="surface-panel">
+            <div class="panel-header"><h2>Recent orders</h2><span>Last 20 min</span></div>
+            @foreach (var item in _recent)
+            {
+                <div class="rank-row"><span>#@item.Number @item.Status</span><b>@Format(item.Total)</b></div>
+            }
+        </section>
+    </div>
+</section>
 
 @code {
-    private DailySalesReport? _dailySales;
-    private SalesByPaymentReport? _salesByPayment;
-    private BestSellerReport? _bestSellers;
-    private List<OrderResponse> _recentOrders = [];
-    private int _openTableCount;
-    private int _waitingCount;
-    private int _cookingCount;
-    private int _servedCount;
-    private bool _isLoading = true;
-    private bool _isRefreshing;
-    private string? _errorMessage;
-
-    protected override async Task OnInitializedAsync() => await LoadDashboardAsync();
-
-    private async Task LoadDashboardAsync()
+    private decimal _sales = 18640;
+    private int _orders = 54;
+    private int _ready = 3;
+    private readonly List<(string Name, int Count)> _bestSellers = [("Pad Thai", 31), ("Tom Yum", 22), ("Thai Tea", 20), ("Fried Rice", 18), ("Water", 16)];
+    private readonly List<(string Name, decimal Amount)> _payments = [("Cash", 8420), ("PromptPay", 7760), ("Card", 2460)];
+    private readonly List<(int Number, string Status, decimal Total)> _recent = [(1042, "Confirmed", 420), (1041, "Completed", 680), (1040, "Preparing", 310)];
+    private void Refresh()
     {
-        if (_isLoading) _isRefreshing = true;
-        _errorMessage = null;
-
-        try
-        {
-            var today = DateOnly.FromDateTime(DateTime.Now);
-            _dailySales = await ReportClient.GetDailySalesAsync(today);
-            _salesByPayment = await ReportClient.GetSalesByPaymentAsync(today.AddDays(-7), today);
-            _bestSellers = await ReportClient.GetBestSellersAsync(today.AddDays(-30), today, 10);
-        }
-        catch (Exception ex) { Logger.LogError(ex, "Cannot load reports"); _errorMessage = $"Cannot load reports: {ex.Message}"; }
-
-        try
-        {
-            var tables = await TableClient.GetAllAsync();
-            _openTableCount = tables.Count(t => t.Status == "Open");
-        }
-        catch { _openTableCount = 0; }
-
-        try
-        {
-            var kitchenTickets = await KitchenClient.GetActiveAsync();
-            _waitingCount = kitchenTickets.Count(t => t.Status == "Pending");
-            _cookingCount = kitchenTickets.Count(t => t.Status == "Preparing");
-
-            var allTickets = await KitchenClient.GetAllAsync();
-            _servedCount = allTickets.Count(t => t.Status == "Served");
-        }
-        catch { _waitingCount = 0; _cookingCount = 0; _servedCount = 0; }
-
-        try { _recentOrders = [.. (await OrderClient.GetAllAsync()).Take(10)]; }
-        catch { _recentOrders = []; }
-
-        _isLoading = false;
-        _isRefreshing = false;
+        _sales += 240;
+        _orders++;
+        _ready = (_ready + 1) % 6;
     }
-
-    private static string FormatCurrency(decimal? value) => value is null ? "—" : value.Value.ToString("N2", CultureInfo.InvariantCulture);
+    private static string Format(decimal value) => value.ToString("C0", CultureInfo.GetCultureInfo("th-TH"));
 }

@@ -1,171 +1,79 @@
 @page "/kitchen"
-@implements IDisposable
-@using JLek.POS.Web.Clients.Kitchen
-@using JLek.POS.Web.Contracts.Kitchen
-@using JLek.POS.Web.Components.Kitchen.KitchenStatusBadge
-@using JLek.POS.Web.Components.Kitchen.KitchenOrderCard
-@using JLek.POS.Web.Components.Kitchen.KitchenQueue
-@using JLek.POS.Web.Components.Kitchen.KitchenToolbar
-@inject IKitchenClient KitchenClient
-@inject ILogger<KitchenPage> Logger
 
-<div class="kitchen-page">
-    <div class="kitchen-header">
-        <h2>Kitchen Display</h2>
-        <KitchenToolbar WaitingCount="@_waitingTickets.Count"
-                        CookingCount="@_cookingTickets.Count"
-                        ReadyCount="@_readyTickets.Count"
-                        IsRefreshing="_isRefreshing"
-                        OnRefresh="LoadTicketsAsync" />
+<PageTitle>Kitchen</PageTitle>
+
+<section class="workspace-page kitchen-redesign">
+    <div class="workspace-heading">
+        <div>
+            <p class="eyebrow">Kitchen workspace</p>
+            <h1>Production queue</h1>
+        </div>
+        <button class="secondary-action" @onclick="AddTicket">New ticket</button>
     </div>
 
-    @if (_isLoading && !_hasLoaded)
-    {
-        <div class="kitchen-loading">Loading kitchen orders...</div>
-    }
-    else if (!string.IsNullOrEmpty(_errorMessage))
-    {
-        <div class="kitchen-error">
-            <p>@_errorMessage</p>
-            <button class="btn-retry" @onclick="LoadTicketsAsync">Retry</button>
-        </div>
-    }
-    else
-    {
-        <div class="kitchen-queues">
-            <div class="kitchen-queue-column kitchen-queue-waiting">
-                <KitchenQueue Title="Waiting"
-                              Tickets="_waitingTickets"
-                              ActionTicketId="_actionTicketId"
-                              OnStart="HandleStartAsync"
-                              OnComplete="HandleCompleteAsync"
-                              OnServe="HandleServeAsync" />
-            </div>
-            <div class="kitchen-queue-column kitchen-queue-cooking">
-                <KitchenQueue Title="Cooking"
-                              Tickets="_cookingTickets"
-                              ActionTicketId="_actionTicketId"
-                              OnStart="HandleStartAsync"
-                              OnComplete="HandleCompleteAsync"
-                              OnServe="HandleServeAsync" />
-            </div>
-            <div class="kitchen-queue-column kitchen-queue-ready">
-                <KitchenQueue Title="Ready"
-                              Tickets="_readyTickets"
-                              ActionTicketId="_actionTicketId"
-                              OnStart="HandleStartAsync"
-                              OnComplete="HandleCompleteAsync"
-                              OnServe="HandleServeAsync" />
-            </div>
-            <div class="kitchen-queue-column kitchen-queue-served">
-                <KitchenQueue Title="Served"
-                              Tickets="_servedTickets"
-                              ActionTicketId="_actionTicketId"
-                              OnStart="HandleStartAsync"
-                              OnComplete="HandleCompleteAsync"
-                              OnServe="HandleServeAsync" />
-            </div>
-        </div>
-    }
-
-    @if (!_isLoading && _hasLoaded && _errorMessage is null)
-    {
-        <div class="kitchen-auto-refresh">
-            <small>Auto-refreshes every 15 seconds</small>
-        </div>
-    }
-</div>
+    <div class="kanban-grid">
+        @foreach (var status in _statuses)
+        {
+            <section class="queue-column">
+                <div class="panel-header">
+                    <h2>@status</h2>
+                    <span>@_tickets.Count(t => t.Status == status)</span>
+                </div>
+                @foreach (var ticket in _tickets.Where(t => t.Status == status))
+                {
+                    <article class="ticket-card @status.ToLowerInvariant()">
+                        <div class="ticket-top">
+                            <strong>#@ticket.Number</strong>
+                            <span>@ticket.Elapsed min</span>
+                        </div>
+                        <ul>
+                            @foreach (var item in ticket.Items)
+                            {
+                                <li>@item</li>
+                            }
+                        </ul>
+                        <button class="ticket-action" @onclick="@(() => Advance(ticket))">@NextAction(ticket.Status)</button>
+                    </article>
+                }
+            </section>
+        }
+    </div>
+</section>
 
 @code {
-    private List<KitchenTicketResponse> _waitingTickets = [];
-    private List<KitchenTicketResponse> _cookingTickets = [];
-    private List<KitchenTicketResponse> _readyTickets = [];
-    private List<KitchenTicketResponse> _servedTickets = [];
-    private bool _isLoading = true;
-    private bool _hasLoaded;
-    private bool _isRefreshing;
-    private string? _errorMessage;
-    private Guid? _actionTicketId;
-    private Timer? _refreshTimer;
-    private bool _isPolling;
-    private const int PollingIntervalMs = 15000;
+    private readonly string[] _statuses = ["Pending", "Preparing", "Ready"];
+    private readonly List<Ticket> _tickets =
+    [
+        new(24, "Pending", 4, ["2x Pad Thai", "1x Thai Tea"]),
+        new(25, "Preparing", 11, ["1x Tom Yum", "2x Rice"]),
+        new(26, "Ready", 16, ["3x Fried Rice"]),
+        new(27, "Pending", 2, ["1x Mango Sticky Rice"])
+    ];
 
-    protected override async Task OnInitializedAsync()
+    private void Advance(Ticket ticket)
     {
-        await LoadTicketsAsync();
-        _refreshTimer = new Timer(async _ => await AutoRefreshAsync(), null, PollingIntervalMs, PollingIntervalMs);
+        ticket.Status = ticket.Status switch
+        {
+            "Pending" => "Preparing",
+            "Preparing" => "Ready",
+            _ => "Served"
+        };
+        if (ticket.Status == "Served") _tickets.Remove(ticket);
     }
 
-    private async Task AutoRefreshAsync()
+    private void AddTicket() => _tickets.Insert(0, new Ticket(28 + _tickets.Count, "Pending", 0, ["1x Chef special"]));
+    private static string NextAction(string status) => status switch
     {
-        if (_isPolling) return;
-        _isPolling = true;
-        try
-        {
-            await InvokeAsync(LoadTicketsAsync);
-        }
-        catch (Exception ex)
-        {
-            Logger.LogWarning(ex, "Kitchen polling refresh failed");
-        }
-        finally
-        {
-            _isPolling = false;
-        }
-    }
+        "Pending" => "Start",
+        "Preparing" => "Mark ready",
+        _ => "Serve"
+    };
 
-    private async Task LoadTicketsAsync()
+    private sealed class Ticket(int number, string status, int elapsed, string[] items)
     {
-        if (_hasLoaded) _isRefreshing = true;
-        _errorMessage = null;
-
-        try
-        {
-            var tickets = await KitchenClient.GetActiveAsync();
-            _waitingTickets = tickets.Where(t => t.Status == "Pending").ToList();
-            _cookingTickets = tickets.Where(t => t.Status == "Preparing").ToList();
-            _readyTickets = tickets.Where(t => t.Status == "Ready").ToList();
-            _servedTickets = tickets.Where(t => t.Status == "Served").ToList();
-            _hasLoaded = true;
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Cannot load kitchen tickets");
-            _errorMessage = $"Cannot load kitchen orders: {ex.Message}";
-        }
-        finally
-        {
-            _isLoading = false;
-            _isRefreshing = false;
-        }
-    }
-
-    private async Task HandleStartAsync(Guid id)
-    {
-        _actionTicketId = id;
-        try { await KitchenClient.StartPreparationAsync(id); await LoadTicketsAsync(); }
-        catch (Exception ex) { Logger.LogError(ex, "Cannot start preparation for ticket {Id}", id); _errorMessage = $"Cannot start: {ex.Message}"; }
-        finally { _actionTicketId = null; }
-    }
-
-    private async Task HandleCompleteAsync(Guid id)
-    {
-        _actionTicketId = id;
-        try { await KitchenClient.CompletePreparationAsync(id); await LoadTicketsAsync(); }
-        catch (Exception ex) { Logger.LogError(ex, "Cannot complete preparation for ticket {Id}", id); _errorMessage = $"Cannot complete: {ex.Message}"; }
-        finally { _actionTicketId = null; }
-    }
-
-    private async Task HandleServeAsync(Guid id)
-    {
-        _actionTicketId = id;
-        try { await KitchenClient.ServeAsync(id); await LoadTicketsAsync(); }
-        catch (Exception ex) { Logger.LogError(ex, "Cannot serve ticket {Id}", id); _errorMessage = $"Cannot serve: {ex.Message}"; }
-        finally { _actionTicketId = null; }
-    }
-
-    public void Dispose()
-    {
-        _refreshTimer?.Dispose();
+        public int Number { get; } = number;
+        public string Status { get; set; } = status;
+        public int Elapsed { get; } = elapsed;
+        public string[] Items { get; } = items;
     }
 }

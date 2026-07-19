@@ -1,133 +1,29 @@
-﻿@page "/"
-@using JLek.POS.Web.Clients.Tables
-@using JLek.POS.Web.Clients.Orders
-@using JLek.POS.Web.Clients.Kitchen
-@using JLek.POS.Web.Contracts.Tables
-@using JLek.POS.Web.Contracts.Orders
-@using JLek.POS.Web.Contracts.Kitchen
-@inject ITableClient TableClient
-@inject IOrderClient OrderClient
-@inject IKitchenClient KitchenClient
-@inject ILogger<Home> Logger
+@page "/"
 
-<PageTitle>JLek POS — Home</PageTitle>
+<PageTitle>JLek POS</PageTitle>
 
-<div class="home-page">
-    <div class="home-hero">
-        <h1>JLek POS</h1>
-        <p class="home-subtitle">Restaurant Point of Sale System</p>
+<section class="workspace-page home-workspace">
+    <div class="workspace-hero">
+        <div>
+            <p class="eyebrow">Today at a glance</p>
+            <h1>JLek POS</h1>
+            <p class="hero-copy">A tablet-first operating surface for cashier, kitchen, and manager workflows.</p>
+        </div>
+        <a class="primary-action" href="cashier">Open Cashier</a>
     </div>
 
-    @if (_isLoading)
-    {
-        <div class="home-loading">
-            <div class="spinner"></div>
-            <span>Loading summary...</span>
-        </div>
-    }
-    else if (!string.IsNullOrEmpty(_errorMessage))
-    {
-        <div class="home-error">
-            <p>@_errorMessage</p>
-            <button class="btn-retry" @onclick="LoadSummaryAsync">Retry</button>
-        </div>
-    }
-    else
-    {
-        <div class="home-summary">
-            <div class="summary-card summary-tables">
-                <div class="summary-icon">🪑</div>
-                <div class="summary-info">
-                    <span class="summary-value">@_openTables</span>
-                    <span class="summary-label">Open Tables</span>
-                </div>
-            </div>
-            <div class="summary-card summary-orders">
-                <div class="summary-icon">📋</div>
-                <div class="summary-info">
-                    <span class="summary-value">@_totalOrders</span>
-                    <span class="summary-label">Total Orders</span>
-                </div>
-            </div>
-            <div class="summary-card summary-waiting">
-                <div class="summary-icon">⏳</div>
-                <div class="summary-info">
-                    <span class="summary-value">@_waitingCount</span>
-                    <span class="summary-label">Waiting</span>
-                </div>
-            </div>
-            <div class="summary-card summary-cooking">
-                <div class="summary-icon">🍳</div>
-                <div class="summary-info">
-                    <span class="summary-value">@_cookingCount</span>
-                    <span class="summary-label">Cooking</span>
-                </div>
-            </div>
-        </div>
+    <div class="metric-strip">
+        <div class="metric-tile"><span>Open tables</span><strong>12</strong></div>
+        <div class="metric-tile"><span>Active orders</span><strong>18</strong></div>
+        <div class="metric-tile"><span>Preparing</span><strong>6</strong></div>
+        <div class="metric-tile"><span>Ready</span><strong>3</strong></div>
+    </div>
 
-        <div class="home-actions">
-            <a class="home-action-btn" href="cashier">
-                <span class="action-icon">🛒</span>
-                <span class="action-label">Cashier</span>
-                <span class="action-desc">Manage orders and payments</span>
-            </a>
-            <a class="home-action-btn" href="kitchen">
-                <span class="action-icon">🍳</span>
-                <span class="action-label">Kitchen</span>
-                <span class="action-desc">View and prepare orders</span>
-            </a>
-            <a class="home-action-btn" href="dashboard">
-                <span class="action-icon">📊</span>
-                <span class="action-label">Dashboard</span>
-                <span class="action-desc">Business overview</span>
-            </a>
-            <a class="home-action-btn" href="reports">
-                <span class="action-icon">📈</span>
-                <span class="action-label">Reports</span>
-                <span class="action-desc">Sales and analytics</span>
-            </a>
-        </div>
-    }
-</div>
-
-@code {
-    private int _openTables;
-    private int _totalOrders;
-    private int _waitingCount;
-    private int _cookingCount;
-    private bool _isLoading = true;
-    private string? _errorMessage;
-
-    protected override async Task OnInitializedAsync() => await LoadSummaryAsync();
-
-    private async Task LoadSummaryAsync()
-    {
-        _isLoading = true;
-        _errorMessage = null;
-
-        try
-        {
-            var tablesTask = TableClient.GetAllAsync();
-            var ordersTask = OrderClient.GetAllAsync();
-            var kitchenTask = KitchenClient.GetActiveAsync();
-
-            await Task.WhenAll(tablesTask, ordersTask, kitchenTask);
-
-            var tables = tablesTask.Result;
-            var orders = ordersTask.Result;
-            var activeKitchen = kitchenTask.Result;
-
-            _openTables = tables.Count(t => t.Status == "Open" || t.Status == "Occupied" || t.Status == "Assigned");
-            _totalOrders = orders.Count;
-            _waitingCount = activeKitchen.Count(t => t.Status == "Pending");
-            _cookingCount = activeKitchen.Count(t => t.Status == "Preparing");
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Cannot load home summary");
-            _errorMessage = "Cannot load data. Is the backend running?";
-        }
-
-        _isLoading = false;
-    }
-}
+    <div class="workspace-grid home-launcher">
+        <a class="launch-card" href="cashier"><b>Cashier</b><span>Tables, orders, payment</span></a>
+        <a class="launch-card" href="kitchen"><b>Kitchen</b><span>Pending, preparing, ready</span></a>
+        <a class="launch-card" href="dashboard"><b>Dashboard</b><span>Live operation pulse</span></a>
+        <a class="launch-card" href="reports"><b>Reports</b><span>Sales and product movement</span></a>
+        <a class="launch-card" href="settings"><b>Settings</b><span>Shop, printer, display</span></a>
+    </div>
+</section>
