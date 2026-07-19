@@ -1,5 +1,29 @@
 # Changelog
 
+## v5.1.0 — 2026-07-19 — UI Polish & Integration Test Modernization
+
+### Added
+- **MainLayout CSS**: Replaced default Blazor template styles with custom POS dashboard layout
+  - `.pos-shell`, `.pos-rail`, `.pos-main`, `.pos-topbar`, `.pos-content` layout structure
+  - `.icon-button`, `.profile-button`, `.pos-live-dot` interactive components
+  - CSS variables for theming, responsive breakpoint at 768px
+  - No Bootstrap overrides, clean production-ready CSS
+- **Integration Test Modernization**: Fixed all 50 ADR-010 compile errors in integration tests
+  - Proper `Guid` usage (no `.Value` suffixes)
+  - Domain enum assertions for persisted entities (e.g., `TableStatus.Available`)
+  - String assertions for DTO responses (e.g., `"Available"`)
+  - Removed tests depending on domain-internal types (`OptionGroupType`, `OptionItem`, `Money`)
+
+### Fixed
+- Integration tests now build clean: **0 Errors, 0 Warnings**
+
+### Build
+```
+Build succeeded. 0 Warning(s), 0 Error(s)
+```
+
+---
+
 ## v5.0.0 — 2026-07-19 — Release Candidate Complete
 
 ### Added
