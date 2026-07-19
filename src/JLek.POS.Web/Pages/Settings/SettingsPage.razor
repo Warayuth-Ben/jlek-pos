@@ -1,3 +1,76 @@
 @page "/settings"
-<h2>Settings</h2>
-<p>Settings page coming soon.</p>
+@using Microsoft.AspNetCore.Components.Forms
+@inject ILogger<SettingsPage> Logger
+
+<PageTitle>JLek POS — Settings</PageTitle>
+
+<div class="settings-page">
+    <div class="settings-header">
+        <h2>Settings</h2>
+    </div>
+
+    <div class="settings-sections">
+        @* --- General --- *@
+        <div class="settings-section">
+            <h3>General</h3>
+            <div class="settings-field">
+                <label>Shop Name</label>
+                <input type="text" @bind="_shopName" class="settings-input" placeholder="JLek POS" />
+            </div>
+            <div class="settings-field">
+                <label>Language</label>
+                <select @bind="_language" class="settings-select">
+                    <option value="th">ไทย</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div class="settings-field">
+                <label>Auto-refresh interval (seconds)</label>
+                <input type="number" @bind="_refreshInterval" class="settings-input" min="5" max="120" />
+            </div>
+        </div>
+
+        @* --- Printer --- *@
+        <div class="settings-section">
+            <h3>Printer</h3>
+            <div class="settings-field">
+                <label>Printer Type</label>
+                <select @bind="_printerType" class="settings-select">
+                    <option value="null">None (Development Mode)</option>
+                    <option value="usb">USB</option>
+                    <option value="lan">LAN / Network</option>
+                </select>
+            </div>
+            <div class="settings-field">
+                <label>Paper Width (mm)</label>
+                <input type="number" @bind="_paperWidth" class="settings-input" min="58" max="80" />
+            </div>
+            <div class="settings-field">
+                <label>Print Copies</label>
+                <input type="number" @bind="_printCopies" class="settings-input" min="1" max="5" />
+            </div>
+        </div>
+
+        @* --- About --- *@
+        <div class="settings-section">
+            <h3>About</h3>
+            <div class="settings-about">
+                <p><strong>JLek POS</strong></p>
+                <p>Version: 1.0.0-rc2</p>
+                <p>Restaurant Point of Sale System</p>
+                <p>Architecture: Clean Architecture + DDD + CQRS</p>
+                <p>Backend: .NET 8 + PostgreSQL</p>
+                <p>UI: Blazor WebAssembly</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _shopName = "JLek POS";
+    private string _language = "th";
+    private int _refreshInterval = 15;
+    private string _printerType = "null";
+    private int _paperWidth = 58;
+    private int _printCopies = 1;
+}

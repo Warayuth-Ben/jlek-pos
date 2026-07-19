@@ -1,12 +1,12 @@
 ﻿# Project Status
 
-Version: 1.6
+Version: 1.7
 
 Project: JLek POS
 
 Last Updated
 
-2026-07-18
+2026-07-19
 
 ---
 
@@ -24,11 +24,11 @@ Update this document whenever a milestone is completed.
 
 # Current Milestone
 
-Backend Runtime Verification
+UI Completion — Phase 1
 
 Status
 
-In Progress
+Completed
 
 ---
 
@@ -136,11 +136,13 @@ Database schema was out of sync with the current EF Core model after configurati
 
 ## UI — Blazor WebAssembly
 
+✔ Home Page (summary cards + quick navigation)
 ✔ Cashier UI
 ✔ Kitchen UI
 ✔ Dashboard
 ✔ Reports
-✔ Settings (placeholder)
+✔ Settings Page (General, Printer, About sections)
+✔ Custom CSS (dark theme, responsive, component styles)
 
 ---
 
@@ -156,19 +158,17 @@ Database schema was out of sync with the current EF Core model after configurati
 - TicketNumber generation needs thread-safe SequenceService
 - No CancellationToken propagation in some UI components
 - ReportsPage HandleDateChange fire-and-forget
-- Settings page is placeholder only
-- Home page shows default Blazor template
-- No CSS file for custom component styles
+- Settings page has no save/persist logic (UI-only)
+- Home page depends on backend being available
 
 ---
 
 # Deferred Items (v1.1+)
 
-- Settings page
 - SignalR for real-time Kitchen
 - Monthly Sales report (no backend API)
 - Export functionality
-- Home page customization
+- Settings persistence
 - Notification auto-dismiss
 
 ---
@@ -186,25 +186,25 @@ Database schema was out of sync with the current EF Core model after configurati
 | Integration Testing | ██████████ 100% (155 tests) |
 | CI/CD | ██████████ 100% |
 | Printing Infrastructure | ██████████ 100% (57 unit tests) |
-| UI (Blazor) | ████████░░ 80% |
+| UI (Blazor) | ██████████ 100% |
 | **Backend Runtime** | **██████████ 100%** |
 | **EF Core Runtime Recovery** | **██████████ 100%** |
 
-Estimated Overall Progress: ≈ 85%
-(Backend 100%, UI 80%, Runtime verification pending)
+Estimated Overall Progress: ≈ 95%
+(Backend 100%, UI 100%, Runtime verification pending)
 
 ---
 
 # Next Milestone
 
-Backend Runtime Verification
+Runtime Verification (Phase 3)
 
-Verify all endpoints respond successfully:
+Verify all endpoints respond successfully and screens load correctly:
 
+- GET /health
 - GET /categories
 - GET /products
 - GET /tables
 - GET /orders
-- GET /health
 
-Then: Backend Stable → Vertical Slice → API Driven UI → Kitchen → Payment → Reports → Production
+Then: End-to-End workflow verification → Production Polish → Release
