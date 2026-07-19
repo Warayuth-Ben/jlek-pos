@@ -4,17 +4,13 @@
 <PageTitle>Cashier</PageTitle>
 
 <section class="workspace-page cashier-redesign">
-    <div class="workspace-heading">
-        <div>
-            <p class="eyebrow">Cashier workspace</p>
-            <h1>Floor service</h1>
-        </div>
-        <div class="segmented-control" role="tablist" aria-label="Service mode">
-            <button class="@ModeClass("Dine in")" @onclick="@(() => _mode = "Dine in")">Dine in</button>
-            <button class="@ModeClass("Takeaway")" @onclick="@(() => _mode = "Takeaway")">Takeaway</button>
-            <button class="@ModeClass("Delivery")" @onclick="@(() => _mode = "Delivery")">Delivery</button>
-        </div>
-    </div>
+    <PageHeader Title="Floor service" Kicker="Cashier workspace">
+        <Actions>
+            <SegmentedControl AriaLabel="Service mode"
+                              Items="@_modeItems"
+                              OnSelect="@HandleModeChange" />
+        </Actions>
+    </PageHeader>
 
     <div class="cashier-layout">
         <section class="surface-panel table-map">
@@ -53,7 +49,7 @@
             <div class="order-lines">
                 @if (_order.Count == 0)
                 {
-                    <div class="empty-state">Select menu items to start this order.</div>
+                    <EmptyState>Select menu items to start this order.</EmptyState>
                 }
                 @foreach (var item in _order)
                 {
@@ -104,7 +100,6 @@
     private TableModel SelectedTable => _tables.First(t => t.Id == _selectedTableId);
     private int OccupiedCount => _tables.Count(t => t.Status == "Occupied");
     private decimal OrderTotal => _order.Sum(i => i.Price * i.Quantity);
-    private string ModeClass(string mode) => _mode == mode ? "active" : "";
     private string TableClass(TableModel table) => $"{table.Status.ToLowerInvariant()} {(table.Id == _selectedTableId ? "selected" : "")}";
     private static string Format(decimal value) => value.ToString("C0", CultureInfo.GetCultureInfo("th-TH"));
     private void SelectTable(int id) => _selectedTableId = id;
@@ -127,6 +122,15 @@
         _toast = $"Payment received: {Format(OrderTotal)}";
         _order.Clear();
     }
+
+    private List<SegmentedControl.SegmentItem> _modeItems => new()
+    {
+        new() { Label = "Dine in", Value = "Dine in", IsActive = _mode == "Dine in" },
+        new() { Label = "Takeaway", Value = "Takeaway", IsActive = _mode == "Takeaway" },
+        new() { Label = "Delivery", Value = "Delivery", IsActive = _mode == "Delivery" },
+    };
+
+    private void HandleModeChange(string mode) => _mode = mode;
 
     private record TableModel(int Id, string Name, string Status, decimal Total);
     private record MenuItem(string Name, decimal Price);

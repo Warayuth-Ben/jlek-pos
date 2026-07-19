@@ -4,13 +4,11 @@
 <PageTitle>Dashboard</PageTitle>
 
 <section class="workspace-page dashboard-redesign">
-    <div class="workspace-heading">
-        <div>
-            <p class="eyebrow">Manager workspace</p>
-            <h1>Live operations</h1>
-        </div>
-        <button class="secondary-action" @onclick="Refresh">Refresh</button>
-    </div>
+    <PageHeader Title="Live operations" Kicker="Manager workspace">
+        <Actions>
+            <button class="secondary-action" @onclick="Refresh">Refresh</button>
+        </Actions>
+    </PageHeader>
 
     <div class="metric-strip">
         <div class="metric-tile"><span>Net sales</span><strong>@Format(_sales)</strong></div>

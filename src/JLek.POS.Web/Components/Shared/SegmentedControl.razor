@@ -1,0 +1,24 @@
+@namespace JLek.POS.Web.Components.Shared
+
+<div class="segmented-control" role="tablist" aria-label="@AriaLabel">
+    @foreach (var item in Items)
+    {
+        <button class="@(item.IsActive ? "active" : "")"
+                @onclick="() => OnSelect.InvokeAsync(item.Value)">
+            @item.Label
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter] public string AriaLabel { get; set; } = "";
+    [Parameter] public List<SegmentItem> Items { get; set; } = new();
+    [Parameter] public EventCallback<string> OnSelect { get; set; }
+
+    public class SegmentItem
+    {
+        public string Label { get; set; } = "";
+        public string Value { get; set; } = "";
+        public bool IsActive { get; set; }
+    }
+}

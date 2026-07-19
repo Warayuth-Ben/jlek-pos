@@ -1,0 +1,13 @@
+@namespace JLek.POS.Web.Components.Shared
+
+<div class="loading-container">
+    <div class="spinner"></div>
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        <p>@Message</p>
+    }
+</div>
+
+@code {
+    [Parameter] public string Message { get; set; } = "Loading…";
+}

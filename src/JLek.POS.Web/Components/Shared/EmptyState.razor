@@ -1,0 +1,9 @@
+@namespace JLek.POS.Web.Components.Shared
+
+<div class="empty-state">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}
