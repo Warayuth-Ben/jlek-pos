@@ -24,6 +24,24 @@
 | CI/CD (GitHub Actions) | ✅ Production |
 | UI (Blazor WebAssembly, 6 pages) | ✅ Production |
 | Runtime Verification | ✅ Verified |
-| Current Focus | **Cashier UX/UI (Phase 13)** |
+| CSS Architecture | ✅ Complete — 4 layers, 16 files, 0 build errors |
+| Current Focus | **Frontend Component Architecture** |
 
 ---
+
+## Frontend Architecture
+
+### CSS Layering
+
+| Layer | Directory | Purpose |
+|-------|-----------|---------|
+| Foundation | `css/foundation/` | Variables, reset, typography |
+| Components | `css/components/` | Reusable UI (buttons, cards, badges) |
+| Layout | `css/layout/` | Application shell structure |
+| Features | `css/features/` | Business UI (cashier, kitchen, dashboard, reports, settings) |
+
+**Dependency Direction:** Foundation → Components → Layout → Features
+
+**Key Rule:** Feature ownership > Cross-feature coupling. Duplication is acceptable.
+
+**Documentation:** `docs/97-AI-Docs/101-css-architecture.md`
