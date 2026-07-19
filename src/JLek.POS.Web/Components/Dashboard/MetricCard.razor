@@ -1,0 +1,16 @@
+@namespace JLek.POS.Web.Components.Dashboard
+
+<div class="metric-tile @Class">
+    @Icon
+    <span>@Label</span>
+    <strong>@Value</strong>
+    @Footer
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string Value { get; set; } = "";
+    [Parameter] public string Class { get; set; } = "";
+    [Parameter] public RenderFragment? Icon { get; set; }
+    [Parameter] public RenderFragment? Footer { get; set; }
+}
