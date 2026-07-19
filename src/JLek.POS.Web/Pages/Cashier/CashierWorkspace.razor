@@ -16,20 +16,15 @@
             <span class="connection-status">Ready</span>
         </div>
     </HeaderContent>
-
     <ToolbarContent>
-        <button @onclick="RefreshTablesAsync" class="btn-secondary">
-            ⟳ Refresh
-        </button>
+        <button @onclick="RefreshTablesAsync" class="btn-secondary">⟳ Refresh</button>
     </ToolbarContent>
-
     <PrimaryContent>
         <TableGrid SelectedTableId="@_selectedTableId"
                    RefreshVersion="@_tableRefreshVersion"
                    OnTableSelected="HandleTableSelected"
                    OnDoubleClick="HandleTableDoubleClick" />
     </PrimaryContent>
-
     <SecondaryContent>
         <OrderPanel SelectedTableId="@_selectedTableId"
                     RefreshVersion="@_orderRefreshVersion"
@@ -37,7 +32,6 @@
                     OnAddItemRequested="HandleAddItemRequested"
                     ProductNames="@_productNames" />
     </SecondaryContent>
-
     <StatusBarContent>
         <span>Online</span>
     </StatusBarContent>
@@ -60,44 +54,33 @@
     private int _orderRefreshVersion;
     private bool _isMenuOpen;
     private bool _isAddingItem;
-
-    // Toast state
     private bool _showToast;
     private string _toastMessage = "";
     private ToastType _toastType = ToastType.Info;
-
-    // Product name cache for OrderPanel
     private Dictionary<Guid, string> _productNames = [];
 
-    // ─── Table Selection ───
-
-    private async Task HandleTableSelected(Guid? tableId)
+    private void HandleTableSelected(Guid? tableId)
     {
         _selectedTableId = tableId;
         _activeOrderId = null;
         _orderRefreshVersion++;
     }
 
-    private async Task HandleTableDoubleClick(Guid tableId)
+    private void HandleTableDoubleClick(Guid tableId)
     {
         _selectedTableId = tableId;
         _orderRefreshVersion++;
     }
 
-    // ─── Table Operations (Open, Cancel, Release) ───
-
-    private async Task HandleTableOperationComplete()
+    private void HandleTableOperationComplete()
     {
-        // After open/cancel/release: refresh grid and clear selection
         _tableRefreshVersion++;
         _selectedTableId = null;
         _activeOrderId = null;
         _orderRefreshVersion++;
     }
 
-    // ─── Menu / Add Item ───
-
-    private async Task HandleAddItemRequested(Guid orderId)
+    private void HandleAddItemRequested(Guid orderId)
     {
         _activeOrderId = orderId;
         _isMenuOpen = true;
@@ -107,7 +90,6 @@
     {
         if (_isAddingItem || !_activeOrderId.HasValue) return;
         _isAddingItem = true;
-
         try
         {
             await OrderClient.AddItemAsync(_activeOrderId.Value, productId, 1, 0);
@@ -116,38 +98,20 @@
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Cannot add item to order");
-            ShowToast(ToastType.Error, $"Cannot add item");
+            Logger.LogError(ex, "Cannot add item");
+            ShowToast(ToastType.Error, "Cannot add item");
         }
-        finally
-        {
-            _isAddingItem = false;
-        }
+        finally { _isAddingItem = false; }
     }
 
-    private void HandleMenuClose()
-    {
-        _isMenuOpen = false;
-    }
+    private void HandleMenuClose() => _isMenuOpen = false;
 
-    // ─── Toolbar ───
-
-    private async Task RefreshTablesAsync()
-    {
-        _tableRefreshVersion++;
-    }
-
-    // ─── Toast ───
+    private void RefreshTablesAsync() => _tableRefreshVersion++;
 
     private void ShowToast(ToastType type, string message)
     {
-        _toastType = type;
-        _toastMessage = message;
-        _showToast = true;
+        _toastType = type; _toastMessage = message; _showToast = true;
     }
 
-    private void HandleToastDismiss()
-    {
-        _showToast = false;
-    }
+    private void HandleToastDismiss() => _showToast = false;
 }

@@ -11,7 +11,7 @@ public sealed class DiningTable : AggregateRoot<TableId>
     private readonly List<TableId> _mergedTableIds = [];
 
     private DiningTable()
-        : base(TableId.From(Guid.Empty))
+        : base(default!)
     {
         Name = string.Empty;
     }

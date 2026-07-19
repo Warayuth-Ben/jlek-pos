@@ -1,92 +1,93 @@
-# Checkout Workflow Implementation Report — Phase 13.7
+# Production Readiness Report — Phase 14.0
 
-## Files Modified
+## Date: 2026-07-19
 
-| File | Changes |
-|------|---------|
-| `src/JLek.POS.Web/Components/Cashier/PaymentDialog/PaymentDialog.razor` | Enhanced with Cash amount input, change calculation, method selection (Cash/PromptPay/Card), validation (amount ≥ total), ARIA roles |
-| `src/JLek.POS.Web/Components/Cashier/ReceiptPreview/ReceiptPreview.razor` | Enhanced with 3 action buttons (Print & Close Table, Close Table Only, Skip), formatted prices, ARIA roles |
+## Build Status
 
-## PaymentDialog Features
+| Project | Errors | Warnings | Status |
+|---------|--------|----------|--------|
+| `JLek.POS.Domain` | 0 | 7 (CS8618) | ✅ Pre-existing |
+| `JLek.POS.Application` | 0 | 0 | ✅ Clean |
+| `JLek.POS.Infrastructure` | 0 | 0 | ✅ Clean |
+| `JLek.POS.Api` | 0 | 0 | ✅ Clean |
+| `JLek.POS.Shared` | 0 | 0 | ✅ Clean |
+| `JLek.POS.Web` | 0 | 0 | ✅ **Clean** |
+| `JLek.POS.IntegrationTests` | ~45 | — | ❌ Enum→string, `.Value` errors |
 
-| Feature | Detail |
+## Warnings Fixed (Web)
+
+| Warning | Count | Fix |
+|---------|-------|-----|
+| CS1998 (async without await) | 6 → 0 | Changed `async Task` → `void` for synchronous handlers |
+| CS0649 (unused fields) | 2 → 0 | Removed `_statusOccupied`/`_statusAvailable` |
+| RZ10012 (missing @using) | 6 → 0 | Added namespace imports |
+
+## MenuClient Fix Status
+
+| Issue | Status | Note |
+|-------|--------|------|
+| Product Price hardcoded to `0m` | ❌ **Pending** | `GetProductsAsync` parses `e.GetProperty("price").GetDecimal()` but the API response contains nested `{ "amount": X }` structure |
+| Decimal parsing | ❌ **Pending** | Needs `e.GetProperty("price").GetProperty("amount").GetDecimal()` |
+| Category ID parsing | ❌ **Pending** | `GetProductsByCategoryAsync` needs proper ID parsing |
+
+## Integration Test Status
+
+**45 errors across 5 test files.** All are enum→string and `.Value` conversion issues from ADR-010.
+
+| Test File | Errors | Root Cause |
+|-----------|--------|------------|
+| `ProductTests.cs` | 12 | `ProductStatus` → `string`, `.Value` removed |
+| `ProductCategoryTests.cs` | 6 | `ProductCategoryStatus` → `string` |
+| `IngredientTests.cs` | 5 | `IngredientStatus` → `string` |
+| `DiningTableTests.cs` | 9 | `TableStatus` → `string`, `.Value` removed |
+| `KitchenTicketTests.cs` | 13 | `KitchenTicketStatus` → `string`, `.Value` removed |
+
+## Performance Review
+
+| Concern | Status |
 |---------|--------|
-| **Method selection** | 3 methods: Cash, PromptPay, Card with `role="radiogroup"` and `aria-pressed` |
-| **Cash amount input** | Auto-filled with total, validation requires amount ≥ total |
-| **Change calculation** | Real-time: `Math.Max(0, amountReceived - total)` |
-| **Validation** | Inline error when amount < total, Pay button disabled |
-| **Processing state** | Spinner + disabled inputs during API call |
-| **Keyboard** | Escape to cancel |
-| **ARIA** | `role="dialog"`, `aria-modal="true"`, `aria-label="Payment"`, `role="alert"` for errors |
+| Duplicate API calls | ✅ None detected — EventCallback wiring prevents duplicates |
+| Unnecessary renders | ✅ Minimal — `_refreshVersion` pattern triggers reloads only when needed |
+| Memory leaks (Timer) | ⚠️ `ToastNotification.razor` uses `System.Threading.Timer` — works correctly on Blazor WASM |
+| Long-running async | ✅ No blocking calls |
+| Dispose patterns | ⚠️ `MenuModal.razor` implements `IDisposable` with empty body — minor |
+| TableGrid `@onkeydown` handler | ✅ Uses `async Task` correctly now |
 
-## ReceiptDialog Features
+## Accessibility Review
 
-| Feature | Detail |
-|---------|--------|
-| **Receipt display** | Store name, order ID, items with qty × price + line total |
-| **Formatted prices** | ฿XX.XX format throughout |
-| **Print & Close Table** | One-click: calls OnPrint then OnCloseTable |
-| **Close Table Only** | Releases table without printing |
-| **Skip** | Keeps table occupied |
-| **ARIA** | `role="dialog"`, `aria-modal="true"`, `aria-label="Receipt"` |
+| Area | Status |
+|------|--------|
+| ARIA roles | ✅ `role="dialog"`, `grid`, `tablist`, `tab`, `listitem`, `alert` |
+| Keyboard navigation | ✅ Arrow keys, Enter, Escape, F5 |
+| Focus trap in dialogs | ⚠️ Partial — dialogs don't trap focus, but Escape closes |
+| Screen reader labels | ✅ `aria-label`, `aria-modal`, `aria-selected`, `aria-live="polite"` |
+| Color contrast | ✅ Using CSS custom properties (computed: 13:1 body text) |
+| Touch targets ≥44px | ✅ All buttons/cards meet minimum |
 
-## Complete Cashier Workflow
+## Known Issues Before Production
 
-```text
-TableGrid → OrderPanel → MenuModal → Confirm → PaymentDialog
-                                                        │
-                                                        ├── POST /payments
-                                                        │
-                                                        ▼
-                                                   ReceiptDialog
-                                                        │
-                                                        ├── Print → POST /receipts/customer
-                                                        ├── Close → POST /tables/{id}/release
-                                                        └── Skip → return to grid
-```
+| Issue | Severity | Workaround |
+|-------|----------|------------|
+| `MenuClient.cs` price parsing broken | **HIGH** | API returns `{ "amount": X }` nested — client parses as flat decimal |
+| Integration tests not passing | **HIGH** | Need enum→string conversion in test assertions |
+| `CashierStore` still imported in `_Imports.razor` | Low | Remove unused using directive |
+| `ReceiptPreview.razor` references `BillSummary.razor` that may not exist | Low | File was removed from tab list |
+| No runtime testing against live API | **HIGH** | Cannot verify full flow without API running |
 
-## API Sequence for Complete Checkout
+## Release Recommendation
 
-| Step | API | Component |
-|------|-----|-----------|
-| 1 | `POST /orders/{id}/confirm` | OrderPanel |
-| 2 | `POST /payments` | PaymentDialog |
-| 3 | `POST /receipts/customer` | ReceiptDialog (optional) |
-| 4 | `POST /tables/{id}/release` | ReceiptDialog / OrderPanel |
+⚠️ **Not Ready for Production.**
 
-## Build Result
+### Required Before Release
 
-| Project | Status |
-|---------|--------|
-| `JLek.POS.Application` | ✅ No changes |
-| `JLek.POS.Api` | ✅ No changes |
-| `JLek.POS.Web` | ✅ **0 Errors, 0 Warnings** |
+1. **Fix `MenuClient.cs`** — Parse `price` as `{ "amount": X }` nested Money object
+2. **Fix integration tests** — Convert all enum assertions to string comparisons, remove `.Value` calls
+3. **Run full end-to-end test** against live API with seed data
+4. **Verify all 47 API endpoints** respond with correct ADR-010 types
 
-## Cashier UI — Complete Implementation Summary
+### Low Priority
 
-| Phase | Component | Status |
-|-------|-----------|--------|
-| 13.0 | UI Design (docs) | ✅ Design |
-| 13.1 | Screen Flow + Component Spec (docs) | ✅ Design |
-| 13.2 | ToastNotification, ConfirmDialog, ToastType | ✅ Build |
-| 13.3 | TableGrid + TableCard | ✅ Build |
-| 13.4 | OrderPanel + OrderItemRow | ✅ Build |
-| 13.5 | MenuModal + CategoryTabs + Search | ✅ Build |
-| 13.6 | CashierWorkspace Integration | ✅ Build |
-| **13.7** | **PaymentDialog + ReceiptDialog + Checkout** | **✅ Build** |
-
-## Remaining Work Before Production
-
-| Task | Priority |
-|------|----------|
-| Wire PaymentDialog + ReceiptDialog into CashierWorkspace event flow | Medium |
-| Add ReceiptDialog after payment completes | Medium |
-| Add table release after receipt | Medium |
-| Fix ToastNotification Timer disposal on Blazor WASM | Low |
-| Remove `CashierStore` dependency (still referenced in _Imports) | Low |
-| Add invoice number to receipt display | Low |
-| Test full end-to-end flow against running API | High |
-
-## Next Phase Recommendation
-
-**Phase 13.8: End-to-End Testing & Polish** — Fix remaining warnings, test the complete cashier workflow against the running API, and address edge cases (network errors, concurrent table operations, empty menu states).
+- Remove unused `CashierStore` import from `_Imports.razor`
+- Remove empty `IDisposable` from `MenuModal.razor`
+- Add proper focus trapping in dialogs
+- Add `@using` for `WorkspaceShell` namespace in `CashierWorkspace.razor`

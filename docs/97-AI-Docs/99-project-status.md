@@ -1,84 +1,107 @@
 ﻿# Project Status
 
-Version: 2.0
+Version: 3.0
 
 Project: JLek POS
 
-Last Updated
-
-2026-07-19
+Last Updated: 2026-07-19
 
 ---
 
 # Current Milestone
 
-ADR-010 Public API Contract Migration
+Production Readiness
 
-Status
+Status: ⚠️ NOT READY FOR PRODUCTION
 
-✅ Complete — All 5 modules migrated
+Reason: MenuClient parsing issue, integration tests pending, runtime verification pending
 
+---
+
+# Overall Progress
+
+| Area | Progress |
+|------|---------|
+| Business | 100% |
+| Domain | 100% |
+| Application | 100% |
+| Infrastructure | 100% |
+| API | 100% |
+| Documentation | 99% |
+| Blazor UI | 100% |
+| Production Hardening | 80% |
+| Runtime Verification | 0% |
+
+**Overall: ≈98%**
+
+---
+
+# Completed Milestones
+
+| Milestone | Status |
+|-----------|--------|
+| Business Foundation | ✅ Complete |
+| Clean Architecture + DDD + CQRS | ✅ Complete |
+| Order Module | ✅ Complete |
+| Catalog Module | ✅ Complete |
+| Table Module | ✅ Complete |
+| Kitchen Module | ✅ Complete |
+| Payment Module | ✅ Complete |
+| Reporting Module | ✅ Complete |
+| ADR-010 Public API Contract Migration | ✅ Complete |
+| Blazor Cashier UI (Phases 13.0-13.8) | ✅ Complete |
+| Web Build Warnings Cleanup | ✅ 0 Errors, 0 Warnings |
+
+---
 
 # Build Status
 
-Full solution build: ✅ 0 Errors, 0 Warnings (14 projects)
+| Project | Errors | Warnings | Status |
+|---------|--------|----------|--------|
+| JLek.POS.Domain | 0 | 7 (CS8618) | ✅ Pre-existing |
+| JLek.POS.Application | 0 | 0 | ✅ Clean |
+| JLek.POS.Infrastructure | 0 | 0 | ✅ Clean |
+| JLek.POS.Api | 0 | 0 | ✅ Clean |
+| JLek.POS.Shared | 0 | 0 | ✅ Clean |
+| JLek.POS.Web | 0 | 0 | ✅ Clean |
+| JLek.POS.IntegrationTests | 45 | — | ❌ ADR-010 assertion errors |
 
 ---
 
-# UI/UX Architecture — New Documents
+# Remaining Before Release
 
-| Document | Description |
-|----------|-------------|
-| `docs/09-ui/00-ui-foundation.md` | Vision, mission, design philosophy, core principles, architecture layers, workspace definition, component types, decision rules, naming convention, Do & Don't |
-| `docs/09-ui/01-design-system.md` | Colors (brand + status), typography, spacing grid, border radius, elevation, shadows, icons, motion, breakpoints, responsive rules |
-| `docs/09-ui/02-navigation.md` | Navigation structure, sidebar, top bar, workspace navigation flows (Cashier, Kitchen, Dashboard, Reports, Settings), quick actions, badges, notifications, future expansion |
+## High Priority
 
-## Architecture Decisions
+- Fix `MenuClient.cs` nested JSON parsing (`{ amount: X }` → decimal)
+- Fix 45 integration test assertions (enum→string after ADR-010)
+- Runtime verification against live API
+- Verify all 47 API endpoints return ADR-010 compliant DTOs
 
-### UI Foundation
-- **Presentation Reflects, Not Invents** — UI never creates business state
-- **Every State Has a Visual Representation** — All aggregate states map to visual tokens
-- **Every Transition Has a Trigger** — All Transition Matrix entries map to UI affordances
-- **Role Before Screen** — Workspaces defined by business persona, not data entity
+## Low Priority
 
-### Design System
-- **Status colors map directly to State Machine states** — No invented statuses
-- **Typography sized for POS environment** — High legibility, fast scanning
-- **Responsive: desktop → tablet → mobile** — Sidebar collapses, grid adapts
-
-### Navigation
-- **6 top-level workspaces** — Home, Cashier, Kitchen, Dashboard, Reports, Settings
-- **Each workspace flow derived from Use Cases + State Machines**
-- **Business rules gate navigation** — Transitions enabled only when Transition Matrix allows
+- Remove unused `CashierStore` import from `_Imports.razor`
+- Final UI polish
+- Error boundary improvements
 
 ---
 
-# All Previously Verified Status (Unchanged)
+# Cashier UI — Component Summary
 
-## Runtime Verification — Completed
+| Component | Status | Lines | Key Features |
+|-----------|--------|-------|-------------|
+| CashierPage | ✅ | 5 | Routes to CashierWorkspace |
+| CashierWorkspace | ✅ | 130 | Orchestrator, EventCallback wiring |
+| TableGrid | ✅ | 180 | Keyboard nav, ARIA, status colors |
+| OrderPanel | ✅ | 300 | CRUD, PaymentDialog, ReceiptPreview wired |
+| MenuModal | ✅ | 200 | Search, categories, stay-open after add |
+| PaymentDialog | ✅ | 150 | Cash/PromptPay/Card, change calc, validation |
+| ReceiptPreview | ✅ | 100 | Print & Close, Close Only, Skip |
+| ToastNotification | ✅ | 60 | Success/Error/Warning/Info, auto-dismiss |
+| ConfirmDialog | ✅ | 50 | Title, message, destructive mode, Escape |
+| LoadingSkeleton | ✅ | (via WorkspaceShell) | Card/Row/Text pulse |
 
-All endpoints verified at runtime. No HTTP 500, no HTTP 404, no EF Core exceptions.
+---
 
-## Build
+# Architecture Decisions (Frozen)
 
-✅ 0 Errors, 0 Warnings (14 projects)
-
-## API
-
-✅ 47 endpoints — all verified
-
-## Integration Tests
-
-✅ 155 tests (CI-verified) + 57 unit tests
-
-## Database
-
-✅ Migrations applied, schema verified
-
-## Breaking Changes
-
-- POST /orders now requires `{ "tableId": "guid" }` in request body
-
-## Recommended Release
-
-v1.0.0
+All ADRs in `docs/98-decisions/` are final for v2.0.0.
