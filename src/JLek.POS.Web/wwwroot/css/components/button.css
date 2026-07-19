@@ -1,0 +1,53 @@
+/* JLek POS — Reusable Buttons */
+
+button { min-height: 44px; cursor: pointer; }
+
+.primary-action, .secondary-action {
+    border: 0;
+    border-radius: var(--radius);
+    padding: 0 18px;
+    min-height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-weight: 850;
+}
+
+.primary-action {
+    background: var(--brand);
+    color: white;
+}
+
+.secondary-action {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+}
+
+.icon-button, .profile-button {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: var(--radius);
+    min-width: 44px;
+}
+
+.profile-button {
+    background: #182421;
+    color: white;
+    font-weight: 800;
+}
+
+.mini-button {
+    min-height: 34px;
+    min-width: 34px;
+    border: 0;
+    border-radius: 7px;
+    background: var(--surface-2);
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: .48;
+}

@@ -1,5 +1,32 @@
 # Changelog
 
+## v4.1.0 — 2026-07-19 — CSS Architecture Refactored
+
+### Added
+- **Layered CSS Architecture**: Monolithic `app.css` (565 lines) split into 16 files
+  - Foundation: variables, reset, typography (3 files)
+  - Components: button, card, badge (3 files)
+  - Layout: app-shell (1 file)
+  - Features: cashier, kitchen, dashboard, reports, settings (5 files)
+- **Feature Ownership**: Each business feature owns its own CSS
+- **Dependency Direction**: Foundation → Components → Layout → Features
+- **Cross-Feature Rule**: Duplication > Coupling
+- **Documentation**: `docs/97-AI-Docs/101-css-architecture.md`
+
+### Changed
+- `app.css`: Reduced from 565 lines to 12 `@import` statements + media queries
+- Project status updated to v4.1
+- Roadmap updated to reflect Frontend Component Architecture as current phase
+
+### Build
+- Application: ✅ 0 Errors, 0 Warnings
+- API: ✅ 0 Errors, 0 Warnings
+- Web: ✅ 0 Errors, 6 pre-existing RZ10012 warnings
+- **Zero build errors across all 12 CSS Sprints (B–M)**
+- **No visual regression detected**
+
+---
+
 ## v4.0.0 — 2026-07-19 — UI Foundation Complete
 
 ### Added

@@ -1,0 +1,39 @@
+/* JLek POS — Kitchen Feature */
+
+.kanban-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    min-height: calc(100vh - 150px);
+}
+
+.ticket-card {
+    background: #f9f5ee;
+    border-left: 6px solid var(--pending);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 10px;
+}
+
+.ticket-card.preparing { border-left-color: var(--preparing); }
+.ticket-card.ready { border-left-color: var(--ready); }
+
+.ticket-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.ticket-card ul {
+    margin: 0 0 12px;
+    padding-left: 18px;
+}
+
+.ticket-action {
+    width: 100%;
+    border: 0;
+    border-radius: var(--radius);
+    background: #182421;
+    color: white;
+    font-weight: 850;
+}

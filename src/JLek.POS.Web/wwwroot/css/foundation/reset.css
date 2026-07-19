@@ -1,0 +1,15 @@
+/* JLek POS — Reset */
+
+* { box-sizing: border-box; }
+
+html, body, #app { min-height: 100%; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    letter-spacing: 0;
+}
+
+button, input, select { font: inherit; }

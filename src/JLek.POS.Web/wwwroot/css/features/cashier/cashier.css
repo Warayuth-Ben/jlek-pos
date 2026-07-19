@@ -1,0 +1,99 @@
+/* JLek POS — Cashier Feature */
+
+.table-map, .order-builder {
+    padding: 16px;
+}
+
+.cashier-layout {
+    display: grid;
+    grid-template-columns: minmax(430px, .92fr) minmax(520px, 1.08fr);
+    gap: 14px;
+    min-height: calc(100vh - 150px);
+}
+
+.table-grid-redesign {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.table-tile {
+    min-height: 118px;
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    padding: 12px;
+    background: var(--surface-2);
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.table-tile span { font-size: 20px; font-weight: 850; }
+.table-tile small { color: var(--muted); font-weight: 750; }
+.table-tile.available strong { color: var(--available); }
+.table-tile.occupied strong { color: var(--occupied); }
+.table-tile.selected { border-color: var(--brand); background: #e5f4ef; }
+
+.menu-chips {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.menu-chips button {
+    min-height: 88px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #f9f5ee;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 12px;
+}
+
+.order-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 220px;
+}
+
+.order-line, .rank-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 14px;
+    min-height: 54px;
+    border-bottom: 1px solid var(--line);
+}
+
+.rank-row {
+    grid-template-columns: 1fr auto;
+}
+
+.bill-dock {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+
+.bill-dock strong { display: block; font-size: 30px; }
+.bill-dock span { color: var(--muted); font-weight: 750; }
+
+.empty-state {
+    min-height: 140px;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    background: var(--surface-2);
+    border-radius: var(--radius);
+}

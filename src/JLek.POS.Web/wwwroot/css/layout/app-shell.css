@@ -1,0 +1,51 @@
+/* JLek POS — Application Shell Layout */
+
+.pos-shell {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+}
+
+.pos-nav, .pos-nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pos-main {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: 72px minmax(0, 1fr);
+}
+
+.pos-content {
+    min-width: 0;
+    overflow: auto;
+    padding: 22px;
+}
+
+.workspace-page {
+    max-width: 1380px;
+    margin: 0 auto;
+}
+
+.workspace-heading, .workspace-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.metric-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.workspace-grid, .dashboard-panels, .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
