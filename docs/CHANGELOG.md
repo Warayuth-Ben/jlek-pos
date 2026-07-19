@@ -112,6 +112,46 @@
 ### Frozen
 - Printing Infrastructure v1
 
+## 2026-07-18 — EF Core Runtime Recovery & Database Sync
+
+### Added
+- OrderSessionIdConverter (OrderSessionId ↔ Guid)
+- NullableOrderSessionIdConverter (OrderSessionId? ↔ Guid?)
+- EF Core Migration: UpdateModelConfiguration (database schema synchronized)
+
+### Fixed
+- EF Core Model Validation: 8 mapping issues resolved
+  - Product.IngredientIds, Product.SuggestedPrices: Ignore() added for OwnsMany backing fields
+  - KitchenTicket.Items: Ignore() added for OwnsMany backing field
+  - Order.TableId, Order.SessionId: ValueConverters added
+  - DiningTable.ActiveSessionId: NullableOrderSessionIdConverter added
+  - DiningTable.MergedTableIds: Ignore() added for OwnsMany backing field
+  - DiningTable._mergedTableIds FK: shadow property type changed from Guid to TableId with converter
+
+### Changed
+- ProductConfiguration.cs: +2 Ignore() mappings
+- OrderConfiguration.cs: +2 HasConversion() mappings
+- KitchenTicketConfiguration.cs: +1 Ignore() mapping
+- DiningTableConfiguration.cs: +1 Ignore() + 1 HasConversion() + 1 FK type fix
+
+### Database
+- Root Cause: schema out of sync with EF Core model after configuration changes
+- Migration `UpdateModelConfiguration` created and applied
+- Tables created: ProductCategories, Products, Ingredients, DiningTables, Payments, Orders (updated), + owned entity tables
+
+### Architecture
+- Preserved Clean Architecture
+- Preserved DDD
+- Preserved Strongly Typed IDs
+- No Domain, Application, or API changes
+
+### Build
+- Full solution: ✅ 0 Errors, 0 Warnings
+
+### Current Milestone
+- Backend Runtime Verification (in progress)
+- Next: Verify GET /categories, /products, /tables, /orders
+
 ## 2026-07-18 — UI Completion & Release Candidate v1.0.0-rc1
 
 ### Added
