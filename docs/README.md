@@ -29,6 +29,25 @@
 
 ---
 
+## Documentation Architecture
+
+```
+Business Foundation (000)
+    ↓
+Architecture (100)
+    ↓
+Design Constitution (160) ✅ Frozen v1.0
+    ↓
+Design Standards (161–199) 🚧
+    ↓
+Implementation (200)
+```
+
+The Design Constitution (160) is the canonical design authority.
+Every Design Standard (161–199) derives its authority from this document.
+
+---
+
 ## Frontend Architecture
 
 ### CSS Layering

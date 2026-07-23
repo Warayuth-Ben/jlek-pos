@@ -335,6 +335,20 @@ read
 
 ---
 
+# Design Constitution
+
+The Design Constitution is the canonical source for the Design Series.
+
+It is frozen.
+
+AI must never redefine constitutional principles.
+
+All Design Standards (161–199) must derive from the Design Constitution.
+
+Implementations may not override constitutional principles.
+
+---
+
 # AI Reminder
 
 Project documentation

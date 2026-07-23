@@ -1,4 +1,4 @@
-# Session Handoff — Development Complete
+# Session Handoff — Design Constitution Complete
 
 ## Current Project State
 
@@ -15,25 +15,29 @@
 - ✅ **Documentation** — All docs up to date
 - ✅ **MainLayout CSS** — Custom POS shell layout replacing default Blazor template styles
 - ✅ **Integration Test Modernization** — All 50 ADR-010 compile errors fixed. Build: 0 Errors, 0 Warnings
-
-### Current Branch
-`feature/ui-v2`
-
-### Latest Commit
-`3fc84ac` — `docs: finalize v1.0 release candidate`
-
-### Uncommitted Changes
-- `docs/CHANGELOG.md` — updated
-- `docs/97-AI-Docs/99-project-status.md` — updated
-- `docs/97-AI-Docs/91-session-handoff.md` — updated
-- `src/JLek.POS.Web/Layout/MainLayout.razor.css` — replaced
-- `src/JLek.POS.IntegrationTests/` — 5 test files modernized
+- ✅ **Design Constitution (160-design-system.md)** — Canonical Edition v1.0, Frozen
+- ✅ **Design Series Infrastructure** — Outline, Writing Guide, Generation Prompt
+- ✅ **Constitutional Review** — All 9 chapters reviewed and frozen
+- ✅ **Constitutional Verification** — Self-verification checklist passed for all sections
 
 ### Current Milestone
-**Development Complete** ✅
+**Design Constitution Complete** ✅
 
 ### Current Phase
-**User Acceptance Testing (UAT)**
+**Design Standards (161–199) Development**
+
+### Repository Transition
+The repository is transitioning from constitutional design to Design Standards development.
+
+The Design Constitution (160) is frozen and is the canonical design authority.
+
+Future work will create Design Standards (161–165) derived from the Design Constitution:
+
+- 161 Information Standards
+- 162 Layout Standards
+- 163 Interaction Standards
+- 164 Visual Standards
+- 165 Component Standards
 
 ### Release Status
 **v1.0.0-rc2** — Ready for stable release after successful UAT
@@ -58,20 +62,19 @@
 
 ---
 
-## Completed Today (2026-07-19)
+## Completed (2026-07-23)
 
-1. **MainLayout CSS** — Replaced default Blazor template styles with custom POS dashboard layout:
-   - `.pos-shell`, `.pos-rail`, `.pos-main`, `.pos-topbar`, `.pos-content` layout
-   - `.icon-button`, `.profile-button`, `.pos-live-dot` interactive components
-   - CSS variables for theming, responsive breakpoint at 768px
+1. **Design Constitution (160-design-system.md)** — Created and frozen as Canonical Edition v1.0:
+   - 9 chapters: Introduction, Design Philosophy, Information Architecture, Layout Architecture, Interaction Philosophy, Visual Language, Component Philosophy, Design Governance, Conclusion
+   - All principles derived from Business Foundation
+   - Self-verification checklist passed for all sections
 
-2. **Integration Test Modernization** — Fixed all 50 ADR-010 compile errors:
-   - `.Value` suffixes removed (Guid usage aligned with ADR-010)
-   - Domain enum assertions for persisted entity properties
-   - String assertions for DTO response fields
-   - Removed tests depending on internal domain types (`OptionGroupType`, `OptionItem`, `Money`)
+2. **Design Series Infrastructure** — Three supporting documents created:
+   - `160-design-system-outline.md` — Section hierarchy
+   - `160-writing-guide.md` — Writing standards
+   - `160-generation-prompt.md` — AI generation prompt
 
-3. **Documentation updated** — CHANGELOG v5.1.0, project status v5.1
+3. **Project Documentation Updated** — Project status, changelog, roadmap, AI context, session handoff
 
 ---
 
@@ -86,21 +89,23 @@
 | RD-006 | Request Rate Limiting | v1.2 |
 | RD-007 | Connection String via Env Var | v1.1 |
 
-**RD-001 (Integration Tests) — now resolved.** ✅
-
 ---
 
-## Next Session — UAT
+## Next Session — Design Standards Development
 
 ### Objectives
-1. **Collect stakeholder feedback** on all workflows
-2. **Fix only production bugs** discovered during UAT
-3. **Prepare stable v1.0.0 release**
+1. **Create 161 Information Standards** — Derived from Design Constitution Section 3
+2. **Create 162 Layout Standards** — Derived from Design Constitution Section 4
+3. **Create 163 Interaction Standards** — Derived from Design Constitution Section 5
+4. **Create 164 Visual Standards** — Derived from Design Constitution Section 6
+5. **Create 165 Component Standards** — Derived from Design Constitution Sections 7-8
 
 ### Recommended First Prompt for Next AI Session
 ```
-"Run UAT phase for JLek POS.
-No new features.
-No refactoring.
-Fix only production bugs discovered during UAT testing.
-Prepare v1.0.0 stable release."
+"Read and understand the Design Constitution (docs/160-design/160-design-system.md).
+
+Then create 161 Information Standards derived from Section 3.
+
+All standards must be consistent with the Design Constitution.
+
+Do not invent principles not established in the constitution."
