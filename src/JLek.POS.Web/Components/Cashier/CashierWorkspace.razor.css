@@ -1,0 +1,32 @@
+.cashier-workspace {
+    display: grid;
+    grid-template-columns: 280px 1fr 420px;
+    gap: var(--space-md);
+    height: 100%;
+    padding: var(--space-md);
+}
+
+.cashier-workspace__panel {
+    min-height: 0;
+}
+
+.cashier-workspace__placeholder {
+    color: var(--muted);
+    font-size: 0.875rem;
+    text-align: center;
+    padding: var(--space-lg) 0;
+    margin: 0;
+}
+
+@media (max-width: 1024px) {
+    .cashier-workspace {
+        grid-template-columns: 220px 1fr 360px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cashier-workspace {
+        grid-template-columns: 1fr;
+        gap: var(--space-sm);
+    }
+}

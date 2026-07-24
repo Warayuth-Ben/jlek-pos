@@ -22,6 +22,8 @@ public class Program
         builder.Services.AddSingleton<JLek.POS.Web.Presentation.Context.ContextStore>();
         builder.Services.AddSingleton<JLek.POS.Web.Presentation.Context.WorkspaceContext>();
         builder.Services.AddTransient<JLek.POS.Web.Presentation.Cashier.CashierStore>();
+        builder.Services.AddScoped<JLek.POS.Web.Presentation.Abstractions.ICashierDataProvider, JLek.POS.Web.Presentation.Data.ApiCashierDataProvider>();
+        builder.Services.AddScoped<JLek.POS.Web.Presentation.Data.ApiOrderProvider>();
 
         await builder.Build().RunAsync();
     }

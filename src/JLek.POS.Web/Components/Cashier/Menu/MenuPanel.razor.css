@@ -1,0 +1,35 @@
+.menu-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    height: 100%;
+}
+
+.menu-panel__toolbar {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.menu-panel__category-btn {
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 0.875rem;
+    cursor: not-allowed;
+    opacity: 0.6;
+    white-space: nowrap;
+}
+
+.menu-panel__body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.menu-panel__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}

@@ -1,0 +1,27 @@
+@namespace JLek.POS.Web.Components.Cashier.Tables
+
+<div class="table-card @(IsSelected ? "table-card--selected" : "")" @onclick="HandleClick">
+    <Card Class="table-card__container">
+        <div class="table-card__content">
+            <span class="table-card__name">@TableName</span>
+            <Badge Variant="@(Disabled ? "neutral" : "neutral")">@StatusText</Badge>
+        </div>
+    </Card>
+</div>
+
+@code {
+    [Parameter] public Guid TableId { get; set; }
+    [Parameter] public string TableName { get; set; } = "";
+    [Parameter] public string StatusText { get; set; } = "";
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool IsSelected { get; set; }
+    [Parameter] public EventCallback<Guid> OnSelected { get; set; }
+
+    private async Task HandleClick()
+    {
+        if (!Disabled)
+        {
+            await OnSelected.InvokeAsync(TableId);
+        }
+    }
+}

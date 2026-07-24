@@ -1,0 +1,25 @@
+@namespace JLek.POS.Web.Components.Cashier.Orders
+@using JLek.POS.Web.Presentation.Models
+
+<div class="order-item">
+    <Card Class="order-item__container">
+        <div class="order-item__content">
+            <div class="order-item__info">
+                <span class="order-item__name">@Item.Name</span>
+                <span class="order-item__detail">@Item.Quantity × @FormatPrice(Item.UnitPrice)</span>
+                @if (!string.IsNullOrEmpty(Item.Note))
+                {
+                    <span class="order-item__note">@Item.Note</span>
+                }
+            </div>
+            <span class="order-item__total">@FormatPrice(Item.TotalPrice)</span>
+        </div>
+    </Card>
+</div>
+
+@code {
+    [Parameter]
+    public OrderItemViewModel Item { get; set; } = new();
+
+    private static string FormatPrice(decimal price) => $"฿{price:N0}";
+}

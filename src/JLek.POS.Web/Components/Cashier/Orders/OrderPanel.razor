@@ -1,0 +1,49 @@
+@namespace JLek.POS.Web.Components.Cashier.Orders
+@using JLek.POS.Web.Presentation.Models
+
+<Panel Header="Current Order">
+    <div class="order-panel">
+        <div class="order-panel__body">
+            @if (Items.Count == 0)
+            {
+                <EmptyState Title="No active order" Message="Select a table to begin" />
+            }
+            else
+            {
+                <div class="order-panel__list">
+                    @foreach (var item in Items)
+                    {
+                        <OrderItem Item="@item" />
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="order-panel__footer">
+            <div class="order-panel__summary-line">
+                <span>Items: @Summary.ItemCount</span>
+                <span>฿@FormatPrice(Summary.Subtotal)</span>
+            </div>
+            <div class="order-panel__total">
+                <span>Total</span>
+                <strong>฿@FormatPrice(Summary.Total)</strong>
+            </div>
+            <button class="order-panel__checkout-btn" disabled="@(Summary.ItemCount == 0)" @onclick="@(() => OnConfirmOrder.InvokeAsync())">
+                Confirm Order
+            </button>
+        </div>
+    </div>
+</Panel>
+
+@code {
+    [Parameter]
+    public IReadOnlyList<OrderItemViewModel> Items { get; set; } = Array.Empty<OrderItemViewModel>();
+
+    [Parameter]
+    public OrderSummaryViewModel Summary { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnConfirmOrder { get; set; }
+
+    private static string FormatPrice(decimal price) => price.ToString("N0");
+}

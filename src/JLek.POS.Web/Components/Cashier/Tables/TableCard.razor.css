@@ -1,0 +1,27 @@
+.table-card {
+    padding: var(--space-xs) 0;
+}
+
+.table-card--selected .table-card__container {
+    border: 2px solid var(--primary);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius-md);
+}
+
+.table-card__container {
+    display: block;
+}
+
+.table-card__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-md);
+}
+
+.table-card__name {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--ink);
+}

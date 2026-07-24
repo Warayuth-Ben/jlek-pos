@@ -1,0 +1,21 @@
+@namespace JLek.POS.Web.Components.Cashier.Tables
+@using JLek.POS.Web.Presentation.Models
+
+<div class="table-grid">
+    @foreach (var table in Items)
+    {
+        <TableCard TableId="@table.Id"
+                   TableName="@table.Name"
+                   StatusText="@table.Status"
+                   IsSelected="@table.IsSelected"
+                   OnSelected="@OnSelected" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IReadOnlyList<TableViewModel> Items { get; set; } = Array.Empty<TableViewModel>();
+
+    [Parameter]
+    public EventCallback<Guid> OnSelected { get; set; }
+}

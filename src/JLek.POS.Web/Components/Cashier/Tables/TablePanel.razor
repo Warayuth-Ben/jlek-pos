@@ -1,0 +1,22 @@
+@namespace JLek.POS.Web.Components.Cashier.Tables
+@using JLek.POS.Web.Presentation.Models
+
+<Panel Header="Tables">
+    <div class="table-panel">
+        <div class="table-panel__toolbar">
+            <SearchBox Placeholder="Search" Disabled="true" />
+            <button class="table-panel__filter-btn" disabled title="Filter">
+                Filter
+            </button>
+        </div>
+
+        <div class="table-panel__body">
+            <TableGrid Items="Items" />
+        </div>
+    </div>
+</Panel>
+
+@code {
+    [Parameter]
+    public IReadOnlyList<TableViewModel> Items { get; set; } = Array.Empty<TableViewModel>();
+}

@@ -1,0 +1,17 @@
+@namespace JLek.POS.Web.Components.Cashier.Menu
+@using JLek.POS.Web.Presentation.Models
+
+<div class="menu-grid">
+    @foreach (var item in Items)
+    {
+        <MenuCard Item="@item" OnSelected="@OnSelected" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IReadOnlyList<MenuItemViewModel> Items { get; set; } = Array.Empty<MenuItemViewModel>();
+
+    [Parameter]
+    public EventCallback<Guid> OnSelected { get; set; }
+}

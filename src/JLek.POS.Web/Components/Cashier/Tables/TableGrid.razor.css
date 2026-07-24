@@ -1,0 +1,11 @@
+.table-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}
+
+@media (max-width: 768px) {
+    .table-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,6 +1,6 @@
 @namespace JLek.POS.Web.Components.Shared
 
-<span class="@($"state-pill {VariantClass}")">
+<span class="@($"state-pill {GetVariantClass()}")">
     @ChildContent
 </span>
 
@@ -8,8 +8,13 @@
     [Parameter] public string Variant { get; set; } = "";
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
-    private string VariantClass => Variant switch
+    private string GetVariantClass() => Variant switch
     {
+        "success" => "badge-success",
+        "warning" => "badge-warning",
+        "danger" => "badge-danger",
+        "info" => "badge-info",
+        "neutral" => "",
         "occupied" => "occupied",
         "available" => "",
         _ => ""

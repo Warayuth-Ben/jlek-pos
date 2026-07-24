@@ -19,4 +19,22 @@
     --danger: #b42318;
     --shadow: 0 16px 40px rgba(39, 31, 21, .10);
     --radius: 8px;
+
+    /* ETS-001: Standard color aliases */
+    --primary: var(--brand);
+    --secondary: var(--muted);
+    --success: var(--available);
+    --warning: var(--occupied);
+    --info: #2563eb;
+
+    /* ETS-001: Spacing scale */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+
+    /* ETS-001: Radius scale */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
 }

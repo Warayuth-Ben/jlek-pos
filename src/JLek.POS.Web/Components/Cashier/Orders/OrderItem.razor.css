@@ -1,0 +1,44 @@
+.order-item {
+    padding: var(--space-xs) 0;
+}
+
+.order-item__container {
+    display: block;
+}
+
+.order-item__content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-md);
+}
+
+.order-item__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.order-item__name {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--ink);
+}
+
+.order-item__detail {
+    font-size: 0.8125rem;
+    color: var(--muted);
+}
+
+.order-item__note {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    font-style: italic;
+}
+
+.order-item__total {
+    font-size: 0.9375rem;
+    color: var(--ink);
+    font-weight: 600;
+    white-space: nowrap;
+}

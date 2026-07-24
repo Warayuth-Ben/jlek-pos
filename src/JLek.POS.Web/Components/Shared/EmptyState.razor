@@ -1,9 +1,21 @@
 @namespace JLek.POS.Web.Components.Shared
 
 <div class="empty-state">
+    @if (!string.IsNullOrEmpty(Title))
+    {
+        <h3 class="empty-state__title">@Title</h3>
+    }
+
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        <p class="empty-state__message">@Message</p>
+    }
+
     @ChildContent
 </div>
 
 @code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Message { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
 }

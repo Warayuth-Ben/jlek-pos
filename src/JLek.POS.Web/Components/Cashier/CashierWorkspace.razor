@@ -1,0 +1,140 @@
+@namespace JLek.POS.Web.Components.Cashier
+@using JLek.POS.Web.Presentation.Models
+@using JLek.POS.Web.Presentation.Abstractions
+@using JLek.POS.Web.Presentation.Data
+@using JLek.POS.Web.Presentation.Mapping
+
+@if (_isLoading)
+{
+    <div class="cashier-state">
+        <LoadingSpinner />
+    </div>
+}
+else if (_hasError)
+{
+    <div class="cashier-state">
+        <EmptyState Title="Unable to load data" Message="Something went wrong while loading cashier data.">
+            <button class="cashier-state__retry-btn" disabled>
+                <i class="fas fa-redo"></i> Retry
+            </button>
+        </EmptyState>
+    </div>
+}
+else if (_viewModel.Tables.Count == 0 || _viewModel.Menu.Count == 0)
+{
+    <div class="cashier-state">
+        <EmptyState Title="No data available" Message="No tables or menu items were found." />
+    </div>
+}
+else
+{
+    <section class="cashier-workspace">
+        <section class="cashier-workspace__panel">
+            <TablePanel Items="_viewModel.Tables" />
+        </section>
+
+        <section class="cashier-workspace__panel">
+            <MenuPanel Items="_viewModel.Menu" OnMenuItemSelected="@HandleMenuItemSelected" />
+        </section>
+
+        <section class="cashier-workspace__panel">
+            <OrderPanel Items="_viewModel.OrderItems" Summary="_viewModel.Summary" OnConfirmOrder="@HandleConfirmOrder" />
+        </section>
+    </section>
+}
+
+@code {
+    [Inject]
+    private ICashierDataProvider Provider { get; set; } = default!;
+
+    [Inject]
+    private ApiOrderProvider OrderProvider { get; set; } = default!;
+
+    private CashierWorkspaceViewModel _viewModel = default!;
+    private bool _isLoading = true;
+    private bool _hasError;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _isLoading = true;
+            var dto = await Provider.LoadAsync();
+            _viewModel = CashierWorkspaceMapper.ToViewModel(dto);
+        }
+        catch (Exception ex)
+        {
+            _hasError = true;
+            _errorMessage = ex.Message;
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task HandleConfirmOrder()
+    {
+        if (!OrderProvider.HasActiveOrder)
+            return;
+
+        var orderId = OrderProvider.ActiveOrderId!.Value;
+        await OrderProvider.ConfirmOrderAsync(orderId);
+
+        OrderProvider.ResetSession();
+        _viewModel = _viewModel with
+        {
+            OrderItems = new List<OrderItemViewModel>(),
+            Summary = new OrderSummaryViewModel(),
+        };
+    }
+
+    private async Task HandleMenuItemSelected(MenuItemViewModel menuItem)
+    {
+        if (!OrderProvider.HasActiveOrder)
+        {
+            var selectedTable = _viewModel.Tables.FirstOrDefault(t => t.IsSelected);
+            if (selectedTable is null)
+                return;
+
+            await OrderProvider.EnsureOrderAsync(selectedTable.Id);
+        }
+
+        var orderId = OrderProvider.ActiveOrderId!.Value;
+
+        await OrderProvider.AddItemAsync(orderId, menuItem.Id, quantity: 1, menuItem.Price);
+
+        var orderItems = (List<OrderItemViewModel>)_viewModel.OrderItems;
+        var existing = orderItems.FirstOrDefault(x => x.Id == menuItem.Id);
+        if (existing is not null)
+        {
+            existing.Quantity++;
+            existing.TotalPrice = existing.UnitPrice * existing.Quantity;
+        }
+        else
+        {
+            orderItems.Add(new()
+            {
+                Id = Guid.NewGuid(),
+                Name = menuItem.Name,
+                Quantity = 1,
+                UnitPrice = menuItem.Price,
+                TotalPrice = menuItem.Price,
+            });
+        }
+
+        var subtotal = orderItems.Sum(x => x.TotalPrice);
+        _viewModel = _viewModel with
+        {
+            OrderItems = orderItems.ToList(),
+            Summary = new OrderSummaryViewModel
+            {
+                Subtotal = subtotal,
+                Discount = 0,
+                Total = subtotal,
+                ItemCount = orderItems.Sum(x => x.Quantity),
+            },
+        };
+    }
+}

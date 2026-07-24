@@ -1,0 +1,34 @@
+@namespace JLek.POS.Web.Components.Shared
+
+<div class="jlek-panel">
+    @if (!string.IsNullOrEmpty(Header))
+    {
+        <div class="jlek-panel__header">
+            <h3 class="jlek-panel__title">@Header</h3>
+        </div>
+    }
+    else if (HeaderTemplate is not null)
+    {
+        <div class="jlek-panel__header">
+            @HeaderTemplate
+        </div>
+    }
+
+    <div class="jlek-panel__body">
+        @ChildContent
+    </div>
+
+    @if (Footer is not null)
+    {
+        <div class="jlek-panel__footer">
+            @Footer
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Header { get; set; }
+    [Parameter] public RenderFragment? HeaderTemplate { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? Footer { get; set; }
+}

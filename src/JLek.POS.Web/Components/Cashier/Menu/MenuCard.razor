@@ -1,0 +1,33 @@
+@namespace JLek.POS.Web.Components.Cashier.Menu
+@using JLek.POS.Web.Presentation.Models
+
+<div class="menu-card @(Item.IsSelected ? "menu-card--selected" : "")" @onclick="HandleClick">
+    <Card Class="menu-card__container">
+        <div class="menu-card__content">
+            <div class="menu-card__info">
+                <span class="menu-card__name">@Item.Name</span>
+            </div>
+            <div class="menu-card__meta">
+                <span class="menu-card__price">@FormatPrice(Item.Price)</span>
+                <Badge Variant="@(Item.Available ? "success" : "neutral")">
+                    @(Item.Available ? "Available" : "Unavailable")
+                </Badge>
+            </div>
+        </div>
+    </Card>
+</div>
+
+@code {
+    [Parameter]
+    public MenuItemViewModel Item { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<Guid> OnSelected { get; set; }
+
+    private async Task HandleClick()
+    {
+        await OnSelected.InvokeAsync(Item.Id);
+    }
+
+    private static string FormatPrice(decimal price) => $"฿{price:N0}";
+}

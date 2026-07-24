@@ -1,0 +1,45 @@
+.menu-card {
+    padding: var(--space-xs) 0;
+}
+
+.menu-card--selected .menu-card__container {
+    border: 2px solid var(--primary);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius-md);
+}
+
+.menu-card__container {
+    display: block;
+}
+
+.menu-card__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-md);
+}
+
+.menu-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.menu-card__name {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--ink);
+}
+
+.menu-card__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.menu-card__price {
+    font-size: 0.9375rem;
+    color: var(--ink);
+    font-weight: 600;
+}
